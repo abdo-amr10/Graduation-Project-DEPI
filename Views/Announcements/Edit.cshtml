@@ -1,0 +1,95 @@
+﻿@model My_Uni_Hub.Models.Pages.Announcement
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Edit Announcement";
+}
+
+<link rel="stylesheet" href="~/css/Admin/EditAnnouncement.css" />
+
+<div class="main-content">
+
+    <div class="breadcrumb">
+        <a href="@Url.Action("dashboard", "admin")">Dashboard</a> /
+        <a href="@Url.Action("announcement", "admin")">Announcements</a> /
+        Edit Announcement
+    </div>
+
+    <div class="header">
+        <h1 class="header-title">Edit Announcement</h1>
+    </div>
+
+    <div class="form-card">
+
+        @if (Model?.CreatedAt != null)
+        {
+            <div class="created-info">
+                Created on: @Model.CreatedAt.ToString("MMMM dd, yyyy")
+            </div>
+        }
+
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="editAnnouncementForm">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-section">
+                <h2 class="section-title">Announcement Details</h2>
+
+                <!-- TITLE -->
+                <div class="form-group">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title"
+                           class="form-control"
+                           placeholder="Enter announcement title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <!-- ✅ BODY (الجديد) -->
+                <div class="form-group">
+                    <label asp-for="Body">Announcement Body</label>
+                    <textarea asp-for="Body"
+                              class="form-control"
+                              rows="6"
+                              placeholder="(Optional) Edit announcement content...">
+                    </textarea>
+                    <span asp-validation-for="Body" class="text-danger"></span>
+                </div>
+
+                <!-- FACULTY -->
+                <div class="form-group">
+                    <label asp-for="FacultyId"></label>
+
+                    <select asp-for="FacultyId"
+                            class="form-control"
+                            asp-items="(IEnumerable<SelectListItem>)ViewBag.Faculties">
+                        <option value="">Select Faculty</option>
+                    </select>
+
+                    <span asp-validation-for="FacultyId" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="button"
+                        class="btn btn-secondary"
+                        onclick="window.history.back()">
+                    Cancel
+                </button>
+
+                <button type="submit"
+                        class="btn btn-primary"
+                        id="updateBtn">
+                    Update Announcement
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

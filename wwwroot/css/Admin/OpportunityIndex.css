@@ -1,0 +1,228 @@
+﻿/* OpportunityIndex.css - styling for index page */
+.opportunities-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0b1a3d;
+    margin: 0;
+}
+
+.btn-accent {
+    background: linear-gradient(90deg,#ff8c00,#ff6b00);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #e9f0fb;
+    background: white;
+}
+
+.filter-select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e9f0fb;
+    background: white;
+}
+
+.card {
+    background: white;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(12,23,56,0.06);
+}
+
+.opportunities-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .opportunities-table thead th {
+        text-align: left;
+        padding: 16px;
+        font-weight: 700;
+        border-bottom: 1px solid #f4f7fb;
+        color: #0b213d;
+    }
+
+    .opportunities-table tbody td {
+        padding: 18px 16px;
+        border-bottom: 1px solid #fbfbfd;
+        vertical-align: top;
+    }
+
+.title {
+    font-weight: 700;
+    color: #0b1a3d;
+    font-size: 16px;
+}
+
+.org {
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.type-badge, .faculty-badge {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.type-internship {
+    background: #e8f0ff;
+    color: #0b1a3d;
+}
+
+.type-scholarship {
+    background: #fff5f5;
+    color: #b91c1c;
+}
+
+.type-job {
+    background: #fff7ed;
+    color: #bf5100;
+}
+
+.type-volunteer {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.type-workshop {
+    background: #faf5ff;
+    color: #7c2ae8;
+}
+
+.faculty-engineering {
+    background: #eef6ff;
+    color: #0b1a3d;
+}
+
+.faculty-medicine {
+    background: #fff5f5;
+    color: #b91c1c;
+}
+
+.faculty-business {
+    background: #fff8ed;
+    color: #bf5100;
+}
+
+.faculty-arts {
+    background: #f0fff6;
+    color: #047857;
+}
+
+.actions-col {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+.btn-edit {
+    background: #eaf3ff;
+    color: #0b63c9;
+    padding: 6px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.btn-delete {
+    background: #fff2f2;
+    color: #c62828;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px;
+    color: #6b7280;
+}
+
+.deleting {
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: all 250ms ease;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6,9,20,0.35);
+    z-index: 99999;
+}
+
+.modal-card {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    min-width: 320px;
+    max-width: 560px;
+    box-shadow: 0 10px 40px rgba(12,23,56,0.18);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.btn-outline {
+    border: 1px solid #e9f0fb;
+    background: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-delete-confirm {
+    background: #ffdddd;
+    color: #b91c1c;
+    border-radius: 8px;
+    padding: 8px 14px;
+    border: none;
+    cursor: pointer;
+}

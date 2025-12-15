@@ -1,0 +1,102 @@
+﻿@model My_Uni_Hub.Models.ViewModels.MaterialEditVM
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Edit Material";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/CreateMaterial.css" asp-append-version="true" />
+}
+
+<div class="dashboard-container">
+    <main class="main-content">
+        <div class="breadcrumb">
+            <a asp-action="Index" asp-controller="Material" asp-area="Admin">Materials</a> / Edit Material
+        </div>
+
+        <div class="header">
+            <h1 class="header-title">Edit Material</h1>
+        </div>
+
+        <div class="form-card">
+            <div asp-validation-summary="ModelOnly" class="validation-summary text-danger"></div>
+
+            <!-- IMPORTANT: multipart/form-data so file uploads bind -->
+            <form asp-action="Edit" asp-controller="Material" asp-area="Admin" method="post" enctype="multipart/form-data" id="materialEditForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-section">
+                    <h2 class="section-title">Basic Information</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="Title">Title <span class="required">*</span></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Category">Category</label>
+                            <input asp-for="Category" class="form-control" />
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label asp-for="Description">Description <span class="required">*</span></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="CourseId">Course</label>
+                            <select asp-for="CourseId" asp-items="(IEnumerable<SelectListItem>)ViewBag.Courses" class="form-control">
+                                <option value="">Select Course</option>
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Existing File</label>
+                            @if (!string.IsNullOrWhiteSpace(Model.ExistingFilePath))
+                            {
+                                <div class="help-text">
+                                    Current file:
+                                    <a href="@Model.ExistingFilePath" target="_blank" rel="noopener">
+                                        @Model.ExistingFileName ?? "Download"
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="help-text">No file uploaded yet.</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="file">Replace File (optional)</label>
+                            <!-- bind to VM.File, must match VM property name -->
+                            <input asp-for="File" type="file" class="form-control" id="file" name="File" />
+                            <span asp-validation-for="File" class="text-danger"></span>
+                            <div class="help-text">Allowed: pdf, docx, pptx, zip, png, jpg, mp4. Max 10MB.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a class="btn btn-secondary" asp-action="Index" asp-controller="Material" asp-area="Admin">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <script src="~/js/Admin/EditMaterial.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial" />
+}

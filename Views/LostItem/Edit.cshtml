@@ -1,0 +1,86 @@
+﻿@model My_Uni_Hub.Models.Pages.LostItem
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "Edit Lost Item";
+}
+
+<link rel="stylesheet" href="~/css/Admin/LostItem.css" />
+<script src="~/js/Admin/LostItemForm.js" defer></script>
+
+<div class="lf-form-card wide">
+    <h2>Edit Item</h2>
+
+    <form asp-action="Edit" method="post" asp-route-id="@Model.Id" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-row">
+            <label asp-for="Name">Name</label>
+            <input asp-for="Name" />
+            <span asp-validation-for="Name" class="field-validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Description">Description</label>
+            <textarea asp-for="Description"></textarea>
+        </div>
+
+        <div class="form-row two-col">
+            <div>
+                <label asp-for="Location">Location</label>
+                <input asp-for="Location" />
+            </div>
+
+            <div>
+                <label>Type</label>
+                <select asp-for="IsFound">
+                    <option value="false" selected="@(!Model.IsFound)">Lost</option>
+                    <option value="true" selected="@(Model.IsFound)">Found</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label>Contact Info</label>
+            <input asp-for="ContactInfo" />
+        </div>
+
+        <div class="form-row">
+            <label>Current Image</label>
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="current-image">
+                    <img src="@Model.ImageUrl" alt="current image" />
+                </div>
+            }
+            else
+            {
+                <div class="current-image empty">No image</div>
+            }
+        </div>
+
+        <div class="form-row">
+            <label>Change Image (optional)</label>
+            <input type="file" id="imageInput" name="image" accept="image/*" />
+            <div id="imagePreview" class="image-preview" style="display:none;">
+                <img src="" alt="preview" />
+                <button type="button" class="btn-clear-image" onclick="clearPreview()">Remove</button>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Status">Status</label>
+            <input asp-for="Status" />
+        </div>
+
+        <div class="form-row actions">
+            <button type="submit" class="btn-submit">Save</button>
+            <a class="btn-cancel" href="@Url.Action("Index", "LostItem", new { area = "Admin" })">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

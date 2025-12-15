@@ -1,0 +1,19 @@
+/* ===== style.css ===== */
+/* محتوى ملف style.css */
+
+/* ...existing style.css content... */
+
+/* ===== user-overrides.css ===== */
+/* محتوى ملف user-overrides.css */
+
+[style*="#1eb2a6"], [style*="#198754"],
+.text-success, .bg-success, .border-success, .btn-success,
+.btn-success, .btn-success:hover, .btn-success:focus, .btn-success:active,
+.text-green, .bg-green, .border-green, .btn-green,
+.text-success *, .bg-success *, .border-success *, .btn-success *,
+.text-green *, .bg-green *, .border-green *, .btn-green * {
+  color: #1f4e79 !important;
+  background: #1f4e79 !important;
+  border-color: #1f4e79 !important;
+}
+/* ...rest of user-overrides.css content... */

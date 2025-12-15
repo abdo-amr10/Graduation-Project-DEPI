@@ -1,0 +1,83 @@
+﻿@model IEnumerable<My_Uni_Hub.Models.Pages.Material>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // keep your admin layout
+    ViewBag.Title = "Manage Materials";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/IndexMaterial.css" asp-append-version="true" />
+}
+
+<div class="materials-page">
+    <div class="materials-header">
+        <div class="breadcrumb">
+            <a href="@Url.Action("dashboard", "admin")">Dashboard</a> /
+            <span>Materials</span>
+        </div>
+
+        <div class="title-actions">
+            <h1>Manage Materials</h1>
+            <a class="btn-add" href="@Url.Action("Create", "Material", new { area = "Admin" })">＋ Add Material</a>
+        </div>
+    </div>
+
+    <div class="materials-card">
+        <div class="controls">
+            <input id="searchInput" class="search-input" placeholder="Search materials..." />
+            <select id="courseFilter" class="filter-select">
+                <option value="">All Courses</option>
+                @* optionally populate from DB; for now keep static or fill in from ViewBag if you prefer *@
+                <option>Computer Science</option>
+                <option>Mathematics</option>
+                <option>Physics</option>
+            </select>
+        </div>
+
+        <div class="table-wrap">
+            <table class="materials-table" aria-describedby="materialsTable">
+                <thead>
+                    <tr>
+                        <th>Material Name</th>
+                        <th>Course</th>
+                        <th>Type</th>
+                        <th>Uploaded</th>
+                        <th class="actions-col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="materialsTableBody">
+                    @if (!Model.Any())
+                    {
+                        <tr class="empty-row"><td colspan="5">No materials found.</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var m in Model)
+                        {
+                            <tr data-id="@m.Id">
+                                <td class="material-title">@m.Title</td>
+                                <td>@(m.Course?.Name ?? "-")</td>
+                                <td>@(string.IsNullOrEmpty(m.FileType) ? "-" : m.FileType.ToUpper())</td>
+                                <td>@m.UploadDate.ToString("yyyy-MM-dd")</td>
+                                <td class="actions-col">
+                                    <a title="Download" class="action-icon action-download" href="@m.FilePath" target="_blank" rel="noopener">⤓</a>
+                                    <a title="Edit" class="action-icon action-edit" href="@Url.Action("Edit", "Material", new { area = "Admin", id = m.Id })">✎</a>
+                                    <button title="Delete" class="action-icon action-delete" data-id="@m.Id" aria-label="Delete material @m.Title">🗑</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @* hidden form to render antiforgery token so JS can pick it up *@
+    <form id="antiforgeryForm" method="post" style="display:none">
+        @Html.AntiForgeryToken()
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/Admin/IndexMaterial.js" asp-append-version="true"></script>
+}

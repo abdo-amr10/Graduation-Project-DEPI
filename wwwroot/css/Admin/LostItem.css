@@ -1,0 +1,173 @@
+﻿/* wwwroot/css/LostItem.css - updated visual styles for forms + image preview */
+
+:root {
+    --primary: #0b1a3d;
+    --accent: #ff8c00;
+    --muted: #86868b;
+    --card-bg: #ffffff;
+    --soft: #f0f4ff;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--primary);
+}
+
+/* Form card - wider */
+.lf-form-card {
+    max-width: 900px;
+    margin: 28px auto;
+    background: var(--card-bg);
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(11,26,61,0.06);
+}
+
+    .lf-form-card.wide {
+        max-width: 1100px;
+        padding: 36px;
+    }
+
+    .lf-form-card h2 {
+        font-size: 22px;
+        margin-bottom: 18px;
+        color: var(--primary);
+    }
+
+/* inputs */
+.form-row {
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .form-row.two-col {
+        display: flex;
+        gap: 16px;
+    }
+
+        .form-row.two-col > div {
+            flex: 1;
+        }
+
+    .form-row label {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--muted);
+    }
+
+    .form-row input[type="text"],
+    .form-row input[type="email"],
+    .form-row input[type="password"],
+    .form-row input[type="file"],
+    .form-row textarea,
+    .form-row select {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e8eef8;
+        font-family: inherit;
+        font-size: 14px;
+        background: #fbfdff;
+    }
+
+    .form-row textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-submit {
+    background: var(--primary);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: var(--soft);
+    color: var(--primary);
+    padding: 10px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* current image block */
+.current-image {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .current-image img {
+        max-width: 160px;
+        max-height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+
+/* preview */
+.image-preview {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+    .image-preview img {
+        width: 160px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #e6eef8;
+    }
+
+.btn-clear-image {
+    background: #fff0f0;
+    color: #d32f2f;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* input file default styling to be subtle */
+input[type="file"] {
+    background: #fff;
+    border: 1px dashed #e6eef8;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+/* validation */
+.field-validation {
+    color: #d32f2f;
+    font-size: 12px;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+    .lf-form-card.wide {
+        padding: 20px;
+        max-width: 700px;
+    }
+
+    .form-row.two-col {
+        flex-direction: column;
+    }
+
+    .image-preview img {
+        width: 120px;
+        height: 90px;
+    }
+}

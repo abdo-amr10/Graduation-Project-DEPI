@@ -1,0 +1,109 @@
+﻿@using My_Uni_Hub.Models.ViewModels.UserViewModel
+@model LoginViewModel
+
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Login";
+}
+
+<div class="wrap-login100">
+    <form class="login100-form validate-form"
+          method="post"
+          asp-controller="Auth"
+          asp-action="Login">
+
+        <span class="login100-form-title">
+            Log In
+        </span>
+
+        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-danger">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <!-- Email -->
+        <div class="wrap-input100 validate-input">
+            <input class="input100"
+                   asp-for="Email"
+                   placeholder="Email">
+            <span class="focus-input100" data-placeholder="&#xf207;"></span>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <!-- Password -->
+        <div class="wrap-input100 validate-input">
+            <input class="input100"
+                   type="password"
+                   asp-for="Password"
+                   placeholder="Password">
+            <span class="focus-input100" data-placeholder="&#xf191;"></span>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+                <!-- Role Selection -->
+        <div class="login-role">
+            <p style="margin-bottom: 8px; font-weight: 600; color: white" >Login as:</p>
+
+            <label style="margin-right: 20px; color: white">
+                <input type="radio"
+                       asp-for="Role"
+                       value="Student"
+                       checked />
+                Student
+            </label>
+
+            <label style="color: white">
+                <input type="radio"
+                       asp-for="Role"
+                       value="Admin" />
+                Admin
+            </label>
+
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+
+        <!-- Remember Me -->
+        <div class="contact100-form-checkbox">
+            <input class="input-checkbox100"
+                   id="ckb1"
+                   type="checkbox"
+                   asp-for="RememberMe">
+            <label class="label-checkbox100" for="ckb1">
+                Remember me
+            </label>
+        </div>
+
+        <!-- Button -->
+        <div class="container-login100-form-btn">
+            <button type="submit" class="login100-form-btn">
+                Login
+            </button>
+        </div>
+
+        <!-- Forgot Password -->
+        <div class="text-center p-t-20">
+            <a class="txt1"
+               asp-controller="Auth"
+               asp-action="ForgotPassword">
+                Forgot Password?
+            </a>
+        </div>
+
+        <!-- Register 
+        <div class="text-center p-t-20">
+            <span class="txt1">Don't have an account?</span>
+            <a class="txt1"
+               asp-controller="Auth"
+               asp-action="Register">
+                <strong>Register Ya m7md ya khalid </strong>
+            </a>
+        </div>-->
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,328 @@
+﻿:root {
+    --accent-1: #b388ff;
+    --accent-2: #7dd3fc;
+    --accent-3: #c084fc;
+    --bg-dark-1: #0a0a1f;
+    --bg-dark-2: #12121f;
+    --glass: rgba(255,255,255,0.04);
+}
+
+/* base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+}
+
+html, body {
+    height: 100%
+}
+
+body {
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #fff;
+    background: radial-gradient(circle at 15% 20%, rgba(123,92,255,0.10) 0%, transparent 35%), radial-gradient(circle at 85% 80%, rgba(125,211,252,0.08) 0%, transparent 35%), linear-gradient(180deg, var(--bg-dark-1) 0%, var(--bg-dark-2) 60%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+}
+
+    /* subtle vignette */
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.35) 100%);
+        mix-blend-mode: multiply;
+        z-index: 0;
+    }
+
+/* canvas particles behind everything */
+canvas#particles {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.55;
+    filter: blur(0.6px);
+}
+
+/* grid + overlay - decorative glass */
+.bg-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 80% 20%, rgba(123,92,255,0.14), transparent 45%), radial-gradient(circle at 20% 80%, rgba(125,211,252,0.12), transparent 45%);
+    backdrop-filter: blur(0px);
+    mix-blend-mode: screen;
+}
+
+.grid-pattern {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: linear-gradient(rgba(123,92,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(123,92,255,0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.45;
+}
+
+/* layout */
+.logo {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    animation: slideFromLeft 1.8s cubic-bezier(.15,.85,.25,1) both;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    padding: 0 48px;
+    animation: slideFromRight 1.8s cubic-bezier(.15,.85,.25,1) both;
+}
+
+/* logo wrapper — add mask reveal for logo */
+.logo-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 360px;
+    height: 360px;
+    overflow: visible;
+}
+
+.logo-glow {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, rgba(179,136,255,0.55), rgba(125,211,252,0.2) 40%, transparent 70%);
+    filter: blur(42px);
+    transform: translateZ(0);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* logo image reveal */
+.logo-mask {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    border-radius: 24px;
+    /* subtle border */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 30px rgba(123,92,255,0.08);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+}
+
+    .logo-mask img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        transform-origin: center center;
+        /* reveal via clip-path animated */
+        clip-path: inset(100% 0 0 0);
+        transition: clip-path 0.9s cubic-bezier(.18,.85,.25,1) 0s, transform 0.9s cubic-bezier(.18,.85,.25,1);
+        will-change: clip-path,transform;
+        filter: drop-shadow(0 0 40px rgba(123,92,255,0.9)) drop-shadow(0 0 60px rgba(168,123,255,0.45));
+    }
+/* when ready: show */
+body:not(.preload) .logo-mask img {
+    clip-path: inset(0% 0 0 0);
+    transform: translateY(0) scale(1);
+}
+
+/* title */
+.title {
+    font-size: 3.4rem;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    background: linear-gradient(135deg,var(--accent-1),var(--accent-2),var(--accent-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-align: center;
+    margin-bottom: 12px;
+    text-shadow: 0 6px 28px rgba(123,92,255,0.08);
+}
+
+/* subtitle uses same animation and starts together */
+.subtitle {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: transparent;
+    background: linear-gradient(90deg,#cbd5e1,#e0e7ff,#a5b4fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-align: center;
+    max-width: 780px;
+    margin-top: 6px;
+}
+
+/* progress area */
+.progress-container {
+    position: fixed;
+    bottom: 62px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 420px;
+    max-width: 90%;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    overflow: hidden;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+    backdrop-filter: blur(2px);
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg,var(--accent-1),var(--accent-2),var(--accent-3));
+    box-shadow: 0 6px 20px rgba(123,92,255,0.12), inset 0 -6px 18px rgba(255,255,255,0.05);
+    transition: width 0.2s linear;
+}
+
+.loading-line {
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: var(--accent-2);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.loading-percent {
+    font-variant-numeric: tabular-nums;
+    color: #dbeafe;
+    font-weight: 700;
+}
+
+/* small screens */
+@media (max-width:1024px) {
+    .logo-wrapper {
+        width: 260px;
+        height: 260px;
+    }
+
+    .logo-mask img {
+        transition-duration: 1s;
+    }
+
+    .title {
+        font-size: 2.6rem
+    }
+
+    .subtitle {
+        font-size: 1.05rem
+    }
+
+    .progress-container {
+        width: 360px
+    }
+}
+
+@media (max-width:600px) {
+    body {
+        justify-content: center
+    }
+
+    .logo {
+        order: 1;
+        margin-bottom: 18px
+    }
+
+    .content {
+        order: 2;
+        padding: 0 24px
+    }
+
+    .title {
+        font-size: 1.75rem
+    }
+
+    .subtitle {
+        font-size: 0.97rem
+    }
+
+    .progress-container {
+        bottom: 36px;
+        width: 320px
+    }
+}
+
+/* entrance animation adjusted to be slightly higher (translateY -10px included) */
+@keyframes slideFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-180px) translateY(-10px) scale(0.97)
+    }
+
+    60% {
+        transform: translateX(10px) translateY(-10px) scale(1.01)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(-10px) scale(1)
+    }
+}
+
+@keyframes slideFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(180px) translateY(-10px) scale(0.97)
+    }
+
+    60% {
+        transform: translateX(-10px) translateY(-10px) scale(1.01)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(-10px) scale(1)
+    }
+}
+
+/* reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .logo, .content, .progress-fill, .logo-mask img, canvas#particles {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .logo-mask img {
+        clip-path: none !important;
+    }
+}

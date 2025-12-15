@@ -1,0 +1,456 @@
+﻿@model IEnumerable<My_Uni_Hub.Models.Pages.Opportunity>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Manage Opportunities";
+
+    // helper to safely JSON-encode text for data-* attributes
+    Func<string, string> jsEncode = s => System.Text.Json.JsonSerializer.Serialize(s ?? "");
+}
+
+<style>
+    /* Reset + base */
+    * {
+        box-sizing: border-box
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        color: #0b1a3d;
+        margin: 0;
+        background: linear-gradient(135deg,#f8faff,#f2f6ff);
+    }
+
+    /* Page layout */
+    .opportunities-page {
+        padding: 28px 40px;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .breadcrumb {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 12px;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .header-title {
+        font-size: 40px;
+        margin: 0;
+        font-weight: 800;
+        color: #0b1a3d;
+    }
+
+    /* Controls */
+    .controls {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin: 12px 0 22px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid #e6e9ef;
+        background: #fff;
+        font-size: 15px;
+        box-shadow: none;
+    }
+
+    .filter-select {
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1px solid #e6e9ef;
+        background: #fff;
+    }
+
+    /* Card / table */
+    .card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 8px 30px rgba(11,26,61,0.06);
+        padding: 18px;
+    }
+
+    .opportunities-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+    }
+
+        .opportunities-table thead th {
+            text-align: left;
+            padding: 18px 20px;
+            color: #0b1a3d;
+            font-weight: 700;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .opportunities-table tbody td {
+            padding: 22px 20px;
+            vertical-align: top;
+            border-bottom: 1px solid #f2f5f9;
+        }
+
+    .title {
+        font-weight: 800;
+        font-size: 18px;
+        color: #062a4a;
+        margin-bottom: 6px;
+    }
+
+    .org {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    /* badges */
+    .type-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #fff0f0;
+        color: #b44b4b;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .faculty-badge {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 18px;
+        background: #eef7ff;
+        color: #063055;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    /* actions */
+    .actions-col {
+        width: 160px;
+        text-align: right;
+    }
+
+    .btn-icon {
+        border: 0;
+        background: #eef6ff;
+        color: #0b1a3d;
+        padding: 8px 12px;
+        margin-left: 8px;
+        border-radius: 9px;
+        cursor: pointer;
+    }
+
+        .btn-icon.btn-delete {
+            background: #fff0f0;
+            color: #b44b4b;
+        }
+
+    /* empty state */
+    .empty-state {
+        padding: 36px;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    /* modal */
+    #deleteModal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(2,6,23,0.45);
+        z-index: 2000;
+    }
+
+    .modal-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 18px;
+        width: 420px;
+        max-width: 94%;
+        box-shadow: 0 12px 40px rgba(2,6,23,0.25);
+    }
+
+        .modal-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+        }
+
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 14px;
+    }
+
+    .btn-outline {
+        background: #f3f4f6;
+        border: 1px solid #e6e9ef;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .btn-delete-confirm {
+        background: #ef4444;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 0;
+        cursor: pointer;
+    }
+
+    /* responsive */
+    (max-width:900px) {
+        .header
+
+    {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: stretch
+    }
+
+    .actions-col {
+        text-align: left;
+    }
+
+    }
+    .actions {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* إزالة الخط */
+.actions a {
+    text-decoration: none !important;
+}
+
+/* زر Edit */
+.btn-edit {
+    background: #eef6ff;
+    color: #0b1a3d;
+}
+
+/* hover أنضف */
+.btn-icon:hover {
+    filter: brightness(0.95);
+}
+
+</style>
+
+<div class="opportunities-page">
+    <div class="breadcrumb">
+        <a href="/admin/opportunities" style="text-decoration:none;color:inherit">Manage Opportunities</a>
+    </div>
+
+    <div class="header">
+        <h1 class="header-title">Manage Opportunities</h1>
+        <div class="page-actions">
+            <a href="/admin/opportunities/create" class="btn-accent" style="display:inline-block;padding:12px 18px;border-radius:12px;background:#0b1a3d;color:#fff;text-decoration:none;font-weight:700">＋ Add Opportunity</a>
+        </div>
+    </div>
+
+    <div class="controls">
+        <input id="searchInput" class="search-input" placeholder="Search by title or organization..." />
+        <select id="typeFilter" class="filter-select" aria-label="Filter by type">
+            <option value="">All Types</option>
+            <option>Internship</option>
+            <option>Scholarship</option>
+            <option>Job</option>
+            <option>Volunteer</option>
+            <option>Workshop</option>
+        </select>
+    </div>
+
+    <div class="card" role="region" aria-label="Opportunities list">
+        <table class="opportunities-table" id="opportunitiesTable" role="table" aria-describedby="opportunitiesDesc">
+            <thead>
+                <tr role="row">
+                    <th role="columnheader">Opportunity</th>
+                    <th role="columnheader">Type</th>
+                    <th role="columnheader">Organization</th>
+                    <th role="columnheader">Faculty</th>
+                    <th role="columnheader">Posted</th>
+                    <th role="columnheader" class="actions-col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        var safeTitle = jsEncode(item.Title);
+                        var safeFaculty = jsEncode(item.Faculty?.Name ?? "");
+                        var safeOrg = jsEncode(item.Organization ?? "");
+                        <tr data-id="@item.OpportunityId"
+                            data-title='@Html.Raw(safeTitle)'
+                            data-type="@(item.Type ?? "")"
+                            data-faculty='@Html.Raw(safeFaculty)'
+                            data-organization='@Html.Raw(safeOrg)'>
+                            <td>
+                                <div class="title">@Html.Encode(item.Title)</div>
+                                <div class="org">@Html.Encode(item.Organization ?? "")</div>
+                            </td>
+                            <td>
+                                <span class="type-badge">@Html.Encode(item.Type ?? "—")</span>
+                            </td>
+                            <td>@Html.Encode(item.Organization ?? "—")</td>
+                            <td><span class="faculty-badge">@Html.Encode(item.Faculty?.Name ?? "—")</span></td>
+                            <td class="muted">@item.PostedAt.ToString("yyyy-MM-dd")</td>
+                            <td class="actions-col">
+                                <div class="actions">
+                                    <a href="/admin/opportunities/edit/@item.OpportunityId"
+                                       class="btn-icon btn-edit">
+                                        Edit
+                                    </a>
+
+                                    <button type="button"
+                                            class="btn-icon btn-delete"
+                                            onclick='openDeleteModal(@item.OpportunityId, @safeTitle)'>
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6" class="empty-state">No opportunities found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete modal with hidden form containing antiforgery token -->
+<div id="deleteModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+        <h3 id="deleteTitle">Delete Opportunity</h3>
+        <p id="deleteMessage">Are you sure?</p>
+
+        <form id="deleteForm" method="post" action="/admin/opportunities/delete" style="margin:0">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="deleteId" />
+            <div class="modal-actions">
+                <button type="button" class="btn-outline" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn-delete-confirm" onclick="confirmDelete()">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Inline script: search/filter + modal + delete using normal form submit (safe for antiforgery) -->
+<script>
+    (function () {
+        'use strict';
+
+        function qs(sel) { return document.querySelector(sel); }
+        function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
+
+        function parseDataAttr(value) {
+            if (!value) return '';
+            try { return JSON.parse(value); } catch { return value; }
+        }
+
+        function getRowData(tr) {
+            return {
+                id: tr.dataset.id,
+                title: parseDataAttr(tr.dataset.title || ''),
+                type: tr.dataset.type || '',
+                faculty: parseDataAttr(tr.dataset.faculty || ''),
+                organization: parseDataAttr(tr.dataset.organization || '')
+            };
+        }
+
+        function renderFilter() {
+            const qEl = qs('#searchInput');
+            const typeEl = qs('#typeFilter');
+            const q = qEl ? (qEl.value || '').trim().toLowerCase() : '';
+            const type = typeEl ? (typeEl.value || '') : '';
+
+            const rows = qsa('#opportunitiesTable tbody tr');
+            let shown = 0;
+            rows.forEach(r => {
+                if (!r.dataset.id) return;
+                const d = getRowData(r);
+                const matchesQ = q === '' || (d.title && d.title.toLowerCase().includes(q)) || (d.organization && d.organization.toLowerCase().includes(q));
+                const matchesType = type === '' || d.type === type;
+                r.style.display = (matchesQ && matchesType) ? '' : 'none';
+                if (matchesQ && matchesType) shown++;
+            });
+
+            const emptyEl = qs('.empty-state');
+            if (emptyEl) emptyEl.style.display = shown === 0 ? '' : 'none';
+        }
+
+        // modal helpers (global so inline onclick works)
+    window.openDeleteModal = function (id, titleJson) {
+        console.log("OPEN MODAL", id);
+
+        const modal = document.getElementById('deleteModal');
+        const msg = document.getElementById('deleteMessage');
+        const idInput = document.getElementById('deleteId');
+
+        let title = titleJson;
+        try { title = JSON.parse(titleJson); } catch {}
+
+        msg.textContent = `Are you sure you want to delete "${title}"?`;
+        idInput.value = id;
+
+        modal.style.display = 'flex';
+    };
+
+
+        window.closeDeleteModal = function () {
+            const modal = qs('#deleteModal');
+            if (!modal) return;
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+        };
+
+        // Confirm: submit the hidden form so antiforgery token + cookie are sent by browser
+        window.confirmDelete = function () {
+            const deleteForm = qs('#deleteForm');
+            if (!deleteForm) {
+                alert('Delete form not found.');
+                return;
+            }
+            deleteForm.submit();
+        };
+
+        // events
+        const searchInput = qs('#searchInput');
+        const typeFilter = qs('#typeFilter');
+        if (searchInput) searchInput.addEventListener('input', renderFilter);
+        if (typeFilter) typeFilter.addEventListener('change', renderFilter);
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeDeleteModal();
+        });
+
+        // expose for debugging
+        window.OpportunityIndex_renderFilter = renderFilter;
+
+    })();
+</script>

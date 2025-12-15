@@ -1,0 +1,69 @@
+﻿@model My_Uni_Hub.Controllers.Admin.LostItemController.CreateAdminLostItemModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "Add Lost Item";
+}
+
+<link rel="stylesheet" href="~/css/Admin/LostItem.css" />
+<script src="~/js/Admin/LostItemForm.js" defer></script>
+
+<div class="lf-form-card wide">
+    <h2>Add Lost / Found Item</h2>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="form-row">
+            <label asp-for="Name">Name</label>
+            <input asp-for="Name" />
+            <span asp-validation-for="Name" class="field-validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Description">Description</label>
+            <textarea asp-for="Description"></textarea>
+        </div>
+
+        <div class="form-row two-col">
+            <div>
+                <label asp-for="Location">Location</label>
+                <input asp-for="Location" />
+            </div>
+
+            <div>
+                <label asp-for="Status">Type</label>
+                <select asp-for="Status">
+                    <option value="lost">Lost</option>
+                    <option value="found">Found</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-row">
+            <label>Contact Info</label>
+            <input asp-for="ContactInfo" />
+        </div>
+
+        <div class="form-row">
+            <label>Image (optional)</label>
+            <input type="file" id="imageInput" name="image" accept="image/*" />
+            <div id="imagePreview" class="image-preview" style="display:none;">
+                <img src="" alt="preview" />
+                <button type="button" class="btn-clear-image" onclick="clearPreview()">Remove</button>
+            </div>
+        </div>
+
+
+
+        <div class="form-row actions">
+            <button type="submit" class="btn-submit">Create</button>
+            <a class="btn-cancel" href="@Url.Action("Index", "LostItem", new { area = "Admin" })">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

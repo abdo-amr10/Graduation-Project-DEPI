@@ -1,0 +1,52 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="~/images/logotab.png"/>
+
+    <link rel="stylesheet" href="~/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/fonts/iconic/css/material-design-iconic-font.min.css">
+
+    <link rel="stylesheet" href="~/css/util.css">
+    <link rel="stylesheet" href="~/css/main.css">
+</head>
+
+<body>
+
+<div class="limiter">
+    <div class="container-login100" style="background-image: url('/images/background.jpg');">
+
+        <canvas id="particleCanvas"></canvas>
+
+        <div class="login-wrapper">
+
+            <!-- LEFT -->
+            <div class="logo-left">
+                <img src="~/images/logoCopy.png" alt="MyUniHub Logo">
+            </div>
+
+            <!-- RIGHT -->
+            <div class="form-right">
+                @RenderBody()
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/js/main.js"></script>
+
+@RenderSection("Scripts", required: false)
+</body>
+</html>

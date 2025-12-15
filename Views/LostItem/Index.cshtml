@@ -1,0 +1,144 @@
+﻿@model List<My_Uni_Hub.Models.Pages.LostItem>
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "Lost & Found - Manage";
+}
+
+<link rel="stylesheet" href="~/css/Admin/LostItemIndex.css" />
+<script src="~/js/Admin/LostItemIndex.js" defer></script>
+<style>
+    .header-actions .btn.btn-navy {
+        background-color: #1d2d50 !important;
+        border-color: #1d2d50 !important;
+        color: #fff !important;
+    }
+
+        .header-actions .btn.btn-navy:hover {
+            background-color: #16213e !important;
+            border-color: #16213e !important;
+        }
+
+</style>
+<main class="lf-index-main">
+    <div class="page-header">
+        <h1>Manage Lost &amp; Found</h1>
+        <div class="header-actions">
+            <a class="btn navy-btn" href="/admin/lostitems/create">+ Add Item</a>
+        </div>
+    </div>
+
+    <div class="index-card">
+        <div class="index-intro">
+            @* <p class="muted">List of items posted in Lost &amp; Found. Use Edit to update details or Delete to remove an item.</p> *@
+        </div>
+
+        <div class="table-wrap">
+            <table class="lf-table" aria-describedby="lostFoundTable">
+                <thead>
+                    <tr>
+                        <th class="col-thumb">#</th>
+                        <th class="col-item">Item</th>
+                        <th class="col-type">Type</th>
+                        <th class="col-status">Status</th>
+                        <th class="col-location">Location</th>
+                        <th class="col-posted">Posted</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        // safe student display name helper (works if Student has Name, FullName or FirstName+LastName)
+                        Func<object, string> studentDisplayName = studentObj =>
+                        {
+                            if (studentObj == null) return "—";
+                            var t = studentObj.GetType();
+                            var p = t.GetProperty("Name") ?? t.GetProperty("FullName");
+                            if (p != null)
+                            {
+                                var v = p.GetValue(studentObj);
+                                return v?.ToString() ?? "—";
+                            }
+
+                            var fn = t.GetProperty("FirstName");
+                            var ln = t.GetProperty("LastName");
+                            if (fn != null || ln != null)
+                            {
+                                var fv = fn?.GetValue(studentObj)?.ToString() ?? "";
+                                var lv = ln?.GetValue(studentObj)?.ToString() ?? "";
+                                var combined = (fv + " " + lv).Trim();
+                                return string.IsNullOrEmpty(combined) ? "—" : combined;
+                            }
+
+                            return "—";
+                        };
+                    }
+
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="empty">No items found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="col-thumb">
+                                    <div class="thumb">
+                                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/placeholder-64.png" : item.ImageUrl)" alt="thumb" />
+                                    </div>
+                                </td>
+
+                                <td class="col-item">
+                                    <div class="item-title">@item.Name</div>
+                                    <div class="item-sub muted">@studentDisplayName(item.Student)</div>
+                                </td>
+
+                                <td class="col-type">
+                                    <span class="badge @(item.IsFound ? "found" : "lost")">@(item.IsFound ? "Found" : "Lost")</span>
+                                </td>
+
+                                <td class="col-status">
+                                    @* show status text and a status-style badge *@
+                                    @{
+                                        var statusText = string.IsNullOrEmpty(item.Status) ? "—" : item.Status;
+                                        // pick a class based on common values
+                                        var stClass = "status-default";
+                                        if (!string.IsNullOrEmpty(item.Status))
+                                        {
+                                            var s = item.Status.Trim().ToLowerInvariant();
+                                            if (s == "active") stClass = "status-active";
+                                            else if (s == "claimed") stClass = "status-claimed";
+                                            else if (s == "archived") stClass = "status-archived";
+                                            else if (s == "pending") stClass = "status-pending";
+                                            else stClass = "status-default";
+                                        }
+                                    }
+                                    <span class="status-badge @stClass">@statusText</span>
+                                </td>
+
+                                <td class="col-location">@(!string.IsNullOrEmpty(item.Location) ? item.Location : "—")</td>
+
+                                <td class="col-posted">@item.PostedAt.ToString("yyyy-MM-dd")</td>
+
+                                <td class="col-actions">
+                                    <div class="actions">
+                                        <a class="action-edit" href="/admin/lostitems/edit/@item.Id">Edit</a>
+
+                                        <form class="delete-form" action="/admin/lostitems/delete" method="post" data-item="@item.Id" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="button" class="action-delete" onclick="confirmDelete(this)">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

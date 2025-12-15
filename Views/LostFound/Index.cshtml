@@ -1,0 +1,534 @@
+﻿@model List<My_Uni_Hub.Models.Pages.LostItem>
+
+@{
+    Layout = null;
+    var items = Model ?? new List<My_Uni_Hub.Models.Pages.LostItem>();
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MyUni Hub - Lost &amp; Found</title>
+
+    <!-- External / Static styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="@(Url.Content("~/css/User/lostfound.css"))" />
+
+    <style>
+    /* Force larger gap under logo (guaranteed) */
+    .logo-section {
+      margin-bottom: 31px !important;
+    }
+
+    /* Final balanced design */
+.item-card {
+    padding: 12px 14px !important;
+    margin-bottom: 14px !important;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 14px !important;
+    border-radius: 12px;
+}
+
+/* Image larger & clean */
+.item-card img {
+    width: 110px !important;
+    height: 110px !important;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Text styling balanced */
+.item-card .item-info p {
+    margin: 2px 0 !important;
+    font-size: 13px !important;
+    line-height: 1.22 !important;
+}
+
+/* Description + Contact */
+.item-card .muted,
+.item-card .excerpt {
+    font-size: 12.8px !important;
+    color: #6b7280 !important;
+    line-height: 1.22 !important;
+}
+
+/* Name slightly larger */
+.item-card p strong {
+    font-size: 14.2px !important;
+}
+
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;      /* هنا التوسيط العمودي الحقيقي */
+    margin-bottom: 12px;
+}
+
+.header-row .btn {
+    height: 36px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="sidebar" id="leftSidebar" aria-label="Main navigation">
+            <div class="logo-section">
+                <a href="/" class="logo-link" title="MyUni Hub home">
+                    <img src="@(Url.Content("~/images/logo.png"))" class="logo-img" alt="MyUni Hub logo" />
+                </a>
+            </div>
+
+            <nav class="nav-wrap" aria-label="Primary">
+                <ul class="nav-menu" role="menu">
+                    <li class="nav-item" role="menuitem" data-key="home" data-href="user/dashboard"><i class="fas fa-home"></i><span class="nav-label">Home</span></li>
+                    <li class="nav-item" role="menuitem" data-key="profile" data-href="user/profile"><i class="fas fa-user"></i><span class="nav-label">Profile</span></li>
+                    <li class="nav-item" role="menuitem" data-key="mycourses" data-href="user/courses"><i class="fas fa-book"></i><span class="nav-label">My Courses</span></li>
+                    <li class="nav-item" role="menuitem" data-key="announcements" data-href="/announcements"><i class="fas fa-bullhorn"></i><span class="nav-label">Announcements</span></li>
+                    <li class="nav-item" role="menuitem" data-key="chat" data-href="user/chat"><i class="fas fa-comments"></i><span class="nav-label">Chat</span></li>
+                    <li class="nav-item" role="menuitem" data-key="agenda"  data-href="/useragenda"><i class="fas fa-calendar-alt"></i><span class="nav-label">Agenda</span></li>
+                    <li class="nav-item" role="menuitem" data-key="opportunities" data-href="/opportunities"><i class="fas fa-briefcase"></i><span class="nav-label">Opportunities</span></li>
+                    <li class="nav-item" role="menuitem" data-key="lostfound" data-href="/lost-and-found"><i class="fas fa-box-open"></i><span class="nav-label">Lost &amp; Found</span></li>
+                </ul>
+            </nav>
+
+            <ul class="bottom-menu" role="menu">
+                <li class="nav-item" role="menuitem" data-key="settings" data-href="user/profile"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
+                <li class="nav-item" role="menuitem" data-key="logout" data-href="/Auth/login"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+            </ul>
+        </div>
+
+        <main class="main" id="mainContent">
+            <div class="page-title">Lost &amp; Found</div>
+
+            <div class="layout" style="display:grid;grid-template-columns:2.3fr 1.2fr;gap:18px;align-items:start">
+                <div>
+                    <div class="card">
+                        <div class="header-row">
+                            <strong style="font-size:20px">Recent Items</strong>
+                            <div>
+                                <button class="btn" type="button" onclick="toggleForm('lost')">+ Add Lost Item</button>
+                                <button class="btn" style="margin-left:8px;background:linear-gradient(90deg,#34d399,#10b981)" type="button" onclick="toggleForm('found')">+ Add Found Item</button>
+                            </div>
+                        </div>
+
+                        <div id="lostList" style="margin-top:12px">
+    @foreach (var it in items)
+    {
+        var statusAttr = string.IsNullOrEmpty(it.Status) ? (it.IsFound ? "found" : "lost") : it.Status.ToLowerInvariant();
+        var isFound = statusAttr == "found";
+
+        <div class="item-card" data-status="@statusAttr" style="position:relative">
+
+            <!-- BADGE -->
+            <span style="
+                position:absolute;
+                top:8px;
+                right:8px;
+                padding:3px 8px;
+                font-size:12px;
+                border-radius:4px;
+                font-weight:600;
+                color:white;
+                background:@(isFound ? "#27ae60" : "#c0392b");
+            ">
+                @(isFound ? "FOUND" : "LOST")
+            </span>
+
+            <img src="@(string.IsNullOrEmpty(it.ImageUrl) ? Url.Content("~/images/placeholder-item.svg") : it.ImageUrl)" alt="@it.Name" />
+
+            <div class="item-info">
+
+                <!-- NAME (بدون Label) -->
+                <p>
+                    <strong>@it.Name</strong>
+                    @if (!string.IsNullOrEmpty(it.OwnerName))
+                    {
+                        <span style="font-size:13px;color:#7f8c8d;margin-left:8px">— @it.OwnerName</span>
+                    }
+                </p>
+
+                <!-- POSTED BY -->
+                <p class="muted">
+                    @{
+                        string poster = "";
+                        if (it.Student != null)
+                        {
+                            var prop = it.Student.GetType().GetProperty("FullName");
+                            if (prop != null) poster = prop.GetValue(it.Student)?.ToString() ?? "";
+                        }
+                    }
+
+                    @if (!string.IsNullOrEmpty(poster))
+                    {
+                        <text><strong>Posted By:</strong> @poster</text>
+                    }
+                </p>
+
+                <!-- LOCATION (سطر مستقل) -->
+                <p class="muted">
+                    <strong>Location:</strong> @(!string.IsNullOrEmpty(it.Location) ? it.Location : "No location")
+                </p>
+
+                <!-- DATE (سطر مستقل) -->
+                <p class="muted">
+                    <strong>Date:</strong> @it.PostedAt.ToString("yyyy-MM-dd")
+                </p>
+
+                <!-- DESCRIPTION (بنفس شكل Contact) -->
+                @if (!string.IsNullOrEmpty(it.Description))
+                {
+                    <p class="muted" style="margin-top:6px">
+                        <strong>Description:</strong> @it.Description
+                    </p>
+                }
+
+                <!-- CONTACT -->
+                @if (!string.IsNullOrEmpty(it.ContactInfo))
+                {
+                    <p class="muted" style="margin-top:6px">
+                        <strong>Contact:</strong> @it.ContactInfo
+                    </p>
+                }
+
+            </div>
+        </div>
+    }
+</div>
+
+
+                        <div id="lfControls" style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:12px">
+                            <div style="color:#334155">
+                                Total: <strong id="totalCount">0</strong> • <span style="color:#e05353">Lost: <strong id="lostCount">0</strong></span> • <span style="color:#059669">Found: <strong id="foundCount">0</strong></span>
+                            </div>
+                            <div>
+                                <button class="btn ghost" type="button" onclick="filterList('all')">All</button>
+                                <button class="btn ghost" type="button" onclick="filterList('lost')" style="margin-left:8px">Lost</button>
+                                <button class="btn ghost" type="button" onclick="filterList('found')" style="margin-left:8px">Found</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="addForm" style="margin-top:16px;display:none">
+                        <strong id="formTitle">Add Item</strong>
+                        <form id="createForm" action="/lost-and-found/create" method="post" enctype="multipart/form-data" style="margin-top:12px">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" id="status" name="status" value="lost" />
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="image">Upload Image</label>
+                                    <input type="file" id="image" name="image" accept="image/*" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="type">Item Type</label>
+                                    <input type="text" id="type" name="type" required />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="owner">Owner / Finder Name</label>
+                                    <input type="text" id="owner" name="owner" placeholder="e.g. Ahmed Ali" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="description">Description</label>
+                                    <textarea id="description" name="description" rows="3" placeholder="Add extra details (optional)"></textarea>
+                                </div>
+
+                                <div class="form-field" id="placeField">
+                                    <label for="place" id="placeLabel">Found Location</label>
+                                    <input type="text" id="place" name="place" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="contact">Contact Info</label>
+                                    <input type="text" id="contact" name="contact" required />
+                                </div>
+                            </div>
+
+                            <div style="margin-top:12px;display:flex;gap:8px">
+                                <button type="submit" class="btn">Save</button>
+                                <button type="button" class="btn ghost" onclick="toggleForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <aside>
+                    <div class="widget">
+                        <h3> Notes</h3>
+                        <p style="color:#334155">Please provide contact info so we can return items to their owners. Admins can remove items when claimed.</p>
+                    </div>
+
+                    <div style="height:12px"></div>
+                    <div class="widget">
+                        <h3> Recent Activity</h3>
+                            <div id="recentActivity">
+                                @foreach (var x in Model.OrderByDescending(i => i.PostedAt).Take(3))
+                                {
+                                    <div class="recent-entry" style="display:flex;gap:10px;margin-bottom:10px">
+                                        <img src="@(string.IsNullOrEmpty(x.ImageUrl) ? Url.Content("~/images/placeholder-item.svg") : x.ImageUrl)"
+                                             style="width:45px;height:45px;object-fit:cover;border-radius:6px" />
+
+                                        <div>
+                                            <div class="r-title" style="font-weight:600">@x.Name — @(x.IsFound ? "Found" : "Lost")</div>
+                                            <div class="r-time muted">@x.PostedAt.ToString("yyyy-MM-dd HH:mm")</div>
+                                        </div>
+                                    </div>
+                                }
+                                     </div>
+                             </div>
+
+                    <div style="height:12px"></div>
+                   @{
+    var popular = Model
+        .Where(i => !string.IsNullOrEmpty(i.Location))
+        .GroupBy(i => i.Location)
+        .Select(g => new { Location = g.Key, Count = g.Count() })
+        .OrderByDescending(x => x.Count)
+        .Take(5)
+        .ToList();
+}
+<div class="widget">
+    <h3> Popular Locations</h3>
+
+    <ul style="list-style:none;padding:0;margin:0">
+        @foreach (var loc in popular)
+        {
+            <li style="padding:8px 0;border-bottom:1px dashed rgba(10,35,70,0.04)">
+                @loc.Location
+                <span class="muted" style="float:right">@loc.Count items</span>
+            </li>
+        }
+    </ul>
+</div>
+
+                </aside>
+            </div>
+
+            <div style="margin-top:18px;color:#6b7280">Thanks for helping return lost items to their owners</div>
+        </main>
+    </div>
+    <script>
+  // Fix سريع: تعريف الدوال المطلوبة مباشرة في الصفحة
+// wwwroot/js/User/lostfound.js
+// improved sidebar behavior + page interactions (fixed syntax)
+
+(function () {
+  // Toggle add form mode (lost / found)
+  window.toggleForm = function (mode) {
+    const f = document.getElementById('addForm');
+    const statusInput = document.getElementById('status');
+    const title = document.getElementById('formTitle');
+    if (!f || !statusInput || !title) return;
+
+    if (mode) {
+      statusInput.value = mode === 'found' ? 'found' : 'lost';
+      title.textContent = mode === 'found' ? 'Add Found Item' : 'Add Lost Item';
+
+      const placeField = document.getElementById('placeField');
+      const placeInput = document.getElementById('place');
+      const placeLabel = document.getElementById('placeLabel');
+      if (placeField && placeInput) {
+        if (mode === 'found') {
+          placeField.style.display = '';
+          placeInput.setAttribute('required', 'required');
+          if (placeLabel) placeLabel.textContent = 'Found Location';
+        } else {
+          placeField.style.display = 'none';
+          placeInput.removeAttribute('required');
+        }
+      }
+
+      f.style.display = 'block';
+      try { document.querySelector('.main')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      document.getElementById('type')?.focus();
+    } else {
+      // toggle
+      f.style.display = f.style.display === 'none' || f.style.display === '' ? 'block' : 'none';
+      if (f.style.display === 'block') try { document.querySelector('.main')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      if (f.style.display === 'none') { statusInput.value = 'lost'; title.textContent = 'Add Item'; }
+    }
+  };
+
+  // client-side preview + submit behavior
+  function safeGet(id) { return document.getElementById(id); }
+  const form = safeGet('createForm');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      // collect values (guard null)
+      const fileInput = safeGet('image');
+      const file = fileInput?.files?.[0];
+      const type = (safeGet('type')?.value || '').trim();
+      const owner = (safeGet('owner')?.value || '').trim();
+      const place = (safeGet('place')?.value || '').trim();
+      const contact = (safeGet('contact')?.value || '').trim();
+      const status = (safeGet('status')?.value || 'lost').trim();
+      const description = (safeGet('description')?.value || '').trim();
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          createClientItem(String(ev.target?.result || ''), type, owner, place, contact, status, description);
+          // letting the form continue to submit to server
+        };
+        reader.readAsDataURL(file);
+      } else {
+        createClientItem('/images/placeholder-item.svg', type, owner, place, contact, status, description);
+      }
+      // do not call e.preventDefault() — we want server to handle saving
+    });
+  }
+
+  function createClientItem(dataUrl, type, owner, place, contact, status, description) {
+    const list = safeGet('lostList');
+    if (!list) return;
+
+    const newItem = document.createElement('div');
+    newItem.className = 'item-card';
+    newItem.dataset.status = status || 'lost';
+
+    // Build HTML as string but avoid injecting unescaped user-provided HTML
+    const ownerHtml = owner ? `<span style="font-size:13px;color:#7f8c8d;margin-left:8px">— ${escapeHtml(owner)}</span>` : '';
+    const descHtml = description ? `<div class="excerpt" style="margin-top:6px">${escapeHtml(description)}</div>` : '';
+
+    newItem.innerHTML = `
+      <img src="${escapeHtml(dataUrl)}" alt="${escapeHtml(type)}">
+      <div class="item-info">
+        <p><strong>${escapeHtml(type || 'Item')}</strong> ${ownerHtml}</p>
+        <p class="muted">Owner/Finder: ${escapeHtml(owner)} • Location: ${escapeHtml(place || 'No location')} • ${new Date().toISOString().split('T')[0]}</p>
+        ${descHtml}
+        <p class="muted">Contact: ${escapeHtml(contact)}</p>
+      </div>
+    `;
+
+    list.prepend(newItem);
+    toggleForm(); // close form
+    updateCounts();
+    pushActivity({ img: dataUrl, title: (type || 'Item') + ' (' + (status === 'found' ? 'Found' : 'Lost') + ')', owner: owner });
+  }
+
+  // activity feed
+  window.pushActivity = function (obj) {
+    const root = safeGet('recentActivity');
+    if (!root) return;
+    const el = document.createElement('div');
+    el.className = 'recent-entry';
+
+    if (typeof obj === 'object' && obj !== null) {
+      const img = document.createElement('img');
+      img.src = obj.img || '/images/placeholder-item.svg';
+      img.alt = obj.title || 'item';
+      img.width = 48;
+      img.height = 48;
+
+      const info = document.createElement('div');
+      info.className = 'r-info';
+
+      const title = document.createElement('div');
+      title.className = 'r-title';
+      title.textContent = `${obj.title || ''} — ${obj.owner || ''}`;
+
+      const time = document.createElement('div');
+      time.className = 'r-time';
+      time.textContent = new Date().toLocaleString();
+
+      info.appendChild(title);
+      info.appendChild(time);
+      el.appendChild(img);
+      el.appendChild(info);
+    } else {
+      el.textContent = String(obj) + ' — ' + new Date().toLocaleString();
+    }
+
+    root.prepend(el);
+  };
+
+  // counts + filters
+  window.updateCounts = function () {
+    const list = safeGet('lostList');
+    if (!list) return;
+    const items = Array.from(list.querySelectorAll('.item-card'));
+    const total = items.length;
+    const lost = items.filter(i => (i.dataset.status || '').toLowerCase() === 'lost').length;
+    const found = items.filter(i => (i.dataset.status || '').toLowerCase() === 'found').length;
+    safeGet('totalCount') && (safeGet('totalCount').textContent = String(total));
+    safeGet('lostCount') && (safeGet('lostCount').textContent = String(lost));
+    safeGet('foundCount') && (safeGet('foundCount').textContent = String(found));
+  };
+
+  window.filterList = function (mode) {
+    const list = safeGet('lostList');
+    if (!list) return;
+    const items = Array.from(list.querySelectorAll('.item-card'));
+    items.forEach(i => {
+      const s = (i.dataset.status || '').toLowerCase();
+      if (mode === 'all') i.style.display = '';
+      else if (mode === 'lost') i.style.display = (s === 'lost') ? '' : 'none';
+      else if (mode === 'found') i.style.display = (s === 'found') ? '' : 'none';
+    });
+  };
+
+  // small safe escaping helper
+  function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/[&<>"'`=\/]/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '/': '&#x2F;', '=': '&#x3D;', '`': '&#x60;' })[c];
+    });
+  }
+
+  // Sidebar interactions: hover expand + keyboard toggle + click navigation
+  document.addEventListener('DOMContentLoaded', function () {
+    // ensure static items have default status
+    document.querySelectorAll('#lostList .item-card').forEach(el => { if (!el.dataset.status) el.dataset.status = 'found'; });
+    updateCounts();
+
+
+    // Sidebar behavior
+    const sidebar = safeGet('leftSidebar');
+    if (!sidebar) return;
+
+    sidebar.addEventListener('mouseenter', () => sidebar.classList.add('expanded'));
+    sidebar.addEventListener('mouseleave', () => sidebar.classList.remove('expanded'));
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 't' || e.key === 'T') && document.activeElement.tagName.toLowerCase() === 'body') {
+        sidebar.classList.toggle('expanded');
+      }
+    });
+
+    const items = Array.from(sidebar.querySelectorAll('.nav-item'));
+    function baseName(h) { if (!h) return ''; return h.split('#')[0].split('/').pop().split('?')[0]; }
+    const current = (location.pathname.split('/').pop() || '').toLowerCase();
+    items.forEach(i => {
+      const href = i.dataset.href;
+      const labelEl = i.querySelector('.nav-label');
+      if (labelEl) i.setAttribute('title', labelEl.textContent.trim());
+      if (href) {
+        i.setAttribute('role', 'link');
+        i.addEventListener('click', () => { window.location.href = href; });
+        const target = baseName(href).toLowerCase();
+        if (target && target === current) { i.classList.add('active'); }
+      }
+      i.setAttribute('tabindex', '0');
+      i.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); i.click(); }
+      });
+    });
+  });
+})();
+
+</script>
+
+    <!-- Load page script after DOM -->
+    <script src="@(Url.Content("~/js/User/lostfound.js"))"></script>
+</body>
+</html>

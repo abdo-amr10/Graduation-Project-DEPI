@@ -1,0 +1,233 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+
+    <link rel="stylesheet" href="~/css/Admin/CreateAnnouncement.css" />
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <div class="dashboard-container">
+
+        <!-- ======= Sidebar (Shared across all pages) ======= -->
+@{
+    var currentPath = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
+    Func<string, bool> isActive = (routePrefix) =>
+    {
+        if (string.IsNullOrEmpty(routePrefix)) return false;
+        return currentPath.StartsWith("/" + routePrefix.TrimStart('/').ToLowerInvariant());
+    };
+    Func<string, string> href = (r) => Url.Content("~/" + r.TrimStart('/'));
+}
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo-section">
+        <a href="@href("admin/agenda")" class="logo-link" aria-label="Home">
+            <img src="@(Url.Content("~/images/logo.png"))" class="logo-img" alt="MyUni Hub logo" />
+        </a>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div class="menu-section">
+        <div class="menu-title">MAIN MENU</div>
+        <ul class="nav-menu">
+<li class="menu-item @(isActive("admin/dashboard") ? "active" : "")" data-key="dashboard">
+    <a href="@href("admin/dashboard")" class="menu-link">
+        <span class="menu-item-icon">
+            <!-- Dashboard Icon -->
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+        </span>
+        <span class="menu-item-text">Dashboard</span>
+    </a>
+</li>
+
+
+
+           <li class="menu-item @(isActive("admin/student") ? "active" : "")" data-key="users">
+                <a href="@href("admin/student")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg users -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Student Management</span>
+                </a>
+            </li>
+
+            <li class="menu-item @(isActive("admin/agenda") ? "active" : "")" data-key="dashboard">
+                <a href="@href("admin/agenda")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg dashboard -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Agenda</span>
+                </a>
+            </li>
+
+
+
+            <li class="menu-item @(isActive("admin/courses") ? "active" : "")" data-key="courses">
+                <a href="@href("admin/courses")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg courses -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Courses</span>
+                </a>
+            </li>
+
+            <li class="menu-item @(isActive("admin/announcements") ? "active" : "")" data-key="announcements">
+                <a href="@href("admin/announcements")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg announcements -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Announcements</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+
+    <!-- CONTENT SECTION -->
+    <div class="menu-section">
+        <div class="menu-title">CONTENT</div>
+        <ul class="nav-menu">
+
+            <li class="menu-item @(isActive("admin/materials") ? "active" : "")" data-key="materials">
+                <a href="@href("admin/materials")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg materials -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Materials</span>
+                </a>
+            </li>
+
+
+            <li class="menu-item @(isActive("admin/opportunities") ? "active" : "")" data-key="opportunities">
+                <a href="@href("admin/opportunities")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg opportunities -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Opportunities</span>
+                </a>
+            </li>
+
+            <li class="menu-item @(isActive("admin/lostitems") ? "active" : "")" data-key="lost-found">
+                <a href="@href("admin/lostitems")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg lostfound -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Lost &amp; Found</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="menu-section">
+        <div class="menu-title">SETTINGS</div>
+        <ul class="nav-menu">
+
+
+
+
+           @* <li class="menu-item @(isActive("Auth/Register") ? "active" : "")" data-key="students">
+                <a href="@href("Auth/Register")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg students -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Users</span>
+                </a>
+            </li>*@
+
+            <li class="menu-item">
+                <a href="@href("Auth/Login")" class="menu-link">
+                    <span class="menu-item-icon">
+                        <!-- svg logout -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </span>
+                    <span class="menu-item-text">Logout</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+
+</aside>
+
+
+        <!-- ===== MAIN CONTENT (changes per page) ===== -->
+        <main class="main-content">
+            @RenderBody()
+        </main>
+
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+
+
+    <script src="~/js/Admin/Sidebar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

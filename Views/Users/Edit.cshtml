@@ -1,0 +1,97 @@
+﻿@using My_Uni_Hub.Models.Pages
+@model Student
+@{
+    ViewData["Title"] = "Edit Student";
+    Layout = "_Layout";
+    var faculties = ViewData["Faculties"] as List<Faculty>;
+    var departments = ViewData["Departments"] as List<Department>;
+    var years = ViewData["AcademicYears"] as List<int>;
+}
+
+<!-- Page Header -->
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h2 class="page-title">✏️ Edit Student</h2>
+    <a asp-action="Index" class="btn btn-secondary">⬅ Back to List</a>
+</div>
+
+<!-- Main Content Area -->
+<div class="dashboard-content">
+    <div class="card shadow-sm p-4">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <!-- Full Name -->
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label fw-semibold">Full Name</label>
+                <input asp-for="FullName" class="form-control" placeholder="Enter full name" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold">Email</label>
+                <input asp-for="Email" class="form-control" placeholder="Enter email address" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Academic Year -->
+            <div class="mb-3">
+                <label asp-for="AcademicYear" class="form-label fw-semibold">Academic Year</label>
+                <select asp-for="AcademicYear" class="form-select">
+                    <option value="">-- Select Year --</option>
+                    @foreach (var year in years)
+                    {
+                        <option value="@year" selected="@(Model.AcademicYear == year)">
+                            Year @year
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="AcademicYear" class="text-danger"></span>
+            </div>
+
+            <!-- Department -->
+            <div class="mb-3">
+                <label asp-for="DepartmentId" class="form-label fw-semibold">Department</label>
+                <select asp-for="DepartmentId" class="form-select">
+                    <option value="">-- Select Department --</option>
+                    @foreach (var dept in departments)
+                    {
+                        <option value="@dept.Id" selected="@(Model.DepartmentId == dept.Id)">
+                            @dept.Name
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+            </div>
+
+            <!-- Faculty -->
+            <div class="mb-3">
+                <label asp-for="FacultyId" class="form-label fw-semibold">Faculty</label>
+                <select asp-for="FacultyId" class="form-select">
+                    <option value="">-- Select Faculty --</option>
+                    @foreach (var faculty in faculties)
+                    {
+                        <option value="@faculty.Id" selected="@(Model.FacultyId == faculty.Id)">
+                            @faculty.Name
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="FacultyId" class="text-danger"></span>
+            </div>
+
+            <!-- Verified Checkbox -->
+            <div class="form-check mb-4">
+                <input asp-for="IsVerified" class="form-check-input" type="checkbox" id="IsVerified" />
+                <label for="IsVerified" class="form-check-label">Verified</label>
+            </div>
+
+            <!-- Save Button -->
+            <div class="d-flex justify-content-end gap-3">
+                <a asp-action="Index" class="btn btn-outline-secondary px-4">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4">💾 Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>

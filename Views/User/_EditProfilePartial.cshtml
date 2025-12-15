@@ -1,0 +1,144 @@
+﻿@model My_Uni_Hub.Models.ViewModels.UserViewModel.StudentEditViewModel
+
+<form id="editProfileForm" enctype="multipart/form-data" method="post" asp-action="EditProfile" asp-controller="User">
+    @Html.AntiForgeryToken()
+
+    <div style="padding:16px;min-width:320px;">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+            <img id="previewPhoto" src="@(Model.PhotoUrl ?? "/images/default-avatar.png")" alt="avatar" style="width:64px;height:64px;border-radius:8px;object-fit:cover" />
+            <div style="flex:1">
+                <label style="font-weight:600">Full name</label>
+                <input name="FullName" value="@Model.FullName" class="form-input" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd" />
+            </div>
+        </div>
+
+        <div style="margin-bottom:8px">
+            <label style="font-weight:600">Phone number</label>
+            <input name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd" />
+        </div>
+
+        <div style="margin-bottom:8px">
+            <label style="font-weight:600">Photo</label>
+            <input type="file" name="photo" id="photoInput" accept="image/*" class="form-input" />
+        </div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+            <button type="button" id="cancelEditProfile" class="btn ghost">Cancel</button>
+            <button type="submit" class="btn navy">Save</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    // preview selected image (unchanged)
+    document.getElementById('photoInput')?.addEventListener('change', function (e) {
+        const input = e.target;
+        const file = input.files && input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            const img = document.getElementById('previewPhoto');
+            if (img) img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // safer AJAX submit with defensive checks and better error messages
+    (function () {
+        const form = document.getElementById('editProfileForm');
+        if (!form) {
+            console.warn('editProfileForm not found.');
+            return;
+        }
+
+        form.addEventListener('submit', async function (evt) {
+            evt.preventDefault();
+
+            // find submit button (may be inside form or outside)
+            const submitBtn = form.querySelector('button[type="submit"]') || document.querySelector('#editProfileForm button[type="submit"]');
+            if (!submitBtn) {
+                console.warn('Submit button not found.');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Saving...';
+            }
+
+            // determine URL: prefer real action attribute rendered by taghelper
+            const formAction = form.getAttribute('action');
+            const fallbackUrl = '@Url.Action("EditProfile", "User")';
+            const url = formAction && formAction.trim().length > 0 ? formAction : fallbackUrl;
+
+            // anti-forgery token from hidden input (if present)
+            const tokenInput = form.querySelector('input[name="__RequestVerificationToken"]');
+            const token = tokenInput ? tokenInput.value : null;
+
+            // build FormData
+            const fd = new FormData(form);
+            // if token exists, ensure it's included both as form field and header (safe)
+            if (token) fd.set('__RequestVerificationToken', token);
+
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin',
+                    headers: token ? { 'RequestVerificationToken': token } : {}
+                });
+
+                // check HTTP level errors first
+                if (!res.ok) {
+                    const text = await res.text().catch(()=>null);
+                    console.error('Server returned HTTP error', res.status, text);
+                    alert('Save failed: server error ' + res.status);
+                    return;
+                }
+
+                // try parse JSON (server should return JSON)
+                let json;
+                try {
+                    json = await res.json();
+                } catch (parseErr) {
+                    const bodyText = await res.text().catch(()=>'<no body>');
+                    console.error('Failed to parse JSON response:', parseErr, bodyText);
+                    alert('Save failed: invalid server response.');
+                    return;
+                }
+
+                if (json && json.success) {
+                    // update UI on parent page: name, phone, photo
+
+    // update UI on main page
+    const nameEl = document.querySelector('.profile-meta h2');
+    if (nameEl) nameEl.innerText = json.fullName;
+
+    const phoneEl = document.querySelector('.profile-phone');
+    if (phoneEl) phoneEl.innerText = json.phone ?? '';
+
+    const photoImg = document.querySelector('.profile-large-img');
+    if (photoImg && json.photoUrl) photoImg.src = json.photoUrl;
+
+    // close the modal
+    closeProfileModal();
+
+    // show bootstrap-like alert
+    const alertBox = window.parent.document.getElementById('successAlert');
+    if (alertBox) {
+        alertBox.style.display = "block";
+        alertBox.textContent = "Profile updated successfully!";
+
+        setTimeout(() => {
+            alertBox.style.display = "none";
+        }, 2500);
+    }
+            } catch (err) {
+                console.error('Save request failed', err);
+                alert('Save failed: network or server error.');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Save';
+                }
+            }
+        });
+    })();
+</script>

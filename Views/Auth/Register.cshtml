@@ -1,0 +1,197 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using My_Uni_Hub.Models.ViewModels.UserViewModel
+@model RegisterViewModel
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject RoleManager<IdentityRole> RoleManager
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Register";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/CreateStudent.css" asp-append-version="true" />
+}
+
+<div class="dashboard-container">
+    <main class="main-content">
+
+        <div class="breadcrumb">
+            <a href="@Url.Action("dashboard", "admin")">Dashboard</a> /
+            <a asp-controller="Auth" asp-action="Register">Authentication</a> /
+            Register
+        </div>
+
+        <div class="header">
+            <h1 class="header-title">Create New Account</h1>
+        </div>
+
+        <div class="form-card">
+
+            <div asp-validation-summary="ModelOnly" class="validation-summary text-danger"></div>
+
+            <form asp-controller="Auth" asp-action="Register" method="post" enctype="multipart/form-data" id="registerForm" novalidate>
+                @Html.AntiForgeryToken()
+
+                <!-- BASIC INFO -->
+                <div class="form-section">
+                    <h2 class="section-title">Basic Information</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="FullName">Full Name <span class="required">*</span></label>
+                            <input asp-for="FullName" class="form-control" maxlength="100" placeholder="Full Name" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Email">Email <span class="required">*</span></label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="example@domain.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="position:relative;">
+                            <label asp-for="Password">Password <span class="required">*</span></label>
+                            <input asp-for="Password" id="pwd" type="password" class="form-control" minlength="6" placeholder="Enter password (min 6 chars)" style="padding-right:40px; height:44px;" />
+                            <button type="button" id="togglePwd" aria-label="Toggle password visibility"
+                                    style="position:absolute; right:10px; top:50%; transform:translateY(-50%); border:none; background:transparent; cursor:pointer; font-size:16px; line-height:1;">
+                                👁️
+                            </button>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+
+                            <div class="form-group" style="position:relative;">
+                                <label asp-for="ConfirmPassword">Confirm Password <span class="required">*</span></label>
+                                <input asp-for="ConfirmPassword" id="confirmPwd" type="password" class="form-control"
+                                       placeholder="Re-enter password" style="padding-right:40px; height:44px;" />
+                                <button type="button" id="toggleConfirmPwd" aria-label="Toggle confirm password visibility"
+                                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); border:none; background:transparent; cursor:pointer; font-size:16px; line-height:1;">
+                                    👁️
+                                </button>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="Address">Address</label>
+                            <input asp-for="Address" class="form-control" maxlength="200" placeholder="Address" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                    <div class="form-group">
+                        <label asp-for="DateOfBirth">Date of Birth</label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control"
+                               max="@DateTime.UtcNow.ToString("yyyy-MM-dd")"
+                               style="-webkit-appearance:none; appearance:none; padding:10px 12px; height:44px;" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+
+                    </div>
+                </div>
+
+                <!-- PROFILE IMAGE -->
+                <div class="form-section">
+                    <h2 class="section-title">Profile Image</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="ProfileImage">Upload Image</label>
+                            <input asp-for="ProfileImage" id="photoInput" type="file" accept="image/*" class="form-control" />
+                            <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                            <span class="help-text">Optional. JPG/PNG. Max recommended size 2MB.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Preview</label>
+                            <div class="photo-preview" id="photoPreview">
+                                <span class="placeholder">No image</span>
+                                <img src="" alt="preview" style="display:none;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACADEMIC & OTHER -->
+                <div class="form-section">
+                    <h2 class="section-title">Academic Information</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="FacultyId">Faculty</label>
+                            <select asp-for="FacultyId" asp-items="ViewBag.Faculties as IEnumerable<SelectListItem>" class="form-control">
+                                <option value="">-- Select Faculty --</option>
+                            </select>
+                            <span asp-validation-for="FacultyId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DepartmentId">Department</label>
+                            <select asp-for="DepartmentId" asp-items="ViewBag.Departments as IEnumerable<SelectListItem>" class="form-control">
+                                <option value="">-- Select Department --</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="AcademicYear">Academic Year</label>
+                            <input asp-for="AcademicYear" class="form-control" placeholder="e.g. 2024" pattern="\d{4}" />
+                            <span asp-validation-for="AcademicYear" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PhoneNumber">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="+20 10xxxxxxx" pattern="[\d\+\-\s]+" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @{
+    var rolesFromDb = await RoleManager.Roles
+                                       .AsNoTracking()
+                                       .OrderBy(r => r.Name)
+                                       .ToListAsync();
+
+    if (rolesFromDb == null || rolesFromDb.Count == 0)
+    {
+        rolesFromDb = new List<IdentityRole>
+        {
+            new IdentityRole { Name = "User" },
+            new IdentityRole { Name = "Admin" }
+        };
+    }
+
+    var rolesSelectList = new SelectList(rolesFromDb, "Name", "Name");
+}
+
+<div class="form-group">
+    <label asp-for="SelectedRole">Role</label>
+    <select asp-for="SelectedRole" asp-items="rolesSelectList" class="form-control">
+        <option value="">-- Select Role --</option>
+    </select>
+    <span asp-validation-for="SelectedRole" class="text-danger"></span>
+</div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="form-actions">
+                    <a asp-action="student" asp-controller="admin" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+
+            </form>
+
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/Admin/CreateStudent.js" asp-append-version="true"></script>
+}

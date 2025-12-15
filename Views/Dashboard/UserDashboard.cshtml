@@ -1,0 +1,1593 @@
+﻿@model My_Uni_Hub.Models.ViewModels.UserViewModel.DashboardViewModel
+@* تأكد أن @model معرف في أعلى الملف *@
+@using System.Linq
+@{
+    ViewBag.Title = "UserDashboard";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyUni Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background-color: #0b1a3d;
+            border-radius: 0 25px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 0;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.12);
+            transition: width 300ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease;
+            transform-origin: left center;
+            overflow: visible;
+        }
+
+            /* Expanded / hover state */
+            .sidebar:hover,
+            .sidebar.expanded {
+                width: 230px;
+                align-items: flex-start;
+                padding-left: 18px;
+                box-shadow: 10px 0 30px rgba(2,6,23,0.18);
+            }
+
+        /* Logo */
+        .logo-section {
+            margin-bottom: 35px;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        /* Navigation */
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            flex-grow: 1;
+            width: 100%;
+            padding-top: 8px;
+        }
+
+        .bottom-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        /* 👇 القسم السفلي يفضل تحت */
+        .bottom-menu {
+            margin-top: auto; /* يخليهم تحت */
+            margin-bottom: 30px; /* المسافة اللي ترفعهم فوق شوية */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+
+        /* Nav Item */
+        .nav-item {
+            color: #bfc8da;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 8px 0;
+            border-radius: 10px;
+            box-sizing: border-box;
+            justify-content: center; /* center icons when collapsed */
+        }
+
+        .sidebar.expanded .nav-item {
+            justify-content: flex-start; /* align left when expanded */
+            padding-left: 12px;
+        }
+
+        .nav-item i {
+            width: 36px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .nav-label {
+            color: #bfc8da;
+            font-size: 15px;
+            white-space: nowrap;
+            display: none; /* hide labels when collapsed */
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .sidebar.expanded .nav-label,
+        .sidebar:hover .nav-label {
+            display: inline-block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: #ff8c00; /* orange for active */
+            background: rgba(255,140,0,0.06);
+            transform: none;
+        }
+
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            margin-bottom: 0; /* شيل المسافة اللي كانت بتخليها تطلع فوق */
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .profile-major {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+
+        /* Main Content */
+        .main-content {
+            margin-left: 75px; /* نفس عرض السايدبار */
+            padding: 20px;
+            width: calc(100% );
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            overflow-y: auto;
+            transition: margin-left 0.25s ease;
+        }
+
+        /* When sidebar expands push content */
+        .sidebar.expanded ~ .main-content,
+        .sidebar:hover ~ .main-content {
+            margin-left: 230px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* Header right group: search + icons */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-input {
+            width: 360px;
+            max-width: 45vw;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(10,35,70,0.08);
+            background: linear-gradient(180deg,#fbfdff,#f3f8ff);
+            color: #053160;
+            box-shadow: 0 6px 18px rgba(10,35,70,0.04);
+            font-size: 14px;
+        }
+
+            .search-input:focus {
+                outline: none;
+                box-shadow: 0 8px 28px rgba(13,50,100,0.06);
+                border-color: rgba(59,130,246,0.18);
+            }
+
+        body.dark-mode .search-input {
+            background: linear-gradient(180deg,#0f2746,#092134);
+            color: #dbe9ff;
+            border-color: rgba(255,255,255,0.04);
+        }
+
+        .welcome-text {
+            font-size: 32px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Improved header icon buttons (softer, blue-accented) */
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(180deg,#eaf4ff,#d6ebff);
+            border: 1px solid rgba(59,130,246,0.12);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #053160;
+            box-shadow: 0 6px 18px rgba(10,35,70,0.06);
+            transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+        }
+
+            .icon-btn i {
+                font-size: 18px;
+                color: #053160
+            }
+
+            /* Clear-search (X) override: make the clear button icon red */
+            #clearSearch, .icon-btn#clearSearch {
+                color: #ef4444 !important;
+            }
+
+                #clearSearch i, .icon-btn#clearSearch i {
+                    color: #ef4444 !important;
+                }
+
+                #clearSearch:hover {
+                    background: rgba(239,68,68,0.08);
+                }
+
+            .icon-btn:hover {
+                transform: translateY(-3px);
+                background: linear-gradient(180deg,#d6ecff,#a9d1ff);
+                box-shadow: 0 10px 30px rgba(13,50,100,0.08);
+                color: #002143;
+            }
+
+            /* Variant: orange action button */
+            .icon-btn.orange {
+                background: linear-gradient(180deg,#fff4e6,#fff0de);
+                border: 1px solid rgba(255,140,0,0.14);
+                color: #b44b00;
+            }
+
+                .icon-btn.orange i {
+                    color: #b44b00
+                }
+
+                .icon-btn.orange:hover {
+                    background: linear-gradient(180deg,#ffd9b8,#ffc58a);
+                    color: #7a2d00
+                }
+
+            /* Variant: navy/dark action (alternative) */
+            .icon-btn.navy {
+                background: linear-gradient(180deg,#e7f1ff,#d7e9ff);
+                border: 1px solid rgba(10,40,80,0.08);
+                color: #05203f;
+            }
+
+                .icon-btn.navy i {
+                    color: #05203f
+                }
+
+                .icon-btn.navy:hover {
+                    background: linear-gradient(180deg,#cfe6ff,#9fc8ff);
+                    color: #021827
+                }
+
+        /* ensure header icons read well on dark bg */
+        body.dark-mode .icon-btn {
+            background: linear-gradient(180deg,#12304f,#09203a);
+            color: #cfe6ff;
+            border-color: rgba(255,255,255,0.04);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+
+        /* Dark toggle as round icon button (nicer visuals) */
+        .dark-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(180deg,#fff7ed,#fff1e6);
+            color: #07304a;
+            box-shadow: 0 6px 18px rgba(10,35,70,0.06);
+            transition: transform 160ms ease, background 200ms ease, color 180ms ease;
+        }
+
+            .dark-toggle i {
+                font-size: 18px
+            }
+
+            .dark-toggle:hover {
+                transform: translateY(-3px);
+            }
+
+        body.dark-mode .dark-toggle {
+            background: linear-gradient(180deg,#0f2746,#092134);
+            color: #ffdca3;
+            box-shadow: 0 10px 28px rgba(2,6,23,0.28);
+        }
+        /* gentle rotate on icon when toggling */
+        .dark-toggle .fa-sun, .dark-toggle .fa-moon {
+            transition: transform 260ms ease, opacity 180ms ease;
+        }
+
+        .dark-toggle.toggled .fa-sun {
+            transform: rotate(15deg);
+        }
+
+        /* navy style for dark-toggle when we want it darker */
+        .dark-toggle.navy {
+            background: linear-gradient(180deg,#e8f2ff,#d8e9ff);
+            color: #07264a
+        }
+
+            .dark-toggle.navy:hover {
+                background: linear-gradient(180deg,#cfe6ff,#a3c6ff)
+            }
+
+        body.dark-mode .dark-toggle.navy {
+            background: linear-gradient(180deg,#0b2b4a,#081f36);
+            color: #ffdca3
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        /* Smart Feed */
+        .smart-feed {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        /* Section header row with optional actions */
+        .section-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .see-all {
+            background: transparent;
+            border: none;
+            color: var(--accent-2, #3b82f6);
+            font-weight: 700;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.15s ease, transform 0.08s ease;
+        }
+
+            .see-all:hover {
+                background: rgba(59,130,246,0.08);
+                transform: translateY(-1px);
+            }
+
+        .feed-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+
+        .feed-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 14px;
+            display: flex;
+            gap: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+            .feed-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+
+        .feed-icon {
+            font-size: 32px;
+        }
+
+        .feed-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .feed-content p {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        /* Courses Grid */
+        .courses-section {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .course-card {
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .course-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .course-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .course-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .course-prof {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+            .action-btn:hover {
+                background: rgba(255,255,255,0.3);
+            }
+
+        /* Sidebar Right */
+        .sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .calendar-widget, .opportunities-widget {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        /* Slightly smaller month label for compact widget */
+        .calendar-month {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #7f8c8d;
+            padding: 4px 6px;
+            border-radius: 8px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+
+        /* container that will host day cells; display:contents so its children participate in parent grid */
+        .calendar-days {
+            display: contents;
+        }
+
+        .calendar-empty {
+            visibility: hidden;
+            height: 34px;
+        }
+
+        .calendar-day-header {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7f8c8d;
+            padding: 6px 0;
+        }
+
+        .calendar-day {
+            padding: 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            min-height: 34px;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .calendar-day:hover {
+                background: #f0f4fb;
+            }
+
+            .calendar-day.today {
+                background: #2b6fb3;
+                color: white;
+            }
+
+        /* make the whole calendar widget more compact */
+        .calendar-widget {
+            padding: 14px;
+        }
+
+        .deadline-alert {
+            padding: 10px;
+        }
+
+        .deadline-alert {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .deadline-alert span {
+                font-size: 14px;
+                color: #856404;
+            }
+
+        .opportunity-item {
+            padding: 13px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+            .opportunity-item:hover {
+                transform: translateX(5px);
+            }
+
+        .opp-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .opp-content h4 {
+            font-size: 15px;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+
+        .opp-content p {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .user-actions {
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(10,30,60,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: auto; /* push to bottom of right column */
+        }
+
+            .user-actions button {
+                border: none;
+                padding: 12px 16px;
+                width: 100%;
+                border-radius: 12px;
+                font-size: 15px;
+                cursor: pointer;
+                font-weight: 700;
+                transition: all 0.18s ease;
+            }
+
+        .profile-btn {
+            background: #e0e7ff;
+            color: #1e40af;
+        }
+
+            .profile-btn:hover {
+                background: #c7d2fe;
+            }
+
+        .logout-btn {
+            background: linear-gradient(90deg,#07294a,#234a7a);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 22px rgba(2,30,60,0.18);
+        }
+
+            .logout-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 30px rgba(2,30,60,0.24);
+            }
+
+
+        /* Course Colors */
+        /* Course Colors: unified blue → navy family, distinct gradients per course */
+        /* stronger contrast, distinct hues */
+        .course-1 {
+            background: linear-gradient(135deg,#063055 0%,#3b7fb8 65%);
+        }
+        /* course-2: convert to light-navy family (was green/teal) */
+        .course-2 {
+            background: linear-gradient(135deg,#062c4f 0%,#2b67a6 65%);
+        }
+        /* replace purple accent with navy/indigo family */
+        .course-3 {
+            background: linear-gradient(135deg,#0a2748 0%,#3869b0 65%);
+        }
+        /* course-4: convert to light-navy family (was green/teal) */
+        .course-4 {
+            background: linear-gradient(135deg,#06315a 0%,#2b78b0 65%);
+        }
+
+        .course-5 {
+            background: linear-gradient(135deg,#081b3f 0%,#5b7bd6 65%);
+        }
+        /* replace purple accent with deeper indigo/navy */
+        .course-6 {
+            background: linear-gradient(135deg,#0f2a4d 0%,#4760a3 65%);
+        }
+
+        /* stronger icon contrast */
+        .course-icon {
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.18);
+        }
+
+        .bg-yellow {
+            background: #fff3cd;
+        }
+        /* neutralized purple -> soft navy/blue tint */
+        .bg-purple {
+            background: #e6eef9;
+        }
+
+        .bg-orange {
+            background: #ffe5d0;
+        }
+        /* 🌙 Dark Mode Styles (updated) */
+        body.dark-mode {
+            background: linear-gradient(135deg, #070911 0%, #0e1320 100%);
+            color: #dfe8f7;
+        }
+
+            /* Dark Mode Sidebar */
+            body.dark-mode .sidebar {
+                background: linear-gradient(180deg, #0f2240 0%, #162a4a 60%, #1b3358 100%);
+                box-shadow: 10px 0 40px rgba(2,6,23,0.45);
+            }
+
+            /* Main content areas */
+            body.dark-mode .main-content,
+            body.dark-mode .smart-feed,
+            body.dark-mode .courses-section,
+            body.dark-mode .calendar-widget,
+            body.dark-mode .opportunities-widget,
+            body.dark-mode .user-actions {
+                background: #121524;
+                color: #dfe8f7;
+                box-shadow: 0 6px 24px rgba(2,6,23,0.25);
+            }
+
+            /* Cards */
+            body.dark-mode .feed-card {
+                background: linear-gradient(135deg,#161825 0%, #1f2638 100%);
+            }
+
+            body.dark-mode .course-card {
+                box-shadow: inset 0 -30px 80px rgba(0,0,0,0.15);
+            }
+
+            /* Titles and headings */
+            body.dark-mode .section-title,
+            body.dark-mode .feed-content h4,
+            body.dark-mode .opp-content h4,
+            body.dark-mode .welcome-text {
+                color: #e8eefc;
+            }
+
+            /* icon buttons in dark */
+            body.dark-mode .icon-btn {
+                background: rgba(255,255,255,0.03);
+                color: #dbe9ff;
+            }
+
+            /* Calendar */
+            body.dark-mode .calendar-day:hover {
+                background: #23263a;
+            }
+
+            body.dark-mode .calendar-day.today {
+                background: #2d6fb3;
+                color: #fff;
+            }
+
+            /* profile/logout buttons */
+            body.dark-mode .profile-btn {
+                background: #2a3a5a;
+                color: #dbe9ff;
+            }
+
+            body.dark-mode .logout-btn {
+                background: linear-gradient(90deg,#02172e,#183656);
+                color: #dbe9ff;
+            }
+
+            /* user-actions */
+            body.dark-mode .user-actions {
+                background: #0f1724;
+            }
+
+        /* 🧑‍🎓 Profile Card */
+        .profile-card {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: 0.3s ease;
+            padding: 20px 15px;
+        }
+
+            .profile-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+            }
+
+        .profile-img {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 14px;
+            border: 2px solid #667eea;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .profile-year {
+            font-size: 13px;
+            color: #556677;
+            margin-top: 2px;
+        }
+
+        .profile-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 3px;
+        }
+
+        .profile-college {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .profile-id {
+            font-size: 13px;
+            color: #556677;
+            margin: 0 0 4px 0;
+        }
+
+        /* course-grade styles removed (badges deleted from HTML) */
+
+        /* 🌙 Dark Mode (لو عندك زرار دارك مود بالفعل) */
+        body.dark-mode .profile-card {
+            background: #1e2738;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+        }
+
+        body.dark-mode .profile-name {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .profile-college,
+        body.dark-mode .profile-id {
+            color: #bbb;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-section">
+                <img src="~/Images/logo.png" alt="MyUni Hub" class="logo-img">
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item" data-key="home" data-href='@Url.Action("dashboard", "user")'>
+                    <i class="fas fa-home"></i><span class="nav-label">Home</span>
+                </li>
+
+                <li class="nav-item" data-key="profile" data-href='@Url.Action("profile", "user")'>
+                    <i class="fas fa-user"></i><span class="nav-label">Profile</span>
+                </li>
+
+                <li class="nav-item" data-key="mycourses" data-href='@Url.Action("courses", "user")'>
+                    <i class="fas fa-book"></i><span class="nav-label">My Courses</span>
+                </li>
+
+                <li class="nav-item" data-key="ann" data-href='@Url.RouteUrl("announcements")'
+                    onclick="window.location.href=this.getAttribute('data-href')"
+                    style="cursor:pointer;">
+                    <i class="fas fa-bullhorn"></i><span class="nav-label">Announcements</span>
+                </li>
+
+                <li class="nav-item" data-key="chat" data-href='@Url.Action("chat", "user")'>
+                    <i class="fas fa-comments"></i><span class="nav-label">Chat</span>
+                </li>
+
+                <li class="nav-item" data-key="agenda"  data-href="/useragenda">
+                    <i class="fas fa-calendar-alt"></i><span class="nav-label">Agenda</span>
+                </li>
+
+                <li class="nav-item" data-key="opp" data-href="/opportunities">
+                    <i class="fas fa-briefcase"></i><span class="nav-label">Opportunities</span>
+                </li>
+
+                <li class="nav-item" data-key="lost" data-href="/lost-and-found">
+                    <i class="fas fa-box-open"></i><span class="nav-label">Lost &amp; Found</span>
+                </li>
+            </ul>
+
+
+            <ul class="bottom-menu" role="menu">
+                <li class="nav-item" role="menuitem" data-key="settings" data-href="/user/profile"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
+                <li class="nav-item" role="menuitem" data-key="logout" data-href="/Auth/login"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+            </ul>
+        </div>
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="welcome-text">Welcome, @Model.FullName 👋</h1>
+                <div class="header-right">
+                    <div class="search-wrapper">
+                        <input id="globalSearch" class="search-input" placeholder="Search courses, announcements, tasks..." aria-label="Search" />
+                        <button class="icon-btn" id="clearSearch" title="Clear search" aria-label="Clear search"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="header-icons">
+                        <!-- Dark mode (navy-styled) -->
+                        <button class="dark-toggle navy" id="darkModeBtn" aria-pressed="false" title="Toggle dark mode" aria-label="Toggle dark mode"><i class="fas fa-moon"></i></button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="content-grid">
+                <div>
+                    <!-- Smart Feed -->
+                    <div class="smart-feed">
+                        <div class="section-row">
+                            <h2 class="section-title">Smart Feed</h2>
+                        </div>
+                        <div class="feed-grid">
+                            <div class="feed-card" data-href='@Url.RouteUrl("announcements")'
+                                 onclick="window.location.href=this.getAttribute('data-href')"
+                                 style="cursor:pointer;">
+                                <div class="feed-icon">🏛️</div>
+                                <div class="feed-content">
+                                    <h4>College Announcements</h4>
+                                    <p>Latest announcements from the college — check updates here.</p>
+                                </div>
+                            </div>
+                            <div class="feed-card" data-href="/lost-and-found">
+                                <div class="feed-icon">🧾</div>
+                                <div class="feed-content">
+                                    <h4>Lost & Found Section</h4>
+                                    <p>Items recently found on campus — see collection info.</p>
+                                </div>
+                            </div>
+                            <div class="feed-card"  data-href="/opportunities">
+                                <div class="feed-icon">💼</div>
+                                <div class="feed-content">
+                                    <h4>Opportunities Panel</h4>
+                                    <p>Open opportunities page for students.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My Courses -->
+                    <!-- My Courses -->
+                    <div class="courses-section">
+                        <div class="section-row">
+                            <h2 class="section-title">My Courses</h2>
+                            <button class="see-all" id="seeAllCourses" data-href='@Url.Action("profile", "user")' ">View All</button>
+                        </div>
+
+                        <div class="courses-grid">
+                            @* generate exact same structure/classes as your static HTML *@
+                            @if (Model?.Courses != null && Model.Courses.Any())
+                            {
+                                var index = 1;
+                                foreach (var c in Model.Courses)
+                                {
+                                    // keep the course-N class to preserve any per-card styling if present
+                                    var courseClass = $"course-card course-{index}";
+                                    index++;
+
+                                    <div class="@courseClass">
+                                        <div class="course-icon">
+                                            @if (!string.IsNullOrEmpty(c.Icon))
+                                            {
+                                                <i class="@c.Icon"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-book"></i>
+                                            }
+                                        </div>
+
+                                        @* Title: prefer Title, fallback to Name *@
+                                        <div class="course-name">@(!string.IsNullOrEmpty(c.Title) ? c.Title : (c.GetType().GetProperty("Name")?.GetValue(c)?.ToString() ?? "Untitled"))</div>
+
+                                        <div class="course-prof">@(!string.IsNullOrEmpty(c.Lecturer) ? c.Lecturer : "—")</div>
+
+                                        <div class="course-actions">
+                                            <button class="action-btn" onclick="location.href='@Url.Action("courses", "user")'">
+                                                <i class="fas fa-folder-open"></i> Materials
+                                            </button>
+                                            <button class="action-btn" onclick="location.href='@Url.Action("courses", "user")'">
+                                                <i class="fas fa-tasks"></i> Tasks
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="no-courses-msg">
+                                    <p>You have no courses yet.</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="sidebar-right">
+
+                    <!-- 🧑‍🎓 Profile Card -->
+                    <div class="profile-card" >
+                        <img src="@(Model.PhotoUrl ?? "/images/default-avatar.png")" alt="Profile Picture" class="profile-img">
+
+                        <div class="profile-info">
+                            <h3 class="profile-name">@Model.FullName</h3>
+
+                            <p class="profile-college">
+                                @(!string.IsNullOrEmpty(Model.FacultyName) ? Model.FacultyName : "—")
+                            </p>
+
+                            <p class="profile-year">
+                                Grade: @(Model.AcademicYear ?? 0)
+                            </p>
+
+                            <p class="profile-id">
+                                ID: @Model.StudentId
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <!-- Calendar -->
+                    <div class="calendar-widget">
+                        <div class="section-row">
+                            <h2 class="section-title">Smart Calendar</h2>
+                            <div style="display:flex;gap:8px;align-items:center">
+                                <button class="calendar-nav" id="prevMonth" title="Previous month">‹</button>
+                                <div class="calendar-month" aria-live="polite" style="min-width:110px;text-align:center;font-weight:600"></div>
+                                <button class="calendar-nav" id="nextMonth" title="Next month">›</button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid">
+                            <div class="calendar-day-header">M</div>
+                            <div class="calendar-day-header">T</div>
+                            <div class="calendar-day-header">W</div>
+                            <div class="calendar-day-header">T</div>
+                            <div class="calendar-day-header">F</div>
+                            <div class="calendar-day-header">S</div>
+                            <div class="calendar-day-header">S</div>
+                            <div class="calendar-days"></div>
+                        </div>
+                        @{
+                            var latest = Model.Announcements?.FirstOrDefault();
+                        }
+
+                        <div class="deadline-alert">
+                            <span>📰</span>
+
+                            @if (latest != null)
+                            {
+                                <span>
+                                    <strong>@latest.Title</strong><br />
+                                    @(latest.Body?.Length > 50 ? latest.Body.Substring(0, 50) + "..." : latest.Body)
+                                    <br />
+                                    <small>@latest.CreatedAt.ToString("dd MMM yyyy")</small>
+                                </span>
+                            }
+                            else
+                            {
+                                <span>
+                                    <strong>No announcements</strong><br />
+                                    Nothing new to show.
+                                </span>
+                            }
+                        </div>
+
+                    </div>
+
+@using System.Linq
+@* Opportunities (أحدث 3 من Model.Opportunities) *@
+<div class="opportunities-widget">
+    <div class="section-row">
+        <h2 class="section-title">Opportunities</h2>
+        <button class="see-all" id="seeAllOpportunities"  data-href="/opportunities">View All</button>
+    </div>
+
+    @{
+        var opportunities = (Model?.Opportunities ?? Enumerable.Empty<My_Uni_Hub.Models.Pages.Opportunity>())
+                                .OrderByDescending(x => x.PostedAt)
+                                .Take(3)
+                                .ToList();
+    }
+
+    @if (!opportunities.Any())
+    {
+        <div class="opportunity-empty" style="color:#6b7280;padding:12px">No opportunities available.</div>
+    }
+    else
+    {
+        foreach (var o in opportunities)
+        {
+            var icon = "💼";
+            var tag = "bg-yellow";
+
+            if (!string.IsNullOrEmpty(o?.Type))
+            {
+                var t = o.Type.ToLowerInvariant();
+                if (t.Contains("job")) { icon = "🎓"; tag = "bg-purple"; }
+                else if (t.Contains("intern")) { icon = "💼"; tag = "bg-yellow"; }
+                else if (t.Contains("design") || t.Contains("workshop") || t.Contains("course")) { icon = "🎨"; tag = "bg-orange"; }
+            }
+    <div class="opportunity-item" data-id="@(o?.OpportunityId)">
+        <div class="opp-icon @tag">@Html.Raw(icon)</div>
+        <div class="opp-content">
+            <h4>@Html.Encode(o?.Title ?? "(No title)")</h4>
+            @if (!string.IsNullOrWhiteSpace(o?.Organization))
+            {
+                <p>@Html.Encode(o.Organization)</p>
+            }
+        </div>
+    </div>
+        }
+    }
+</div>
+
+                    <!-- Only Logout Button -->
+                    <div class="user-actions">
+                        <button class="logout-btn">Logout</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            try {
+                // Find current path (without querystring)
+                const path = window.location.pathname.replace(/\/$/, "").toLowerCase(); // remove trailing slash
+                const items = document.querySelectorAll(".nav-item");
+
+                let found = false;
+                items.forEach(i => {
+                    // try data-href first (absolute or relative)
+                    const href = (i.getAttribute("data-href") || "").toLowerCase();
+                    if (href) {
+                        // create an anchor to get pathname part
+                        const a = document.createElement("a");
+                        a.href = href;
+                        const hrefPath = a.pathname.replace(/\/$/, "");
+                        if (hrefPath === path) {
+                            i.classList.add("active");
+                            found = true;
+                            return;
+                        }
+                    }
+
+                    // fallback: compare data-key against last path segment or action name
+                    const key = i.getAttribute("data-key") || "";
+                    if (!found && key) {
+                        const lastSegment = path.split("/").filter(Boolean).pop() || "";
+                        if (lastSegment === key.toLowerCase() || lastSegment.includes(key.toLowerCase())) {
+                            i.classList.add("active");
+                            found = true;
+                        }
+                    }
+                });
+
+                // if nothing matched, optionally mark home when path is / or /user/dashboard
+                if (!found) {
+                    const homeItem = document.querySelector('.nav-item[data-key="home"]');
+                    if (homeItem && (path === "" || path === "/" || path.endsWith("/dashboard"))) homeItem.classList.add("active");
+                }
+            } catch (e) {
+                console.warn("sidebar active script error:", e);
+            }
+        });
+    </script>
+
+
+    <script>
+        /*
+            Inline View Script (dashboard behavior)
+
+            Notes for MVC integration:
+            - This IIFE contains UI initialization and small interactions only.
+            - For production, move this into a module (e.g., `dashboard.js`) and include via the layout.
+            - Server-rendered data (courses, notifications, user info) should be bound to the DOM
+              by the server template or passed to client code as a JSON payload.
+        */
+        (function(){
+            // Element references used by the view; replace with selectors matching your server-rendered markup
+            const sidebar = document.querySelector('.sidebar');
+            // Navigation items in the left sidebar
+            const navItems = document.querySelectorAll('.nav-item');
+            const feedCards = document.querySelectorAll('.feed-card');
+        const courseCards = document.querySelectorAll('.course-card');
+        const opportunityItems = document.querySelectorAll('.opportunity-item');
+        const searchInput = document.getElementById('globalSearch');
+        const clearSearch = document.getElementById('clearSearch');
+
+            // Restore active nav from (1) URL hash, then (2) localStorage (persisted UI state)
+            // This ensures dashboard anchors like `dashboard.html#announcements` highlight correctly.
+            let activeKey = localStorage.getItem('activeNav');
+            const hashKey = (location.hash || '').replace('#', '');
+            if (hashKey) {
+                const match = Array.from(navItems).find(i => i.dataset.key === hashKey);
+                if (match) {
+                    activeKey = hashKey;
+                    localStorage.setItem('activeNav', hashKey);
+                }
+            }
+
+            if (activeKey) {
+                navItems.forEach(i => i.classList.toggle('active', i.dataset.key === activeKey));
+            } else {
+                const first = document.querySelector('.nav-item[data-key="home"]');
+                if (first) first.classList.add('active');
+            }
+
+            // Click to set active, persist and optionally navigate
+            // If you prefer server-driven navigation, replace this behavior with links
+            // whose `href` point to server routes and let the controller handle routing.
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    if (this.dataset.key) localStorage.setItem('activeNav', this.dataset.key);
+                    // if this nav item points to a page, navigate there
+                    if (this.dataset.href) {
+                        window.location.href = this.dataset.href;
+                    }
+                });
+                item.tabIndex = 0;
+                item.addEventListener('keypress', e => { if (e.key === 'Enter') item.click(); });
+            });
+
+            // Hover expand (desktop) and click-toggle expand (mobile)
+            // This provides a lightweight UX for the sidebar; you can replace it
+            // with server-provided preferences (e.g., persist `sidebarLocked` in user settings).
+            if (sidebar) {
+                sidebar.addEventListener('mouseenter', () => sidebar.classList.add('expanded'));
+                sidebar.addEventListener('mouseleave', () => sidebar.classList.remove('expanded'));
+                sidebar.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 800) sidebar.classList.toggle('expanded');
+                });
+            }
+
+            // Small click effect for cards
+            document.querySelectorAll('.course-card, .opportunity-item').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => { this.style.transform = ''; }, 100);
+                });
+            });
+
+            // Feed cards: navigate when `data-href` present, handle quick-chat when `data-action="quick-chat"`
+            if (feedCards.length) {
+                feedCards.forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        // ignore clicks on buttons inside card
+                        if (e.target.closest('button')) return;
+                        const action = card.dataset.action;
+                        const href = card.dataset.href;
+                        if (action === 'quick-chat') {
+                            openQuickChat();
+                        } else if (href) {
+                            window.location.href = href;
+                        } else {
+                            // simple press feedback for non-action cards
+                            card.style.transform = 'translateY(-3px)';
+                            setTimeout(() => { card.style.transform = ''; }, 120);
+                        }
+                    });
+                });
+            }
+
+            // Opportunities / Courses 'View All' handlers (navigate to their pages)
+            const seeAllOpp = document.getElementById('seeAllOpportunities');
+            const seeAllCourses = document.getElementById('seeAllCourses');
+            if (seeAllOpp) seeAllOpp.addEventListener('click', ()=> { window.location.href = '/opportunities'; });
+            if (seeAllCourses) seeAllCourses.addEventListener('click', ()=> { window.location.href = 'courses'; });
+
+            // Quick Chat drawer (client-only placeholder)
+            // Replace with your chat widget or server-driven modal as needed.
+            function openQuickChat(){
+                // simple drawer/modal placeholder
+                if (document.getElementById('quickChat')) return;
+                const panel = document.createElement('div');
+                panel.id = 'quickChat';
+                panel.style.position = 'fixed';
+                panel.style.right = '20px';
+                panel.style.bottom = '20px';
+                panel.style.width = '320px';
+                panel.style.height = '420px';
+                panel.style.background = 'white';
+                panel.style.borderRadius = '12px';
+                panel.style.boxShadow = '0 10px 30px rgba(2,6,23,0.2)';
+                panel.style.zIndex = 2000;
+                panel.innerHTML = `
+                    <div style="padding:12px 14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;font-weight:700">Quick Chat <button id=closeChat style='background:none;border:none;cursor:pointer;font-size:16px'>✖</button></div>
+                    <div style="padding:12px;display:flex;flex-direction:column;gap:8px;height:calc(100% - 56px);">
+                        <div style='flex:1;overflow:auto;padding:6px;border-radius:8px;background:#f6f7fb'>Start a conversation...</div>
+                        <div style='display:flex;gap:8px'>
+                            <input placeholder='Type a message' style='flex:1;padding:10px;border-radius:8px;border:1px solid #e6e9ef'/>
+                            <button style='padding:10px 12px;border-radius:8px;background:linear-gradient(90deg,#06b6d4,#3b82f6);color:#fff;border:none'>Send</button>
+                        </div>
+                    </div>`;
+                document.body.appendChild(panel);
+                document.getElementById('closeChat').addEventListener('click', ()=> panel.remove());
+            }
+
+            // Dark mode toggle + persist (switch-style)
+            // In MVC, you can persist user's theme choice in server-side profile and
+            // add a class on the body during server rendering instead of relying only on localStorage.
+            const btn = document.getElementById('darkModeBtn');
+            if (btn) {
+                const innerIcon = btn.querySelector('i');
+                function updateKnob(isDark){
+                    if (!innerIcon) return;
+                    if (isDark){
+                        innerIcon.classList.remove('fa-moon');
+                        innerIcon.classList.add('fa-sun');
+                        btn.classList.add('toggled');
+                    } else {
+                        innerIcon.classList.remove('fa-sun');
+                        innerIcon.classList.add('fa-moon');
+                        btn.classList.remove('toggled');
+                    }
+                }
+                btn.addEventListener('click', () => {
+                    const isDark = document.body.classList.toggle('dark-mode');
+                    btn.setAttribute('aria-pressed', isDark);
+                    localStorage.setItem('darkMode', isDark);
+                    updateKnob(isDark);
+                    // subtle press animation
+                    btn.style.transform = 'scale(0.98)';
+                    setTimeout(() => btn.style.transform = '', 120);
+                });
+                if (localStorage.getItem('darkMode') === 'true') {
+                    document.body.classList.add('dark-mode');
+                    btn.setAttribute('aria-pressed', 'true');
+                    updateKnob(true);
+                } else {
+                    updateKnob(false);
+                }
+            }
+
+            // Global search: filter client-side items (courses, feed, opportunities)
+            // For server-side search/filtering, send the query to a controller endpoint
+            // and render results as a fresh view or partial.
+            function filterDashboard(query){
+                const q = (query || '').trim().toLowerCase();
+                // Courses
+                courseCards.forEach(card => {
+                    const title = (card.querySelector('.course-name')?.textContent || '').toLowerCase();
+                    const prof = (card.querySelector('.course-prof')?.textContent || '').toLowerCase();
+                    const visible = !q || title.includes(q) || prof.includes(q);
+                    card.style.display = visible ? '' : 'none';
+                });
+                // Feed cards
+                feedCards.forEach(card => {
+                    const h = (card.querySelector('h4')?.textContent || '').toLowerCase();
+                    const p = (card.querySelector('p')?.textContent || '').toLowerCase();
+                    const visible = !q || h.includes(q) || p.includes(q);
+                    card.style.display = visible ? '' : 'none';
+                });
+                // Opportunities
+                opportunityItems.forEach(it => {
+                    const h = (it.querySelector('h4')?.textContent || '').toLowerCase();
+                    const p = (it.querySelector('p')?.textContent || '').toLowerCase();
+                    const visible = !q || h.includes(q) || p.includes(q);
+                    it.style.display = visible ? '' : 'none';
+                });
+            }
+
+            if (searchInput){
+                searchInput.addEventListener('input', (e)=> filterDashboard(e.target.value));
+                clearSearch?.addEventListener('click', ()=>{ searchInput.value=''; searchInput.focus(); filterDashboard(''); });
+            }
+
+            // Calendar rendering and navigation (client-side)
+            // Replace or augment this with server-side calendar data JSON if desired.
+            (function(){
+                const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                const daysInMonth = (y,m)=> new Date(y,m+1,0).getDate();
+                let current = new Date();
+                let monthIndex = current.getMonth();
+                let year = current.getFullYear();
+                const monthLabel = document.querySelector('.calendar-widget .section-title') || null;
+                const daysContainer = document.querySelector('.calendar-days');
+
+                function renderCalendar(){
+                    const monthEl = document.querySelector('.calendar-month');
+                    // Keep the header label consistent: use the section title for month/year display under the header row
+                    // If there is no separate month element, create/replace the small label inside calendar-widget
+                    let label = document.querySelector('.calendar-widget .calendar-month');
+                    if (!label) {
+                        label = document.createElement('div');
+                        label.className = 'calendar-month';
+                        label.style.marginTop = '8px';
+                        label.style.fontWeight = '600';
+                        label.style.marginBottom = '8px';
+                        document.querySelector('.calendar-widget').insertBefore(label, document.querySelector('.calendar-widget').querySelector('.calendar-grid'));
+                    }
+                    label.textContent = months[monthIndex] + ' ' + year;
+                    if (!daysContainer) return;
+                    daysContainer.innerHTML = '';
+                    const count = daysInMonth(year, monthIndex);
+                    // compute weekday for the 1st of month (make Monday = 0)
+                    const firstWeekday = (new Date(year, monthIndex, 1).getDay() + 6) % 7;
+                    // add empty placeholders to align the first day
+                    for (let i=0;i<firstWeekday;i++){
+                        const emp = document.createElement('div');
+                        emp.className = 'calendar-empty';
+                        daysContainer.appendChild(emp);
+                    }
+                    for (let d=1; d<=count; d++){
+                        const el = document.createElement('div');
+                        el.className = 'calendar-day';
+                        el.textContent = d;
+                        if (year === current.getFullYear() && monthIndex === current.getMonth() && d === current.getDate()) el.classList.add('today');
+                        daysContainer.appendChild(el);
+                    }
+                }
+                document.getElementById('prevMonth')?.addEventListener('click', ()=>{
+                    monthIndex--; if (monthIndex < 0){ monthIndex = 11; year--; }
+                    renderCalendar();
+                });
+                document.getElementById('nextMonth')?.addEventListener('click', ()=>{
+                    monthIndex++; if (monthIndex > 11){ monthIndex = 0; year++; }
+                    renderCalendar();
+                });
+                renderCalendar();
+                // Make profile card clickable (navigate to profile page)
+                document.querySelector('.profile-card')?.addEventListener('click', function(){
+                    // prefer dataset href if present
+                    const href = this.dataset?.href || 'profile';
+                    window.location.href = href;
+                });
+            })();
+        })();
+
+
+    </script>
+<script>
+(function () {
+    // كل عناصر السايدبار
+    const items = document.querySelectorAll('.nav-item');
+
+    // ابعت المسار الحقيقي للصفحة بدون / في الآخر
+    const current = window.location.pathname.replace(/\/$/, "").toLowerCase();
+
+    // شيل active من الكل
+    items.forEach(i => i.classList.remove("active"));
+
+    let matched = null;
+
+    // 1) أولاً — طابق link كامل مع data-href
+    items.forEach(i => {
+        const href = i.dataset.href;
+        if (!href) return;
+
+        try {
+            // نحلل الرابط لحماية من الروابط المطلقة
+            const a = document.createElement("a");
+            a.href = href;
+            const path = a.pathname.replace(/\/$/, "").toLowerCase();
+
+            if (path === current) matched = i;
+        } catch { }
+    });
+
+    // 2) لو لسه ملقاش — طابق آخر جزء مع الـ data-key
+    if (!matched) {
+        const last = current.split("/").pop();
+        matched = Array.from(items).find(i =>
+            (i.dataset.key || "").toLowerCase() === last
+        );
+    }
+
+    // 3) لو لسه — طابق بادئة (لصفحات الأقسام مثل /opportunities/5/edit)
+    if (!matched) {
+        matched = Array.from(items).find(i => {
+            const href = i.dataset.href;
+            if (!href) return false;
+
+            const a = document.createElement("a");
+            a.href = href;
+            const path = a.pathname.replace(/\/$/, "").toLowerCase();
+
+            return current.startsWith(path);
+        });
+    }
+
+    // لو وجدنا العنصر — فعّله
+    if (matched) matched.classList.add("active");
+
+})();
+</script>
+
+
+</body>
+</html>

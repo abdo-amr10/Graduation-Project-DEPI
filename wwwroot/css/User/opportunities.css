@@ -1,0 +1,235 @@
+﻿/* opportunitites page styles (sidebar + main) - condensed from your theme */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box
+}
+
+body {
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    background: linear-gradient(135deg,#f5f7fa,#e8ecf1);
+    color: #222;
+    min-height: 100vh
+}
+
+.container {
+    display: flex;
+    min-height: 100vh
+}
+
+/* sidebar */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 70px;
+    background: #0b1a3d;
+    border-radius: 0 25px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+    box-shadow: 3px 0 10px rgba(0,0,0,.12);
+    transition: width .3s
+}
+
+    .sidebar.expanded, .sidebar:hover {
+        width: 230px;
+        align-items: flex-start;
+        padding-left: 18px;
+        box-shadow: 10px 0 30px rgba(2,6,23,.18)
+    }
+
+.logo-section {
+    margin-bottom: 35px
+}
+
+.logo-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    object-fit: cover
+}
+
+.logo-text {
+    display: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 16px
+}
+
+.sidebar.expanded .logo-text, .sidebar:hover .logo-text {
+    display: inline-block
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+    width: 100%;
+    padding-top: 8px
+}
+
+.bottom-menu {
+    margin-top: auto;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center
+}
+
+.nav-item {
+    color: #bfc8da;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 0;
+    border-radius: 10px;
+    justify-content: center
+}
+
+.sidebar.expanded .nav-item {
+    justify-content: flex-start;
+    padding-left: 12px
+}
+
+.nav-item i {
+    width: 36px;
+    text-align: center;
+    font-size: 18px
+}
+
+.nav-label {
+    color: #bfc8da;
+    font-size: 15px;
+    white-space: nowrap;
+    display: none;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity .2s,transform .2s
+}
+
+.sidebar.expanded .nav-label, .sidebar:hover .nav-label {
+    display: inline-block;
+    opacity: 1;
+    transform: translateX(0)
+}
+
+.nav-item.active, .nav-item:hover {
+    color: #ff8c00;
+    background: rgba(255,140,0,.06)
+}
+
+/* main */
+.main {
+    margin-left: 75px;
+    padding: 22px;
+    transition: margin-left .25s
+}
+
+.sidebar.expanded ~ .main, .sidebar:hover ~ .main {
+    margin-left: 230px
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50
+}
+
+.controls .search {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(10,35,70,0.08);
+    background: linear-gradient(180deg,#fbfdff,#f3f8ff);
+    min-width: 220px
+}
+
+/* cards grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 18px
+}
+
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.06)
+}
+
+.meta {
+    font-size: 13px;
+    color: #7f8c8d;
+    margin-bottom: 8px
+}
+
+.title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #063055;
+    margin-bottom: 10px;
+    cursor: pointer
+}
+
+.excerpt {
+    color: #334155;
+    font-size: 14px;
+    line-height: 1.45;
+    margin-bottom: 10px
+}
+
+.apply-link {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: linear-gradient(90deg,#06b6d4,#3b82f6);
+    color: #fff;
+    text-decoration: none
+}
+
+/* responsive */
+@media (max-width:1100px) {
+    .grid {
+        grid-template-columns: repeat(2,1fr)
+    }
+
+    .side-right {
+        width: 100%
+    }
+}
+
+@media (max-width:700px) {
+    .grid {
+        grid-template-columns: 1fr
+    }
+
+    .main {
+        margin-left: 0
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-radius: 0 0 12px 12px
+    }
+}

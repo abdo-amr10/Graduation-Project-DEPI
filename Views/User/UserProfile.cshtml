@@ -1,0 +1,1402 @@
+﻿@{
+    ViewBag.Title = "Profile";
+    Layout = null;
+}
+@model My_Uni_Hub.Models.Pages.Student
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile - MyUni Hub</title>
+    <!-- Inline styles copied/adapted from dashboard for quick parity -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+            background: linear-gradient(135deg,#f5f7fa 0%,#e8ecf1 100%);
+            min-height: 100vh
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh
+        }
+
+        /* Sidebar (same as dashboard) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background-color: #0b1a3d;
+            border-radius: 0 25px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 0;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.12);
+            transition: width 300ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease;
+            overflow: visible
+        }
+
+            .sidebar:hover, .sidebar.expanded {
+                width: 230px;
+                align-items: flex-start;
+                padding-left: 18px;
+                box-shadow: 10px 0 30px rgba(2,6,23,0.18)
+            }
+
+        .logo-section {
+            margin-bottom: 35px
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            flex-grow: 1;
+            width: 100%;
+            padding-top: 8px
+        }
+
+        .bottom-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            margin-top: auto;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center
+        }
+
+        .nav-item {
+            color: #bfc8da;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 8px 0;
+            border-radius: 10px;
+            box-sizing: border-box;
+            justify-content: center
+        }
+
+        .sidebar.expanded .nav-item {
+            justify-content: flex-start;
+            padding-left: 12px
+        }
+
+        .nav-item i {
+            width: 36px;
+            text-align: center;
+            font-size: 18px
+        }
+
+        .nav-label {
+            color: #bfc8da;
+            font-size: 15px;
+            white-space: nowrap;
+            display: none;
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: opacity 0.2s ease, transform 0.2s ease
+        }
+
+        .sidebar.expanded .nav-label, .sidebar:hover .nav-label {
+            display: inline-block;
+            opacity: 1;
+            transform: translateX(0)
+        }
+
+        .nav-item.active, .nav-item:hover {
+            color: #ff8c00;
+            background: rgba(255,140,0,0.06);
+            transform: none
+        }
+
+        /* Main content area */
+        .main-content {
+            margin-left: 75px;
+            padding: 28px;
+            width: calc(100%);
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            overflow-y: auto;
+            transition: margin-left 0.25s ease
+        }
+
+        .sidebar.expanded ~ .main-content, .sidebar:hover ~ .main-content {
+            margin-left: 230px
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px
+        }
+
+        .welcome-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            white-space: nowrap
+        }
+
+        .header-right .see-all {
+            margin-right: 6px
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(180deg,#eaf4ff,#d6ebff);
+            border: 1px solid rgba(59,130,246,0.12);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #053160;
+            box-shadow: 0 6px 18px rgba(10,35,70,0.06)
+        }
+
+            .icon-btn i {
+                font-size: 18px
+            }
+
+            .icon-btn.orange {
+                background: linear-gradient(180deg,#fff4e6,#fff0de);
+                border: 1px solid rgba(255,140,0,0.14);
+                color: #b44b00
+            }
+
+                .icon-btn.orange:hover {
+                    background: linear-gradient(180deg,#ffd9b8,#ffc58a)
+                }
+
+        .dark-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(180deg,#fff7ed,#fff1e6);
+            color: #07304a;
+            box-shadow: 0 6px 18px rgba(10,35,70,0.06);
+            transition: transform 160ms ease, background 200ms ease, color 180ms ease
+        }
+
+            .dark-toggle.navy {
+                background: linear-gradient(180deg,#e7f1ff,#d7e9ff);
+                color: #05203f
+            }
+
+                .dark-toggle.navy:hover {
+                    background: linear-gradient(180deg,#cfe6ff,#9fc8ff)
+                }
+
+        /* Profile layout */
+        .profile-page {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 28px
+        }
+
+        .profile-main {
+            background: white;
+            padding: 26px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(10,30,60,0.06)
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            margin-bottom: 18px
+        }
+
+        .profile-large-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 3px solid #fff;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06)
+        }
+
+        .profile-meta {
+            display: flex;
+            flex-direction: column
+        }
+
+            .profile-meta h2 {
+                font-size: 22px;
+                margin-bottom: 6px
+            }
+
+            .profile-meta p {
+                color: #556677;
+                font-size: 14px;
+                margin-bottom: 6px
+            }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700
+        }
+
+            .btn.primary {
+                background: linear-gradient(90deg,#0b6cff,#3b82f6);
+                color: #fff
+            }
+
+            .btn.ghost {
+                background: transparent;
+                border: 1px solid #e6eef9;
+                color: #053160
+            }
+
+            /* Navy variant for Edit Profile */
+            .btn.navy {
+                background: linear-gradient(90deg,#05203f,#0b3b62);
+                color: #fff;
+                border: none;
+                box-shadow: 0 8px 22px rgba(2,30,60,0.18)
+            }
+
+                .btn.navy:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 30px rgba(2,30,60,0.22)
+                }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 12px;
+            margin-top: 10px
+        }
+
+        .info-card {
+            background: #fafbfd;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(10,35,70,0.03)
+        }
+
+            .info-card h4 {
+                font-size: 13px;
+                color: #2c3e50;
+                margin-bottom: 6px
+            }
+
+            .info-card p {
+                font-size: 14px;
+                color: #556677
+            }
+
+        .courses-list {
+            margin-top: 18px;
+            display: grid;
+            gap: 10px
+        }
+
+        .course-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);
+            padding: 12px 14px;
+            border-radius: 12px
+        }
+
+        /* Right column widgets copied from dashboard (calendar/opportunities/logout) */
+        .sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .calendar-widget, .opportunities-widget, .stats-widget {
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(10,30,60,0.06)
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7,1fr);
+            gap: 6px;
+            text-align: center
+        }
+
+        .calendar-day-header {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7f8c8d;
+            padding: 6px 0
+        }
+
+        .calendar-day {
+            padding: 6px;
+            border-radius: 8px;
+            font-size: 13px
+        }
+
+
+
+        .main-content {
+            padding: 18px
+        }
+
+        }
+
+        /* Buttons & user-actions */
+        .user-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .logout-btn {
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(90deg,#07294a,#234a7a);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(2,30,60,0.18)
+        }
+
+            .logout-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 30px rgba(2,30,60,0.24)
+            }
+
+        .see-all {
+            background: transparent;
+            border: none;
+            color: #3b82f6;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        /* Profile page specific: user-roles container and muted button variants */
+        .user-roles {
+            background: #fff;
+            padding: 14px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(10,30,60,0.06);
+        }
+
+            .user-roles .section-title {
+                font-size: 14px;
+                margin-bottom: 8px
+            }
+
+            .user-roles .role-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 8px
+            }
+
+        .btn-muted {
+            background: linear-gradient(90deg,#eef6ff,#e6eefc);
+            color: #0b2540;
+            border: 1px solid rgba(11,37,64,0.06);
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-weight: 700
+        }
+
+            .btn-muted:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 22px rgba(11,37,64,0.06);
+            }
+
+        .btn-danger-muted {
+            background: linear-gradient(90deg,#fff1f2,#ffe7e9);
+            color: #7a1f1f;
+            border: 1px solid rgba(220,38,38,0.06);
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-weight: 700
+        }
+
+            .btn-danger-muted:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 22px rgba(220,38,38,0.06);
+            }
+
+        /* Dark mode styles (expanded) */
+        body.dark-mode {
+            background: linear-gradient(135deg,#070911 0%, #071229 100%);
+            color: #dfe8f7
+        }
+
+            body.dark-mode .sidebar {
+                background-color: #071129;
+                box-shadow: 6px 0 20px rgba(2,6,23,0.35)
+            }
+
+            body.dark-mode .nav-item {
+                color: rgba(222,233,255,0.85)
+            }
+
+            body.dark-mode .nav-label {
+                color: rgba(222,233,255,0.9)
+            }
+
+            body.dark-mode .nav-item.active, body.dark-mode .nav-item:hover {
+                color: #ffb86b;
+                background: rgba(255,140,0,0.08)
+            }
+
+            body.dark-mode .main-content, body.dark-mode .profile-main, body.dark-mode .stats-widget, body.dark-mode .opportunities-widget, body.dark-mode .calendar-widget {
+                background: #0b1220;
+                color: #dfe8f7;
+                box-shadow: 0 6px 24px rgba(2,6,23,0.28)
+            }
+            /* Right column widgets refinement */
+            body.dark-mode .sidebar-right {
+                background: transparent
+            }
+
+            body.dark-mode .stats-widget {
+                background: linear-gradient(180deg,#071226,#081428);
+                border: 1px solid rgba(255,255,255,0.03);
+                color: #e6f0ff
+            }
+
+            body.dark-mode #notificationsWidget .see-all, body.dark-mode #deadlinesWidget .see-all, body.dark-mode #documentsWidget .see-all {
+                color: #8fb7ff
+            }
+
+            body.dark-mode #notificationsList > div, body.dark-mode #documentsWidget > div > div {
+                background: linear-gradient(180deg,#071226,#081428);
+                border: 1px solid rgba(255,255,255,0.02);
+                color: #cfe6ff
+            }
+
+            body.dark-mode .deadline-item {
+                background: linear-gradient(180deg,#081226,#0b1724);
+                border: 1px solid rgba(255,255,255,0.02)
+            }
+
+            body.dark-mode .btn.ghost {
+                border-color: rgba(255,255,255,0.04);
+                color: #cfe6ff
+            }
+
+            body.dark-mode .see-all {
+                color: #8fb7ff
+            }
+
+            body.dark-mode .icon-btn {
+                background: rgba(255,255,255,0.03);
+                color: #dbe9ff;
+                border-color: rgba(255,255,255,0.03)
+            }
+
+            body.dark-mode .btn.primary {
+                background: linear-gradient(90deg,#0b6cff,#3b82f6);
+                color: #fff
+            }
+
+            body.dark-mode .btn.ghost {
+                background: transparent;
+                border: 1px solid rgba(255,255,255,0.06);
+                color: #dbe9ff
+            }
+
+            body.dark-mode .info-card {
+                background: #071226;
+                border-color: rgba(255,255,255,0.03)
+            }
+
+            body.dark-mode .profile-large-img {
+                box-shadow: 0 6px 20px rgba(0,0,0,0.7)
+            }
+            /* Dark-mode for navy button */
+            body.dark-mode .btn.navy {
+                background: linear-gradient(90deg,#03172a,#07243b);
+                color: #f0f8ff;
+                box-shadow: 0 8px 22px rgba(0,0,0,0.45)
+            }
+
+            body.dark-mode .see-all {
+                color: #8fb7ff
+            }
+
+            body.dark-mode .courses-list .course-row {
+                background: linear-gradient(135deg,#071226 0%,#0b1724 100%);
+                border: 1px solid rgba(255,255,255,0.02);
+                color: #dfe8f7
+            }
+
+            body.dark-mode .course-row strong {
+                color: #e6f0ff
+            }
+
+            body.dark-mode .deadline-item {
+                background: linear-gradient(135deg,#0b1220,#081021)
+            }
+
+            body.dark-mode .user-roles {
+                background: #071226;
+                box-shadow: 0 6px 18px rgba(2,6,23,0.35)
+            }
+
+            body.dark-mode .btn-muted {
+                background: linear-gradient(90deg,#0b2540,#0d3358);
+                color: #e6f3ff;
+                border-color: rgba(255,255,255,0.03)
+            }
+
+            body.dark-mode .btn-danger-muted {
+                background: linear-gradient(90deg,#3d1212,#4a1616);
+                color: #ffdede;
+                border-color: rgba(255,255,255,0.03)
+            }
+
+        /* Edit Profile Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000
+        }
+
+        .modal {
+            width: 720px;
+            max-width: 95%;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 18px 50px rgba(2,12,40,0.4);
+            overflow: hidden
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            border-bottom: 1px solid #eef3ff
+        }
+
+        .modal-body {
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
+
+        .modal-footer {
+            padding: 12px 18px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #eef3ff
+        }
+
+        .modal input, .modal select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e6e9ef;
+            background: #fbfdff
+        }
+
+        .modal label {
+            display: block;
+            font-size: 13px;
+            color: #4b5563;
+            margin-bottom: 6px
+        }
+
+        .btn.save {
+            background: linear-gradient(90deg,#06b6d4,#3b82f6);
+            color: #fff
+        }
+
+        .btn.cancel {
+            background: transparent;
+            border: 1px solid #e6e9ef
+        }
+
+        .modal-backdrop.show {
+            display: flex
+        }
+
+        body.dark-mode .modal {
+            background: #0f1724;
+            color: #dfe8f7
+        }
+
+            body.dark-mode .modal input, body.dark-mode .modal select {
+                background: #0b1220;
+                border-color: rgba(255,255,255,0.04);
+                color: #dfe8f7
+            }
+        /* Right-side specific widgets in dark mode: Documents, Deadlines, Notifications */
+        body.dark-mode #documentsWidget,
+        body.dark-mode #deadlinesWidget,
+        body.dark-mode #notificationsWidget {
+            background: linear-gradient(180deg,#071226,#081428);
+            border: 1px solid rgba(255,255,255,0.04);
+            color: #dfe8f7;
+            box-shadow: 0 8px 30px rgba(2,6,23,0.32);
+        }
+
+            /* Inner lists/items */
+            body.dark-mode #notificationsList > div,
+            body.dark-mode #documentsWidget > div > div,
+            body.dark-mode #documentsWidget div[style] {
+                background: linear-gradient(180deg,#081226,#0b1724);
+                border: 1px solid rgba(255,255,255,0.02);
+                color: #cfe6ff;
+            }
+
+        /* Deadline items and mark-done button visibility */
+        body.dark-mode .deadline-item {
+            background: linear-gradient(180deg,#081226,#0b1724);
+            border: 1px solid rgba(255,255,255,0.02);
+            color: #dfe8f7
+        }
+
+            body.dark-mode .deadline-item .btn.ghost {
+                border-color: rgba(255,255,255,0.04);
+                color: #cfe6ff
+            }
+
+        /* Ghost buttons inside widgets */
+        body.dark-mode .stats-widget .see-all,
+        body.dark-mode .see-all {
+            color: #8fb7ff
+        }
+
+        body.dark-mode .btn.ghost {
+            color: #cfe6ff;
+            border-color: rgba(255,255,255,0.04)
+        }
+
+        /* --- Force dark styles for inner content (override inline light backgrounds) --- */
+        /* Documents inner rows, file items, and buttons */
+        body.dark-mode #documentsWidget div[style],
+        body.dark-mode #documentsWidget .btn,
+        body.dark-mode #documentsWidget button,
+        body.dark-mode #documentsWidget p,
+        body.dark-mode #documentsWidget small,
+        body.dark-mode #documentsWidget strong {
+            background: linear-gradient(180deg,#081226,#0b1724) !important;
+            color: #cfe6ff !important;
+            border: 1px solid rgba(255,255,255,0.02) !important;
+        }
+
+        /* Notifications list entries */
+        body.dark-mode #notificationsList > div {
+            background: linear-gradient(180deg,#081226,#0b1724) !important;
+            color: #e6f4ff !important;
+            border: 1px solid rgba(255,255,255,0.02) !important;
+        }
+
+        /* Deadlines inner text and buttons */
+        body.dark-mode #deadlinesList .deadline-item,
+        body.dark-mode #deadlinesList .deadline-item div {
+            background: linear-gradient(180deg,#081226,#0b1724) !important;
+            color: #e6f4ff !important;
+            border: 1px solid rgba(255,255,255,0.02) !important;
+        }
+
+            body.dark-mode #deadlinesList .deadline-item .btn.ghost {
+                border-color: rgba(255,255,255,0.04) !important;
+                color: #cfe6ff !important
+            }
+
+        /* Ensure icons/emoji remain visible */
+        body.dark-mode #documentsWidget i, body.dark-mode #notificationsWidget i {
+            color: #cfe6ff !important
+        }
+
+        /* Make sure small labels inside these widgets are readable */
+        body.dark-mode #documentsWidget small, body.dark-mode #notificationsWidget small, body.dark-mode #deadlinesWidget small {
+            color: #99accb !important
+        }
+
+        /* Hide interactive buttons inside the three right widgets per user request */
+        #documentsWidget button,
+        #deadlinesWidget button,
+        #notificationsWidget button {
+            display: none !important;
+        }
+        /* Also hide any .see-all controls inside those widgets */
+        #documentsWidget .see-all, #deadlinesWidget .see-all, #notificationsWidget .see-all {
+            display: none !important
+        }
+
+        /* --- Dark mode: remaining profile page elements --- */
+        body.dark-mode .welcome-text {
+            color: #e8eefc !important
+        }
+
+        body.dark-mode .main-content {
+            background: linear-gradient(180deg,#071226,#071826) !important
+        }
+
+        body.dark-mode .profile-main {
+            background: linear-gradient(180deg,#071226,#081428) !important;
+            border: 1px solid rgba(255,255,255,0.03) !important;
+            color: #e6f0ff !important
+        }
+
+        body.dark-mode .profile-header {
+            border-bottom: 1px solid rgba(255,255,255,0.03) !important
+        }
+
+        body.dark-mode .profile-meta h2 {
+            color: #f0f6ff !important
+        }
+
+        body.dark-mode .profile-meta p {
+            color: #b8cfe8 !important
+        }
+
+        body.dark-mode .profile-actions .btn {
+            background: transparent !important;
+            border: 1px solid rgba(255,255,255,0.04) !important;
+            color: #cfe6ff !important
+        }
+
+        body.dark-mode .profile-large-img {
+            box-shadow: 0 6px 30px rgba(0,0,0,0.6) !important;
+            border-color: rgba(255,255,255,0.04) !important
+        }
+
+        /* Info cards */
+        body.dark-mode .info-card {
+            background: linear-gradient(180deg,#071226,#081428) !important;
+            border: 1px solid rgba(255,255,255,0.02) !important;
+            color: #cfe6ff !important
+        }
+
+            body.dark-mode .info-card h4 {
+                color: #e6f0ff !important
+            }
+
+            body.dark-mode .info-card p {
+                color: #9fb7d6 !important
+            }
+
+        /* Courses list rows */
+        body.dark-mode .courses-list .course-row {
+            background: linear-gradient(180deg,#071226,#081428) !important;
+            border: 1px solid rgba(255,255,255,0.02) !important;
+            color: #e6f0ff !important
+        }
+
+            body.dark-mode .courses-list .course-row strong {
+                color: #eaf4ff !important
+            }
+
+            body.dark-mode .courses-list .course-row .btn.ghost {
+                border-color: rgba(255,255,255,0.04) !important;
+                color: #cfe6ff !important
+            }
+
+        /* Transcript preview and similar inline containers */
+        body.dark-mode .profile-main [style*="background:#fff"] {
+            background: linear-gradient(180deg,#071226,#081428) !important;
+            border: 1px solid rgba(255,255,255,0.02) !important;
+            color: #dfe8f7 !important
+        }
+
+        /* Small text / meta inside right widgets and center content */
+        body.dark-mode small, body.dark-mode .profile-year, body.dark-mode .profile-id {
+            color: #9fb7d6 !important
+        }
+
+        /* Ensure icons in the profile area are visible */
+        body.dark-mode .profile-main i, body.dark-mode .profile-main svg {
+            color: #cfe6ff !important
+        }
+
+        /* Make container titles light in dark mode */
+        body.dark-mode .section-title,
+        body.dark-mode .profile-main h2,
+        body.dark-mode .profile-main h3,
+        body.dark-mode .profile-main h4 {
+            color: #f4f8ff !important;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo-section">
+                <img src="~/Images/logo.png" class="logo-img" alt="MyUni Hub">
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item" data-key="home" data-href='@Url.Action("dashboard", "user")'>
+                    <i class="fas fa-home"></i><span class="nav-label">Home</span>
+                </li>
+
+                <li class="nav-item" data-key="profile" data-href='@Url.Action("profile", "user")'>
+                    <i class="fas fa-user"></i><span class="nav-label">Profile</span>
+                </li>
+
+                <li class="nav-item" data-key="mycourses" data-href='@Url.Action("courses", "user")'>
+                    <i class="fas fa-book"></i><span class="nav-label">My Courses</span>
+                </li>
+
+                <li class="nav-item" data-key="ann" data-href='@Url.RouteUrl("announcements")'
+                    onclick="window.location.href=this.getAttribute('data-href')"
+                    style="cursor:pointer;">
+                    <i class="fas fa-bullhorn"></i><span class="nav-label">Announcements</span>
+                </li>
+
+                <li class="nav-item" data-key="chat" data-href='@Url.Action("chat", "user")'>
+                    <i class="fas fa-comments"></i><span class="nav-label">Chat</span>
+                </li>
+
+                <li class="nav-item" data-key="agenda" data-href="/useragenda">
+                    <i class="fas fa-calendar-alt"></i><span class="nav-label">Agenda</span>
+                </li>
+
+                <li class="nav-item" data-key="opp" data-href="/opportunities">
+                    <i class="fas fa-briefcase"></i><span class="nav-label">Opportunities</span>
+                </li>
+
+                <li class="nav-item" data-key="lost" data-href="/lost-and-found">
+                    <i class="fas fa-box-open"></i><span class="nav-label">Lost &amp; Found</span>
+                </li>
+            </ul>
+
+
+            <ul class="bottom-menu">
+                <li class="nav-item" data-key="settings" data-href='@Url.Action("profile", "user")'><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
+                <li class="nav-item" data-key="logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+            </ul>
+        </div>
+
+        @* main-content فقط - الصقها داخل view الموجود لديك *@
+        @{
+            string defaultImg = Url.Content("~/Images/my.jpg");
+            string profileImg = string.IsNullOrWhiteSpace(Model?.PhotoUrl) ? defaultImg : Url.Content(Model.PhotoUrl);
+            string fullName = Model?.FullName ?? "Abd El-Rahman Amr";
+            string faculty = Model?.Faculty?.Name ?? "Faculty of Computers & Information";
+            string department = Model?.Department?.Name ?? "Computer Science";
+            string email = Model?.Email ?? "abd.elrahman@example.com";
+            string phone = string.IsNullOrWhiteSpace(Model?.PhoneNumber) ? "+20 123 456 7890" : Model.PhoneNumber;
+            string academicYear = Model?.AcademicYear?.ToString() ?? "3";
+            string studentId = Model?.Id.ToString() ?? "2023040090";
+        }
+
+        <div class="main-content">
+            <div class="header">
+                <h1 class="welcome-text">Student Profile</h1>
+                <div class="header-right">
+                    <button class="see-all" id="backBtnProfile" data-href='@Url.Action("dashboard", "user")'>Back</button>
+                    <div class="header-icons">
+                        <button class="dark-toggle navy" id="darkModeBtn" title="Toggle dark mode" aria-label="Toggle dark mode"><i class="fas fa-moon"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-page">
+                <div class="profile-main">
+
+                    <div class="profile-header">
+                        <img src="@profileImg" alt="Profile" class="profile-large-img profile-img">
+
+                        <div class="profile-meta">
+                            <h2 class="profile-name">@fullName</h2>
+                            <p class="profile-college">@faculty</p>
+
+                            <p>
+                                <span class="profile-id">ID: <strong>@studentId</strong></span>
+                                &nbsp;•&nbsp;
+                                <span class="profile-year">Grade: <strong>@academicYear</strong></span>
+                            </p>
+
+                            <div class="profile-actions">
+                                <button class="btn navy" id="editProfileBtn">Edit Profile</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h4>Contact</h4>
+                            <p>Email: <span class="profile-email">@email</span></p>
+                            <p>Phone: <span class="profile-phone">@phone</span></p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Academic</h4>
+                            <p>GPA: <strong>3.78</strong></p>
+                            <p>Major: @department</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Advisor</h4>
+                            <p> Dr. Ayman Al-Sayed</p>
+                            <p>Office: "Bldg 3 - Room 210"</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Enrollment</h4>
+                            <p>Start: @(Model?.CreatedAt == null ? "Sep 2023" : Model.CreatedAt.ToString("MMM yyyy"))</p>
+                            <p>Status: @(Model?.IsVerified == true ? "Active" : "Pending")</p>
+                        </div>
+                    </div>
+
+                    @{
+                        // قائمة مدربين ثابتة
+                        var instructors = new[]
+                        {
+                                        "Dr. Ayman Al-Sayed",
+                                        "Dr. Nada Ameen",
+                                        "Dr. Sarah Ahmed",
+                                        "Dr. Omar Hassan",
+                                        "Dr. Lina Mostafa",
+                                        "Dr. Saeed Hany"
+                                        };
+                    }
+
+                    <div style="margin-top:18px">
+                        <h3 style="margin-bottom:10px">Courses Enrolled</h3>
+                        <div class="courses-list">
+                            @if (Model?.CourseStudents != null && Model.CourseStudents.Any())
+                            {
+                                int i = 0;
+
+                                foreach (var cs in Model.CourseStudents)
+                                {
+                                    var course = cs.Course; // Course object loaded by Include
+                                    var title = course?.Name ?? course?.Name ?? "Untitled course";
+                                    var instructor = instructors[i % instructors.Length];
+                                    i++;
+
+                                    <div class="course-row">
+                                        <div>
+                                            <strong>@title</strong>
+                                            <div style="font-size:13px;color:#556677">@instructor</div>
+                                        </div>
+                                        <div><button class="btn ghost" data-href='@Url.Action("courses", "user")'>Open</button></div>
+                                    </div>
+                                }
+                            }
+                          
+                            else
+                            {
+                                @if (Model == null)
+                                {
+                                    <div>Model is null</div>
+                                }
+                                else
+                                {
+                                    <div>Model not null. Courses property is @(Model.CourseStudents == null ? "null" : Model.CourseStudents.Count.ToString() + " items")</div>
+                                }
+
+                            }
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="sidebar-right">
+                    <div class="stats-widget">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="section-title">Quick Stats</div><div style="font-size:13px;color:#7f8c8d">Updated now</div></div>
+                        <div style="display:flex;gap:8px;flex-direction:column">
+                            <div style="display:flex;justify-content:space-between"><div>Completed Credits</div><div><strong>78</strong></div></div>
+                            <div style="display:flex;justify-content:space-between"><div>Current GPA</div><div><strong>3.78</strong></div></div>
+                            <div style="display:flex;justify-content:space-between"><div>Active Courses</div><div><strong>@(Model?.CourseStudents?.Count() ?? 6)</strong></div></div>
+                        </div>
+                    </div>
+
+                   
+
+
+
+                    @* My Documents widget *@
+                    <div class="stats-widget" id="documentsWidget">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <div class="section-title">My Documents</div>
+                            <button class="see-all" id="uploadDoc">Upload</button>
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                            @if (Model.Documents != null && Model.Documents.Any())
+                            {
+                                foreach (var doc in Model.Documents)
+                                {
+                                    <div style="display:flex;justify-content:space-between;align-items:center;
+                                    padding:8px;border-radius:8px;background:#fbfdff">
+
+                                        <div>
+                                            @doc.Title
+                                            <!-- 🔹 لينك تحميل بجانب الاسم -->
+                                            <a href="@doc.FilePath" download
+                                               style="margin-left:10px; font-size:13px; color:#1e73a8; text-decoration:none;">
+                                                Download
+                                            </a>
+                                        </div>
+
+                                        <div>
+                                            <!-- 🔹 زر تحميل كما هو -->
+                                            <button class="btn ghost" onclick="window.location.href='@doc.FilePath'">
+                                                Download
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div style="padding:8px;border-radius:8px;background:#fbfdff;color:#666;">
+                                    No documents available.
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div id="successAlert" class="alert alert-success"
+                         style="display:none; position:fixed; top:20px; right:20px; z-index:5000;">
+                        Profile updated successfully!
+                    </div>
+
+
+                    <div class="user-roles">
+                        <div class="section-title">User Actions</div>
+                        <div class="role-actions">
+                            <button class="btn-muted" id="messageBtn"><i class="fas fa-comment-dots"></i> Message</button>
+                            <form method="post" asp-controller="Auth" asp-action="Logout" style="display:inline"><button type="submit" class="btn-danger-muted"><i class="fas fa-sign-out-alt"></i> Logout</button></form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+                        document.querySelectorAll('button[data-href]').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const url = this.getAttribute('data-href');
+                    if (url) window.location.href = url;
+                });
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                try {
+                    // Find current path (without querystring)
+                    const path = window.location.pathname.replace(/\/$/, "").toLowerCase(); // remove trailing slash
+                    const items = document.querySelectorAll(".nav-item");
+
+                    let found = false;
+                    items.forEach(i => {
+                        // try data-href first (absolute or relative)
+                        const href = (i.getAttribute("data-href") || "").toLowerCase();
+                        if (href) {
+                            // create an anchor to get pathname part
+                            const a = document.createElement("a");
+                            a.href = href;
+                            const hrefPath = a.pathname.replace(/\/$/, "");
+                            if (hrefPath === path) {
+                                i.classList.add("active");
+                                found = true;
+                                return;
+                            }
+                        }
+
+                        // fallback: compare data-key against last path segment or action name
+                        const key = i.getAttribute("data-key") || "";
+                        if (!found && key) {
+                            const lastSegment = path.split("/").filter(Boolean).pop() || "";
+                            if (lastSegment === key.toLowerCase() || lastSegment.includes(key.toLowerCase())) {
+                                i.classList.add("active");
+                                found = true;
+                            }
+                        }
+                    });
+
+                    // if nothing matched, optionally mark home when path is / or /user/dashboard
+                    if (!found) {
+                        const homeItem = document.querySelector('.nav-item[data-key="home"]');
+                        if (homeItem && (path === "" || path === "/" || path.endsWith("/dashboard"))) homeItem.classList.add("active");
+                    }
+                } catch (e) {
+                    console.warn("sidebar active script error:", e);
+                }
+            });
+        </script>
+
+        <script>
+            // helpers for modal
+            function openProfileModal(html) {
+                // create overlay
+                let overlay = document.createElement('div');
+                overlay.id = 'editProfileOverlay';
+                overlay.style.position = 'fixed';
+                overlay.style.inset = '0';
+                overlay.style.background = 'rgba(0,0,0,0.4)';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.style.zIndex = 9999;
+
+                // create container
+                let cont = document.createElement('div');
+                cont.style.background = '#fff';
+                cont.style.borderRadius = '12px';
+                cont.style.boxShadow = '0 12px 40px rgba(2,6,23,.2)';
+                cont.innerHTML = html;
+
+                overlay.appendChild(cont);
+                document.body.appendChild(overlay);
+
+                // cancel handler
+                overlay.querySelector('#cancelEditProfile')?.addEventListener('click', closeProfileModal);
+                // close on outside click
+                overlay.addEventListener('click', function (e) {
+                    if (e.target === overlay) closeProfileModal();
+                });
+            }
+
+            function closeProfileModal() {
+                const ov = document.getElementById('editProfileOverlay');
+                if (ov) ov.remove();
+            }
+
+            document.getElementById('editProfileBtn')?.addEventListener('click', async function () {
+                try {
+                    const res = await fetch('@Url.Action("EditProfilePartial", "User")', { credentials: 'same-origin' });
+                    const html = await res.text();
+                    openProfileModal(html);
+                } catch (e) {
+                    console.error(e);
+                    alert('Cannot open edit form');
+                }
+            });
+        </script>
+
+
+    <script>
+        (function(){
+            const sidebar = document.querySelector('.sidebar');
+            const navItems = document.querySelectorAll('.nav-item');
+            // Restore active nav if set
+            const activeKey = localStorage.getItem('activeNav');
+            if (activeKey) navItems.forEach(i=> i.classList.toggle('active', i.dataset.key===activeKey));
+            else { const first = document.querySelector('.nav-item[data-key="profile"]'); if (first) first.classList.add('active'); }
+
+            navItems.forEach(item=>{
+                item.addEventListener('click', function(){ navItems.forEach(i=>i.classList.remove('active')); this.classList.add('active'); if (this.dataset.key) localStorage.setItem('activeNav', this.dataset.key); if (this.dataset.href) window.location.href = this.dataset.href; });
+                item.tabIndex = 0; item.addEventListener('keypress', e=>{ if (e.key==='Enter') item.click(); });
+            });
+
+            if (sidebar) { sidebar.addEventListener('mouseenter', ()=> sidebar.classList.add('expanded')); sidebar.addEventListener('mouseleave', ()=> sidebar.classList.remove('expanded')); sidebar.addEventListener('click', ()=> { if (window.innerWidth <= 800) sidebar.classList.toggle('expanded'); }); }
+
+            // Dark mode toggle (same behavior as dashboard)
+            const btn = document.getElementById('darkModeBtn');
+            if (btn) {
+                const innerIcon = btn.querySelector('i');
+                function updateKnob(isDark){ if (!innerIcon) return; if (isDark){ innerIcon.classList.remove('fa-moon'); innerIcon.classList.add('fa-sun'); btn.classList.add('toggled'); } else { innerIcon.classList.remove('fa-sun'); innerIcon.classList.add('fa-moon'); btn.classList.remove('toggled'); } }
+                btn.addEventListener('click', ()=>{ const isDark = document.body.classList.toggle('dark-mode'); btn.setAttribute('aria-pressed', isDark); localStorage.setItem('darkMode', isDark); updateKnob(isDark); btn.style.transform = 'scale(0.98)'; setTimeout(()=> btn.style.transform = '', 120); });
+                if (localStorage.getItem('darkMode') === 'true'){ document.body.classList.add('dark-mode'); btn.setAttribute('aria-pressed', 'true'); updateKnob(true); } else updateKnob(false);
+            }
+
+            // Quick chat / message drawer (reused)
+            function openQuickChat(){ if (document.getElementById('quickChat')) return; const panel = document.createElement('div'); panel.id = 'quickChat'; panel.style.position = 'fixed'; panel.style.right = '20px'; panel.style.bottom = '20px'; panel.style.width = '360px'; panel.style.height = '480px'; panel.style.background = 'white'; panel.style.borderRadius = '12px'; panel.style.boxShadow = '0 10px 30px rgba(2,6,23,0.2)'; panel.style.zIndex = 2000; panel.innerHTML = `<div style="padding:12px 14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;font-weight:700">Quick Chat <button id=closeChat style='background:none;border:none;cursor:pointer;font-size:16px'>✖</button></div><div style="padding:12px;display:flex;flex-direction:column;gap:8px;height:calc(100% - 56px);"><div style='flex:1;overflow:auto;padding:6px;border-radius:8px;background:#f6f7fb'>Start a conversation...</div><div style='display:flex;gap:8px'><input placeholder='Type a message' style='flex:1;padding:10px;border-radius:8px;border:1px solid #e6e9ef'/><button style='padding:10px 12px;border-radius:8px;background:linear-gradient(90deg,#06b6d4,#3b82f6);color:#fff;border:none'>Send</button></div></div>`; document.body.appendChild(panel); document.getElementById('closeChat').addEventListener('click', ()=> panel.remove()); }
+
+            // Wire Edit, Message, Logout, Documents actions
+            document.getElementById('messageBtn')?.addEventListener('click', ()=> openQuickChat());
+            // Notifications button (header) should open quick chat like Home
+            document.getElementById('notifBtn')?.addEventListener('click', ()=> openQuickChat());
+            document.getElementById('logoutBtn')?.addEventListener('click', ()=> { if (confirm('هل أنت متأكد من تسجيل الخروج؟')) { alert('Logging out... (implement actual logout)'); } });
+            document.getElementById('clearNotifications')?.addEventListener('click', ()=> { const list = document.getElementById('notificationsList'); if (list) list.innerHTML = '<div style="color:#7f8c8d">No notifications</div>'; });
+            document.getElementById('uploadDoc')?.addEventListener('click', ()=> alert('Upload document — implement file input.'));
+            document.querySelectorAll('button[data-doc]').forEach(b => b.addEventListener('click', ()=> alert('Download: '+ b.dataset.doc)));
+
+            /* Edit Profile modal: markup is added below; hook handlers here */
+
+
+            // Deadlines widget handlers
+            (function(){
+                const deadlinesList = document.getElementById('deadlinesList');
+                function attachMarkDone(btn){ btn.addEventListener('click', ()=>{ const item = btn.closest('.deadline-item'); if (!item) return; item.style.opacity = '0.3'; setTimeout(()=> item.remove(), 220); }); }
+                document.querySelectorAll('.mark-done').forEach(attachMarkDone);
+                document.getElementById('addDeadline')?.addEventListener('click', ()=>{
+                    const text = prompt('Add deadline (e.g. "Project X — due Dec 1"):');
+                    if (!text) return;
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'deadline-item';
+                    wrapper.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:#fffbea';
+                    wrapper.innerHTML = `<div>${text}</div><div><button class="btn ghost mark-done">Done</button></div>`;
+                    deadlinesList.prepend(wrapper);
+                    attachMarkDone(wrapper.querySelector('.mark-done'));
+                });
+            })();
+
+            // Back button on profile header (acts like "View All" placement in Home)
+            const backBtnProfile = document.getElementById('backBtnProfile');
+            if (backBtnProfile) {
+                backBtnProfile.addEventListener('click', function () {
+                        // go back to dashboard
+                        window.location.href = 'dashboard';
+                    });
+            }
+
+            // Ensure header buttons (notif, dark toggle) are initialized and resilient
+            (function initHeaderButtons(){
+                // Notifications -> quick chat
+                const notif = document.getElementById('notifBtn');
+                if (notif) {
+                    // remove previous handlers to avoid duplicates
+                    notif.replaceWith(notif.cloneNode(true));
+                }
+                const notifFresh = document.getElementById('notifBtn');
+                if (notifFresh) notifFresh.addEventListener('click', ()=> openQuickChat());
+
+                // Dark mode toggle: make sure it toggles body.dark-mode and persists state
+                const darkBtn = document.getElementById('darkModeBtn');
+                if (darkBtn){
+                    const icon = darkBtn.querySelector('i');
+                    function setDark(isDark){ if (isDark){ document.body.classList.add('dark-mode'); if (icon){ icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); } darkBtn.setAttribute('aria-pressed','true'); } else { document.body.classList.remove('dark-mode'); if (icon){ icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); } darkBtn.setAttribute('aria-pressed','false'); } }
+                    // remove duplicates then attach
+                    darkBtn.replaceWith(darkBtn.cloneNode(true));
+                    const darkFresh = document.getElementById('darkModeBtn');
+                    if (darkFresh){
+                        darkFresh.addEventListener('click', ()=>{ const isDark = document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', isDark); setDark(isDark); darkFresh.style.transform = 'scale(0.98)'; setTimeout(()=> darkFresh.style.transform = '', 120); });
+                        // apply persisted state
+                        if (localStorage.getItem('darkMode') === 'true') setDark(true); else setDark(false);
+                    }
+                }
+            })();
+        })();
+
+
+    </script>
+
+    <script>
+(function () {
+    // كل عناصر السايدبار
+    const items = document.querySelectorAll('.nav-item');
+
+    // ابعت المسار الحقيقي للصفحة بدون / في الآخر
+    const current = window.location.pathname.replace(/\/$/, "").toLowerCase();
+
+    // شيل active من الكل
+    items.forEach(i => i.classList.remove("active"));
+
+    let matched = null;
+
+    // 1) أولاً — طابق link كامل مع data-href
+    items.forEach(i => {
+        const href = i.dataset.href;
+        if (!href) return;
+
+        try {
+            // نحلل الرابط لحماية من الروابط المطلقة
+            const a = document.createElement("a");
+            a.href = href;
+            const path = a.pathname.replace(/\/$/, "").toLowerCase();
+
+            if (path === current) matched = i;
+        } catch { }
+    });
+
+    // 2) لو لسه ملقاش — طابق آخر جزء مع الـ data-key
+    if (!matched) {
+        const last = current.split("/").pop();
+        matched = Array.from(items).find(i =>
+            (i.dataset.key || "").toLowerCase() === last
+        );
+    }
+
+    // 3) لو لسه — طابق بادئة (لصفحات الأقسام مثل /opportunities/5/edit)
+    if (!matched) {
+        matched = Array.from(items).find(i => {
+            const href = i.dataset.href;
+            if (!href) return false;
+
+            const a = document.createElement("a");
+            a.href = href;
+            const path = a.pathname.replace(/\/$/, "").toLowerCase();
+
+            return current.startsWith(path);
+        });
+    }
+
+    // لو وجدنا العنصر — فعّله
+    if (matched) matched.classList.add("active");
+
+})();
+</script>
+
+</body>
+</html>

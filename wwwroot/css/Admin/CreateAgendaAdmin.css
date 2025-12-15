@@ -1,0 +1,78 @@
+﻿/* ====== Page Background ====== */
+body {
+    background-color: #0c1b33;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* ====== Main Container ====== */
+.create-container {
+    width: 60%;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+    /* ====== Page Title ====== */
+    .create-container h2 {
+        color: #1b59e0;
+        font-weight: 700;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+/* ====== Form Groups ====== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+    .form-group label {
+        font-weight: 600;
+        font-size: 15px;
+        color: #0c1b33;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+/* ====== Inputs ====== */
+.form-control,
+textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #cfd4dc;
+    background: #f7f9fc;
+    font-size: 15px;
+    transition: 0.2s ease-in-out;
+}
+
+    .form-control:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #1b59e0;
+        box-shadow: 0 0 4px rgba(27, 89, 224, 0.4);
+    }
+
+/* ====== Submit Button (Matches + Add Event Style) ====== */
+.btn-submit {
+    width: 180px;
+    background-color: #1b59e0;
+    color: white;
+    padding: 12px 18px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-top: 10px;
+}
+
+    .btn-submit:hover {
+        background-color: #1647b8;
+    }
+
+/* Validation error */
+.text-danger {
+    font-size: 14px;
+}

@@ -1,0 +1,61 @@
+﻿@model My_Uni_Hub.Models.Pages.UniversityAgenda
+
+@{
+ViewData["Title"] = "Create Event";
+Layout = "_AdminLayout";
+}
+
+<link rel="stylesheet" href="~/css/Admin/CreateAgendaAdmin.css" asp-append-version="true" />
+
+<div class="create-container">
+    <h2>Create New Event</h2>
+
+<form asp-action="Create" method="post">
+
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate"></label>
+        <input asp-for="StartDate" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate"></label>
+        <input asp-for="EndDate" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FacultyId"></label>
+        <select asp-for="FacultyId" class="form-control" asp-items="ViewBag.Faculties">
+            <option value="">-- Select Faculty --</option>
+        </select>
+        <span asp-validation-for="FacultyId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DepartmentId"></label>
+        <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.Departments">
+            <option value="">-- Select Department --</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn-submit">Create</button>
+</form>
+</div>
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

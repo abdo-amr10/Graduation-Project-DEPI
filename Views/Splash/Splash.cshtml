@@ -1,0 +1,175 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome | MyUni Hub</title>
+
+  <!-- Using Poppins for a cleaner modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="~/css/Splash.css" />
+
+
+</head>
+<body class="preload">
+
+  <!-- Particles canvas -->
+  <canvas id="particles"></canvas>
+
+  <div class="bg-overlay"></div>
+  <div class="grid-pattern"></div>
+
+  <!-- LOGO (left) -->
+  <div class="logo" aria-hidden="true">
+    <div class="logo-wrapper" role="img" aria-label="MyUni Hub Logo">
+      <div class="logo-glow" aria-hidden="true"></div>
+
+      <div class="logo-mask" aria-hidden="true">
+        <!-- keep source as your logo.png -->
+        <img src="~/Images/logo.png" alt="MyUni Hub">
+      </div>
+    </div>
+  </div>
+
+  <!-- Title & subtitle (right) -->
+  <div class="content" aria-hidden="true">
+    <div class="title">MyUni Hub</div>
+    <div class="subtitle">Connecting Students, Knowledge &amp; Innovation</div>
+  </div>
+
+  <!-- progress + percent -->
+  <div class="progress-container" aria-hidden="true">
+    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="loading-line">
+      <div class="loading-text">LOADING</div>
+      <div class="loading-percent" id="loadingPct">0%</div>
+    </div>
+  </div>
+
+  <script>
+    // ---- Particles with lines + subtle parallax to mouse ----
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let w = canvas.width = innerWidth;
+    let h = canvas.height = innerHeight;
+
+    window.addEventListener('resize', () => {
+      w = canvas.width = innerWidth;
+      h = canvas.height = innerHeight;
+      initParticles();
+    });
+
+    let mouse = { x: w/2, y: h/2 };
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+    class Particle {
+      constructor(x,y,r,vx,vy,c){
+        this.x=x; this.y=y; this.r=r; this.vx=vx; this.vy=vy; this.c=c;
+      }
+      update(){
+        // subtle parallax towards mouse / center
+        const dx = (mouse.x - this.x) * 0.0006;
+        const dy = (mouse.y - this.y) * 0.0006;
+        this.x += this.vx + dx;
+        this.y += this.vy + dy;
+        if(this.x < 0 || this.x > w) this.vx *= -1;
+        if(this.y < 0 || this.y > h) this.vy *= -1;
+      }
+      draw(){
+        ctx.beginPath();
+        ctx.fillStyle = this.c;
+        ctx.shadowBlur = 12; ctx.shadowColor = this.c;
+        ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    let particles = [];
+    function initParticles(){
+      particles = [];
+      const colors = ["rgba(179,136,255,0.72)","rgba(125,211,252,0.68)","rgba(192,132,252,0.68)","rgba(168,123,255,0.72)"];
+      const count = Math.min(100, Math.floor(innerWidth / 12));
+      for(let i=0;i<count;i++){
+        const r = Math.random()*2.4 + 0.6;
+        const x = Math.random()*w, y = Math.random()*h;
+        const vx = (Math.random()-0.5)*0.45, vy = (Math.random()-0.5)*0.45;
+        const c = colors[Math.floor(Math.random()*colors.length)];
+        particles.push(new Particle(x,y,r,vx,vy,c));
+      }
+    }
+
+    function connect(){
+      const maxD = 140;
+      for(let i=0;i<particles.length;i++){
+        for(let j=i+1;j<particles.length;j++){
+          const a = particles[i], b = particles[j];
+          const dx = a.x-b.x, dy = a.y-b.y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if(d < maxD){
+            const alpha = 0.18 * (1 - d/maxD);
+            ctx.strokeStyle = `rgba(179,136,255,${alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function loop(){
+      ctx.clearRect(0,0,w,h);
+      for(const p of particles){ p.update(); p.draw(); }
+      connect();
+      raf = requestAnimationFrame(loop);
+    }
+
+    let raf = null;
+    initParticles();
+    loop();
+
+    // ---- progress counter + redirect after 5s ----
+    const duration = 5000; // 5 seconds visible
+    const start = performance.now();
+    const progressFill = document.getElementById('progressFill');
+    const loadingPct = document.getElementById('loadingPct');
+
+    function tick(now){
+      const elapsed = Math.min(now - start, duration);
+      const pct = Math.round((elapsed / duration) * 100);
+      progressFill.style.width = pct + '%';
+      loadingPct.textContent = pct + '%';
+      if(elapsed < duration){
+        requestAnimationFrame(tick);
+      } else {
+        // finish: fade out and redirect
+        document.body.classList.add('fade-out');
+        // stop particles loop politely
+        if(raf) cancelAnimationFrame(raf);
+        setTimeout(()=>{ location.href = "/landing"; }, 900);
+      }
+    }
+
+    // small delay to allow initial CSS reveal to play nicely
+    requestAnimationFrame(tick);
+
+    // remove preload class so logo reveal plays
+    window.addEventListener('load', () => {
+      setTimeout(()=> document.body.classList.remove('preload'), 40);
+    });
+
+    // accessibility: respect reduced motion
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if(mq.matches){
+      // complete immediately
+      progressFill.style.width = '100%';
+      loadingPct.textContent = '100%';
+      setTimeout(()=>{ location.href = "/landing"; }, 600);
+    }
+  </script>
+</body>
+</html>

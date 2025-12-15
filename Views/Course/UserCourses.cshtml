@@ -1,0 +1,376 @@
+﻿@model IEnumerable<My_Uni_Hub.Models.Pages.Course>
+@{
+    ViewBag.Title = "Courses";
+}
+
+    <title>My Courses - MyUni Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/User/Sidebar.css">
+
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#e8ecf1 100%);min-height:100vh}
+
+
+    .main-content {
+        margin-left: var(--sidebar-collapsed);
+        padding: 22px;
+        width: calc(100% - var(--sidebar-collapsed));
+        min-height: 100vh;
+        transition: margin-left .25s ease, width .25s ease;
+        box-sizing: border-box;
+        overflow-x: hidden; /* حماية مؤقتة */
+    }
+    /* Push main content when sidebar expands/hover (match bbb.html) */
+       
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+        .see-all {
+            background: transparent;
+            border: none;
+            color: var(--accent-2, #3b82f6);
+            font-weight: 700;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.15s ease, transform 0.08s ease;
+        }
+        /* header icon button styles (copied light variant used on Home) */
+        .header-icons { display:flex; gap:12px; align-items:center }
+        .icon-btn {
+            width:44px; height:44px; border-radius:12px; background:linear-gradient(180deg,#eaf4ff,#d6ebff); border:1px solid rgba(59,130,246,0.12); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; color:#053160; box-shadow:0 6px 18px rgba(10,35,70,0.06); transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+        }
+        .icon-btn i{ font-size:18px; }
+        .icon-btn.orange { background: linear-gradient(180deg,#fff4e6,#fff0de); border:1px solid rgba(255,140,0,0.14); color:#b44b00 }
+        .icon-btn.orange:hover{ background: linear-gradient(180deg,#ffd9b8,#ffc58a); }
+        .dark-toggle { width:44px; height:44px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; border:none; cursor:pointer; background: linear-gradient(180deg,#fff7ed,#fff1e6); color:#07304a; box-shadow:0 6px 18px rgba(10,35,70,0.06); transition: transform 160ms ease, background 200ms ease, color 180ms ease }
+        .dark-toggle.navy { background: linear-gradient(180deg,#e7f1ff,#d7e9ff); color:#05203f }
+        .dark-toggle .fa-sun, .dark-toggle .fa-moon { transition: transform 260ms ease, opacity 180ms ease }
+        .see-all:hover { background: rgba(59,130,246,0.08); transform: translateY(-1px); }
+        .welcome-text{font-size:22px}
+       .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 كروت في الصف */
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.course-card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+}
+        .course-top{display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid rgba(10,30,60,0.04)}
+        .course-accent{width:6px;height:64px;border-radius:6px;background:linear-gradient(180deg,#0b6cff,#3b82f6);margin-right:6px}
+        .course-info h4{font-size:18px;color:#0b2540;margin-bottom:4px}
+        .course-info p{font-size:13px;color:#556677;margin:0}
+        .course-body {
+            display: block;
+        }
+        .material-actions {
+            display: flex;
+            gap: 10px; /* ← يفصل بين Open و Download */
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+            .material-actions .btn {
+                padding: 6px 12px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+        /* Open button */
+        .btn.open {
+            background: linear-gradient(90deg,#06b6d4,#3b82f6);
+            color: #fff;
+        }
+
+        /* Download button */
+        .btn.download {
+            background: #eef2ff;
+            color: #1e3a8a;
+            border: 1px solid rgba(30,58,138,0.1);
+        }
+
+        /* Hover effect */
+        .material-actions .btn:hover {
+            transform: translateY(-2px);
+            opacity: .95;
+        }
+
+        .materials, .tasks{background:#fbfdff;border-radius:10px;padding:10px;border:1px solid rgba(10,30,60,0.03)}
+        .materials h5, .tasks h5{font-size:14px;margin-bottom:8px;color:#193a66}
+        .material-item, .task-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:linear-gradient(180deg,#fff,#f6f9ff);margin-bottom:8px;border:1px solid rgba(10,30,60,0.03)}
+        .material-item small, .task-item small{color:#3b4b66}
+        .material-actions button, .task-actions button{padding:6px 8px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+        .material-actions .btn{background:linear-gradient(90deg,#06b6d4,#3b82f6);color:#fff}
+        .task-actions .btn{background:#eef2ff;color:#1e3a8a}
+        .course-card:hover{transform:translateY(-4px);transition:transform .18s ease,box-shadow .18s ease}
+        .sidebar-right{position:relative;margin-top:0;margin-left:auto;width:320px}
+        .widget{background:#fff;padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(10,30,60,0.06);margin-bottom:14px}
+        /* FIX REAL BUTTON LOOK FOR <a> */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none; /* مهم جداً: يمنع underline */
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        /* PRIMARY (OPEN) */
+        .material-actions .btn:first-child {
+            background: linear-gradient(90deg,#06b6d4,#3b82f6);
+            color: white;
+        }
+
+        /* SECONDARY (DOWNLOAD) */
+        .material-actions .btn:nth-child(2) {
+            background: #eef2ff;
+            color: #1e3a8a;
+            border: 1px solid rgba(30,58,138,0.1);
+        }
+
+        /* HOVER */
+        .material-actions .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode { background: linear-gradient(135deg,#070911 0%, #071229 100%); color:#dfe8f7 }
+        body.dark-mode .sidebar { background-color:#071129 }
+        body.dark-mode .nav-item { color: rgba(222,233,255,0.86) }
+        body.dark-mode .nav-label { color: rgba(222,233,255,0.9) }
+        body.dark-mode .nav-item.active, body.dark-mode .nav-item:hover { color:#ffb86b; background: rgba(255,140,0,0.08) }
+        body.dark-mode .main-content { background: #0b1220 }
+        body.dark-mode .course-card { background:#071226; border:1px solid rgba(255,255,255,0.03); box-shadow:0 10px 28px rgba(2,6,23,0.35) }
+        body.dark-mode .course-info h4 { color:#e6f0ff }
+        body.dark-mode .course-info p, body.dark-mode .material-item small, body.dark-mode .task-item small { color:#99accb }
+        body.dark-mode .materials, body.dark-mode .tasks { background:#071226; border:1px solid rgba(255,255,255,0.02) }
+        body.dark-mode .material-item, body.dark-mode .task-item { background: linear-gradient(180deg,#071226,#0b1724); border:1px solid rgba(255,255,255,0.02) }
+        body.dark-mode .material-actions .btn, body.dark-mode .task-actions .btn { box-shadow:none }
+        body.dark-mode .see-all { color:#8fb7ff }
+    </style>
+
+<div class="header">
+    <h1 class="welcome-text">My Courses</h1>
+    <div class="header-right" style="display:flex;gap:10px;align-items:center">
+        <button class="see-all" id="backBtn" onclick="history.back()">Back</button>
+        <div class="header-icons">
+            <button class="dark-toggle navy" id="darkModeBtn" aria-pressed="false" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        </div>
+    </div>
+</div>
+
+@{
+    // قائمة مدربين ثابتة (نفس اللي في صفحة البروفايل)
+    var instructors = new[]
+    {
+        "Dr. Ayman Al-Sayed",
+        "Dr. Nada Ameen",
+        "Dr. Sarah Ahmed",
+        "Dr. Omar Hassan",
+        "Dr. Lina Mostafa",
+        "Dr. Saeed Hany"
+    };
+
+    // عدّاد لِتوزيع الأسماء بالتتابع
+    int idx = 0;
+}
+
+<div class="courses-grid" id="coursesGrid">
+    @if (Model == null || !Model.Any())
+    {
+        <p>لم يتم العثور على كورسات مسجلة لديك.</p>
+    }
+    else
+    {
+        foreach (var course in Model)
+        {
+            // اختر المحاضر بناءً على الفهرس ثم زِد العدّاد
+            var instructor = instructors.Length > 0 ? instructors[(idx++) % instructors.Length] : "Instructor";
+
+            <div class="course-card" data-course="@course.Name" data-course-id="@course.Id">
+                <div class="course-top">
+                    <div class="course-accent" aria-hidden="true"></div>
+                    <div class="course-info">
+                        <h4>@Html.Encode(course.Name)</h4>
+                        <p>@Html.Encode(instructor)</p>
+                    </div>
+                </div>
+
+                <div class="course-body">
+                    <div class="materials">
+                        <h5>Materials</h5>
+
+                        @if (course.Materials == null || !course.Materials.Any())
+                        {
+                            <p>No files uploaded yet</p>
+                        }
+                        else
+                        {
+                            foreach (var m in course.Materials.OrderByDescending(x => x.UploadDate))
+                            {
+                                <div class="material-item" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+                                    <div>
+                                        <strong>@Html.Encode(m.Title)</strong><br />
+                                        <small>@(string.IsNullOrWhiteSpace(m.Description) ? "-" : Html.Encode(m.Description)) • @m.UploadDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</small>
+                                    </div>
+                                    <div class="material-actions">
+                                        <a class="btn open" href="@Url.Action("Download", "Course", new { id = m.Id })" target="_blank">Open</a>
+                                        <a class="btn download" href="@Url.Action("Download", "Course", new { id = m.Id })" download>Download</a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // dark mode toggle persistence (same logic as before)
+        (function(){
+            const btn = document.getElementById('darkModeBtn');
+            if (!btn) return;
+            const innerIcon = btn.querySelector('i');
+            function updateKnob(isDark){ if (!innerIcon) return; if (isDark){ innerIcon.classList.remove('fa-moon'); innerIcon.classList.add('fa-sun'); btn.classList.add('toggled'); } else { innerIcon.classList.remove('fa-sun'); innerIcon.classList.add('fa-moon'); btn.classList.remove('toggled'); } }
+            btn.addEventListener('click', ()=>{ const isDark = document.body.classList.toggle('dark-mode'); btn.setAttribute('aria-pressed', isDark); localStorage.setItem('darkMode', isDark); updateKnob(isDark); });
+            if (localStorage.getItem('darkMode') === 'true'){ document.body.classList.add('dark-mode'); btn.setAttribute('aria-pressed','true'); updateKnob(true); } else updateKnob(false);
+        })();
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            try {
+                // Find current path (without querystring)
+                const path = window.location.pathname.replace(/\/$/, "").toLowerCase(); // remove trailing slash
+                const items = document.querySelectorAll(".nav-item");
+
+                let found = false;
+                items.forEach(i => {
+                    // try data-href first (absolute or relative)
+                    const href = (i.getAttribute("data-href") || "").toLowerCase();
+                    if (href) {
+                        // create an anchor to get pathname part
+                        const a = document.createElement("a");
+                        a.href = href;
+                        const hrefPath = a.pathname.replace(/\/$/, "");
+                        if (hrefPath === path) {
+                            i.classList.add("active");
+                            found = true;
+                            return;
+                        }
+                    }
+
+                    // fallback: compare data-key against last path segment or action name
+                    const key = i.getAttribute("data-key") || "";
+                    if (!found && key) {
+                        const lastSegment = path.split("/").filter(Boolean).pop() || "";
+                        if (lastSegment === key.toLowerCase() || lastSegment.includes(key.toLowerCase())) {
+                            i.classList.add("active");
+                            found = true;
+                        }
+                    }
+                });
+
+                // if nothing matched, optionally mark home when path is / or /user/dashboard
+                if (!found) {
+                    const homeItem = document.querySelector('.nav-item[data-key="home"]');
+                    if (homeItem && (path === "" || path === "/" || path.endsWith("/dashboard"))) homeItem.classList.add("active");
+                }
+            } catch (e) {
+                console.warn("sidebar active script error:", e);
+            }
+        });
+    </script>
+
+}
+
+
+
+    <script>
+
+        // Attach handlers for material open buttons
+        function attachMaterialHandlers(root){ root.querySelectorAll('[data-file]').forEach(b => b.addEventListener('click', ()=> alert('Open file: ' + b.dataset.file))); }
+        // Attach handlers for existing cards
+        document.querySelectorAll('.course-card').forEach(c => attachMaterialHandlers(c));
+    </script>
+        <script src="~/js/Admin/Sidebar.js"></script>
+
+
+            <script>
+(function () {
+    // كل عناصر السايدبار
+    const items = document.querySelectorAll('.nav-item');
+
+    // ابعت المسار الحقيقي للصفحة بدون / في الآخر
+    const current = window.location.pathname.replace(/\/$/, "").toLowerCase();
+
+    // شيل active من الكل
+    items.forEach(i => i.classList.remove("active"));
+
+    let matched = null;
+
+    // 1) أولاً — طابق link كامل مع data-href
+    items.forEach(i => {
+        const href = i.dataset.href;
+        if (!href) return;
+
+        try {
+            // نحلل الرابط لحماية من الروابط المطلقة
+            const a = document.createElement("a");
+            a.href = href;
+            const path = a.pathname.replace(/\/$/, "").toLowerCase();
+
+            if (path === current) matched = i;
+        } catch { }
+    });
+
+    // 2) لو لسه ملقاش — طابق آخر جزء مع الـ data-key
+    if (!matched) {
+        const last = current.split("/").pop();
+        matched = Array.from(items).find(i =>
+            (i.dataset.key || "").toLowerCase() === last
+        );
+    }
+
+    // 3) لو لسه — طابق بادئة (لصفحات الأقسام مثل /opportunities/5/edit)
+    if (!matched) {
+        matched = Array.from(items).find(i => {
+            const href = i.dataset.href;
+            if (!href) return false;
+
+            const a = document.createElement("a");
+            a.href = href;
+            const path = a.pathname.replace(/\/$/, "").toLowerCase();
+
+            return current.startsWith(path);
+        });
+    }
+
+    // لو وجدنا العنصر — فعّله
+    if (matched) matched.classList.add("active");
+
+})();
+</script>

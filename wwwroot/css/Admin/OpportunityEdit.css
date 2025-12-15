@@ -1,0 +1,134 @@
+﻿/* OpportunityEdit.css - match Material card (wider) and Create view styles */
+
+/* container / page */
+.main-content {
+    margin-left: 75px;
+    margin-right: 75px;
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1400px;
+    box-sizing: border-box;
+}
+
+/* card */
+.form-card {
+    width: 100%;
+    max-width: 980px; /* same width used for Material-like layout */
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 36px 42px;
+    box-shadow: 0 8px 30px rgba(11,26,61,0.06);
+    box-sizing: border-box;
+}
+
+/* header/title */
+.header-title {
+    font-size: 36px;
+    line-height: 1.05;
+    font-weight: 700;
+    color: #0b1a3d;
+    margin-bottom: 26px;
+    text-align: center;
+}
+
+.form-section-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 18px;
+    color: #0b1a3d;
+}
+
+/* grid and inputs */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-weight: 700;
+        color: #0b1a3d;
+        margin-bottom: 8px;
+    }
+
+.form-control {
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid #eceff5;
+    font-size: 15px;
+    background: #fff;
+    transition: box-shadow .12s ease, border-color .12s ease;
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0b1a3d;
+        box-shadow: 0 8px 24px rgba(11,26,61,0.06);
+    }
+
+textarea.form-control {
+    min-height: 160px;
+}
+
+/* actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.btn {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background: #0b1a3d;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(11,26,61,0.12);
+}
+
+.btn-secondary {
+    background: #f0f4ff;
+    color: #0b1a3d;
+    border: 1px solid #e0e0e0;
+}
+
+/* success message */
+.success-message {
+    background: #e6f9f0;
+    color: #10b981;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    display: none;
+    border-left: 4px solid #10b981;
+}
+
+/* responsive */
+@media (max-width: 1000px) {
+    .form-card {
+        padding: 22px;
+        max-width: 760px;
+    }
+
+    .header-title {
+        font-size: 28px;
+    }
+}

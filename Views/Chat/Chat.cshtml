@@ -1,0 +1,846 @@
+﻿@{
+    ViewBag.Title = "Chat";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyUni Hub - Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* Dashboard-matching styles (sidebar + cards) */
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial, sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#e8ecf1 100%);color:#222;min-height:100vh}
+        .container{display:flex;min-height:100vh}
+        /* ===== Sidebar ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background: #0b1a3d;
+            border-radius: 0 25px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* ثابت */
+            padding: 15px 0;
+            box-shadow: 3px 0 10px rgba(0,0,0,.12);
+            transition: width .3s;
+        }
+
+            .sidebar.expanded,
+            .sidebar:hover {
+                width: 230px;
+                box-shadow: 10px 0 30px rgba(2,6,23,.18);
+            }
+
+        /* ===== Logo ===== */
+        .logo-section {
+            width: 100%;
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: center; /* مقفول → في النص */
+            transition: justify-content .25s ease, padding-left .25s ease;
+        }
+
+        .sidebar.expanded .logo-section,
+        .sidebar:hover .logo-section {
+            justify-content: flex-start; /* مفتوح → شمال */
+            padding-left: 25px;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        /* لو ناوي تظهر الاسم */
+        .logo-text {
+            display: none;
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .sidebar.expanded .logo-text,
+        .sidebar:hover .logo-text {
+            display: inline;
+        }
+
+        /* ===== Navigation ===== */
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            flex-grow: 1;
+            width: 100%;
+            padding-top: 8px;
+        }
+
+        .bottom-menu {
+            margin-top: auto;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: stretch;
+        }
+
+        .nav-item {
+            color: #bfc8da;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 8px 0;
+            border-radius: 10px;
+            justify-content: center; /* مقفول */
+        }
+
+        .sidebar.expanded .nav-item,
+        .sidebar:hover .nav-item {
+            justify-content: flex-start;
+            padding-left: 25px;
+        }
+
+        .nav-item i {
+            width: 36px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .nav-label {
+            color: #bfc8da;
+            font-size: 15px;
+            white-space: nowrap;
+            display: none;
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: opacity .2s,transform .2s;
+        }
+
+        .sidebar.expanded .nav-label,
+        .sidebar:hover .nav-label {
+            display: inline-block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: #ff8c00;
+            background: rgba(255,140,0,.06);
+        }
+
+        /* ===== Main ===== */
+        .main {
+            margin-left: 75px;
+            padding: 22px;
+            transition: margin-left .25s;
+        }
+
+        .sidebar.expanded ~ .main,
+        .sidebar:hover ~ .main {
+            margin-left: 230px;
+        }
+
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+        .page-title{font-size:26px;font-weight:700;color:#2c3e50}
+
+        .controls{display:flex;gap:10px;align-items:center}
+        .search{padding:8px 10px;border-radius:10px;border:1px solid rgba(10,35,70,0.08);background:linear-gradient(180deg,#fbfdff,#f3f8ff);min-width:220px}
+        .btn{padding:8px 12px;border-radius:10px;border:none;background:linear-gradient(180deg,#fff4e6,#fff0de);color:#b44b00;cursor:pointer}
+        .featured{background:linear-gradient(90deg,#fff8ef,#fff4e6);border-radius:14px;padding:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+        .tag{background:#eef6ff;color:#063055;padding:6px 8px;border-radius:8px;font-size:13px;margin-right:6px}
+        .save-btn{padding:6px 10px;border-radius:8px;border:1px solid rgba(10,35,70,0.06);background:#fff;cursor:pointer}
+
+        /* --- Force left column to behave and grid to give big cards --- */
+        .container, .main {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+            /* ensure parent column can shrink/grow properly */
+            section, .main > div, .main section {
+                min-width: 0;
+            }
+
+        /* responsive grid: make cards larger and centered when space allows */
+        .grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)) !important;
+            gap: 22px !important;
+            width: 100% !important;
+            align-items: start !important;
+            justify-content: center; /* center columns so they don't stretch thin across full width */
+            box-sizing: border-box !important;
+        }
+
+        /* make sure each card fills its column */
+        #list .card, .card {
+            width: 100% !important;
+            max-width: none !important;
+            box-sizing: border-box !important;
+        }
+
+        /* If you want to cap columns on very wide screens (max 3 columns) */
+
+
+        /* fallback: if any parent constrains, allow shrinking */
+        .container > * {
+            min-width: 0;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.06)
+        }
+        .meta{font-size:13px;color:#7f8c8d;margin-bottom:8px}
+        .title{font-size:16px;font-weight:700;color:#063055;margin-bottom:10px}
+        .excerpt{color:#334155;font-size:14px;line-height:1.45}
+        .readmore{display:inline-block;margin-top:10px;color:#3b82f6;font-weight:700}
+
+        .side-right{width:320px;display:flex;flex-direction:column;gap:18px}
+        .widget{background:#fff;padding:16px;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+        .widget h3{margin-bottom:12px}
+
+        
+        /* Main area */
+        .main-content{margin-left:75px;padding:32px;width:calc(100% - 75px);min-height:100vh;transition:margin-left .25s ease}
+        .sidebar.expanded ~ .main-content,.sidebar:hover ~ .main-content{margin-left:230px;width:calc(100% - 230px)}
+
+        .page-header{font-size:28px;font-weight:700;color:#2c3e50;margin-bottom:18px}
+        .placeholder-card{background:white;border-radius:14px;padding:40px;box-shadow:0 8px 30px rgba(10,30,60,0.06);max-width:900px}
+        .muted{color:#556677}
+
+
+
+    
+
+    </style>
+
+
+</head>
+<body>
+
+<div class="container">
+    <!-- Sidebar (canonical from dashboard) -->
+    <div class="sidebar" id="leftSidebar">
+        <div class="logo-section">
+            <a href="dashboard.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit">
+                <img src="~/Images/logo.png" alt="MyUni Hub logo" class="logo-img">
+            </a>
+        </div>
+
+        <ul class="nav-menu">
+                <li class="nav-item" data-key="home" data-href='@Url.Action("dashboard", "user")'>
+                    <i class="fas fa-home"></i><span class="nav-label">Home</span>
+                </li>
+
+                <li class="nav-item" data-key="profile" data-href='@Url.Action("profile", "user")'>
+                    <i class="fas fa-user"></i><span class="nav-label">Profile</span>
+                </li>
+
+                <li class="nav-item" data-key="mycourses" data-href='@Url.Action("courses", "user")'>
+                    <i class="fas fa-book"></i><span class="nav-label">My Courses</span>
+                </li>
+
+                <li class="nav-item" data-key="ann" data-href="/announcements" >
+                    <i class="fas fa-bullhorn"></i><span class="nav-label">Announcements</span>
+                </li>
+
+                <li class="nav-item" data-key="chat" data-href='@Url.Action("chat", "user")'>
+                    <i class="fas fa-comments"></i><span class="nav-label">Chat</span>
+                </li>
+
+                <li class="nav-item" data-key="agenda"  data-href="/useragenda">
+                    <i class="fas fa-calendar-alt"></i><span class="nav-label">Agenda</span>
+                </li>
+
+                <li class="nav-item" data-key="opp" data-href="/opportunities">
+                    <i class="fas fa-briefcase"></i><span class="nav-label">Opportunities</span>
+                </li>
+
+                <li class="nav-item" data-key="lost" data-href="/lost-and-found">
+                    <i class="fas fa-box-open"></i><span class="nav-label">Lost &amp; Found</span>
+                </li>
+            </ul>
+
+
+            <ul class="bottom-menu" role="menu">
+                <li class="nav-item" role="menuitem" data-key="settings" data-href="/user/profile"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
+                <li class="nav-item" role="menuitem" data-key="logout" data-href="/Auth/login"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+            </ul>
+    </div>
+
+        <!-- Main content -->
+   <div class="main-content">
+    <div class="page-header">Chat with students</div>
+
+    <div class="placeholder-card">
+        <h2>Chat Feature</h2>
+        <p class="muted">
+            This feature is currently under development — you'll soon be able to message your colleagues and faculty members within the platform. Bookmark this page to check back later.
+        </p>
+
+        <p style="margin-top:18px;color:#7f8c8d">
+            To follow the development progress or test integrations, contact the project team or open an issue on the code repository.
+        </p>
+    </div>
+</div>
+
+
+    <!-- Modal -->
+   
+
+
+
+    <script>
+        (function(){
+            // عناصر DOM
+            const featuredWrap = document.getElementById('featuredWrap');
+            const listEl = document.getElementById('list');
+            const countEl = document.getElementById('count');
+            const qInput = document.getElementById('q');
+            const recentEl = document.getElementById('recent');
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDate = document.getElementById('modalDate');
+            const modalContent = document.getElementById('modalContent');
+            const closeModal = document.getElementById('closeModal');
+            const savedCountEl = document.getElementById('savedCount');
+
+            // enable/disable saving (public API)
+            let savingEnabled = true;
+            window.enableSaving = function(enable, options = { clearOnDisable: true }){
+                savingEnabled = !!enable;
+                savingEnabled = !!enable;
+                // toggle UI
+                document.querySelectorAll('.save-btn').forEach(b => {
+                    b.style.display = savingEnabled ? '' : 'none';
+                });
+                if(!savingEnabled && options.clearOnDisable){
+                    localStorage.removeItem('savedAnnouncements');
+                }
+                updateSavedCount();
+            };
+
+            // static fallback
+            const staticFallback = [
+                {id:1,title:"Course Registration Open",content:"Registration for next semester opens from Dec 1 to Dec 10.",date:"2025-12-01T09:00:00",category:'Academic',tags:['Registration']},
+                {id:2,title:"Student Union Meeting",content:"Meeting will be held in the conference hall on Wednesday.",date:"2025-11-25T12:00:00",category:'Campus',tags:['Events']},
+                {id:3,title:"Scholarship Announcement",content:"Students can now apply for the internal research scholarship.",date:"2025-11-05T08:30:00",category:'Opportunities',tags:['Scholarship']},
+                {id:4,title:"Library Hours Extended",content:"The library will extend hours during exam week.",date:"2025-11-20T10:00:00",category:'Campus',tags:['Library']},
+                {id:5,title:"IT Maintenance",content:"Network maintenance is scheduled this weekend; some services may be unavailable.",date:"2025-11-29T22:00:00",category:'IT',tags:['Maintenance']}
+            ];
+
+            // escape XSS
+            function esc(s){ if (s === null || s === undefined) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+            // format date
+            function formatDateAt(isoOrDate){
+                if (!isoOrDate) return '';
+                const d = (isoOrDate instanceof Date) ? isoOrDate : new Date(isoOrDate);
+                if (isNaN(d)) return esc(String(isoOrDate));
+                const pad = n => String(n).padStart(2,'0');
+                const y = d.getFullYear();
+                const m = pad(d.getMonth()+1);
+                const day = pad(d.getDate());
+                const hh = pad(d.getHours());
+                const mm = pad(d.getMinutes());
+                return `${y}-${m}-${day} AT ${hh}:${mm}`;
+            }
+
+            // modal
+            function openModal(item){
+                if(!item) return;
+                modalTitle.textContent = item.title || 'Announcement';
+                modalDate.textContent = formatDateAt(item.date);
+                modalContent.innerHTML = esc(item.content || item.body || '').replace(/\n/g, '<br/>');
+                modal.style.display = 'flex';
+            }
+            closeModal?.addEventListener('click', ()=> modal.style.display = 'none');
+            modal?.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+            // sort
+            function sortByDateDesc(arr){
+                return arr.slice().sort((x,y) => new Date(y.date) - new Date(x.date));
+            }
+
+            // saved helpers
+            function getSavedArray(){
+                try {
+                    return JSON.parse(localStorage.getItem('savedAnnouncements') || '[]');
+                } catch(e){
+                    console.warn('bad savedAnnouncements JSON', e);
+                    return [];
+                }
+            }
+            function isSaved(id){
+                const arr = getSavedArray();
+                return arr.indexOf(String(id)) !== -1;
+            }
+            function saveToggle(id){
+                if(!savingEnabled) return;
+                const arr = getSavedArray();
+                const sid = String(id);
+                const idx = arr.indexOf(sid);
+                if(idx === -1) arr.push(sid);
+                else arr.splice(idx,1);
+                localStorage.setItem('savedAnnouncements', JSON.stringify(arr));
+                updateSavedCount();
+                // return new state
+                return idx === -1;
+            }
+            function updateSavedCount(){
+                const arr = getSavedArray();
+                if(savedCountEl){
+                    savedCountEl.textContent = `You have ${arr.length} saved`;
+                }
+            }
+
+            // render featured
+            function renderFeatured(item){
+                if(!featuredWrap) return;
+                if(!item){ featuredWrap.innerHTML = ''; return; }
+                const excerpt = item.content ? (item.content.length > 400 ? esc(item.content.slice(0,400)) + '...' : esc(item.content)) : '';
+                featuredWrap.innerHTML = `
+                    <div class="featured" style="background:linear-gradient(90deg,#fff8ef,#fff4e6);border-radius:12px;padding:18px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 6px 24px rgba(2,6,23,0.04);margin-bottom:12px">
+                        <div style="flex:1">
+                            <h2 style="margin:0 0 8px 0;color:#05203f">${esc(item.title)}</h2>
+                            <div style="color:#6b7280;margin-bottom:10px">${esc(item.category || item.faculty || '')} • ${formatDateAt(item.date)}</div>
+                            <div style="color:#213645;line-height:1.6">${excerpt}</div>
+                        </div>
+                        <div style="flex:0 0 120px;text-align:right">
+                            <button class="btn-read" data-id="${esc(item.id)}" style="padding:8px 12px;border-radius:8px;border:0;background:#0b6cff;color:#fff;cursor:pointer">Read</button>
+                        </div>
+                    </div>
+                `;
+                featuredWrap.querySelectorAll('.btn-read').forEach(b => b.addEventListener('click', e => {
+                    const id = e.currentTarget.dataset.id;
+                    const itm = window._announcementsAll?.find(x => String(x.id) === String(id));
+                    if (itm) openModal(itm);
+                }));
+            }
+
+            // render list (cards)
+            function renderList(items){
+                if(!listEl) return;
+                listEl.innerHTML = '';
+                if(!items || items.length === 0){
+                    listEl.innerHTML = '<div class="widget">No announcements found.</div>';
+                    countEl && (countEl.textContent = '0');
+                    updateSavedCount();
+                    return;
+                }
+                items.forEach(a => {
+                    const saved = isSaved(a.id);
+                    const tagsHtml = (a.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join(' ');
+                    const excerpt = a.content ? (a.content.length > 220 ? esc(a.content.slice(0,220)) + '...' : esc(a.content)) : '';
+                    const card = document.createElement('article');
+                    card.className = 'card';
+                    card.style.background = '#fff';
+                    card.style.borderRadius = '12px';
+                    card.style.padding = '18px';
+                    card.style.boxShadow = '0 6px 18px rgba(2,6,23,0.04)';
+                    card.innerHTML = `
+                        <div class="meta" style="color:#6b7280;font-size:13px;margin-bottom:8px">${formatDateAt(a.date)} • ${esc(a.category || a.faculty || '')}</div>
+                        <div class="title" style="font-weight:700;color:#05203f;margin-bottom:8px">${esc(a.title)}</div>
+                        <div class="excerpt" style="color:#213645;line-height:1.6">${excerpt}</div>
+                        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+                            <button class="btn-read" data-id="${esc(a.id)}" style="padding:6px 10px;border-radius:8px;border:0;background:#0b6cff;color:#fff;cursor:pointer">Read more</button>
+                            <button class="save-btn" data-id="${esc(a.id)}" style="padding:6px 10px;border-radius:8px;border:1px solid #e6edf5;background:#fff;cursor:pointer;${savingEnabled ? '' : 'display:none;'}">${saved ? 'Saved' : 'Save'}</button>
+                            <div style="margin-left:auto">${tagsHtml}</div>
+                        </div>
+                    `;
+                    listEl.appendChild(card);
+                });
+
+                countEl && (countEl.textContent = String(items.length));
+
+                // attach handlers (delegate safer: re-query)
+                listEl.querySelectorAll('.btn-read').forEach(b => b.addEventListener('click', e => {
+                    const id = e.currentTarget.dataset.id;
+                    const itm = window._announcementsAll?.find(x => String(x.id) === String(id));
+                    if (itm) openModal(itm);
+                }));
+
+                listEl.querySelectorAll('.save-btn').forEach(b => {
+                    b.addEventListener('click', e => {
+                        const id = String(e.currentTarget.dataset.id);
+                        // toggle saved
+                        const becameSaved = saveToggle(id);
+                        e.currentTarget.textContent = becameSaved ? 'Saved' : 'Save';
+                    });
+                });
+
+                updateSavedCount();
+            }
+
+            // render recent
+            function renderRecent(items){
+                if(!recentEl) return;
+                recentEl.innerHTML = '';
+                if(!items || items.length === 0){ recentEl.innerHTML = '<div style="color:#6b7280;padding:8px">No recent alerts</div>'; return; }
+                items.slice(0,10).forEach(a => {
+                    const saved = isSaved(a.id);
+                    const wrapper = document.createElement('div');
+                    wrapper.style.background = '#fff';
+                    wrapper.style.borderRadius = '12px';
+                    wrapper.style.padding = '12px';
+                    wrapper.style.boxShadow = '0 6px 18px rgba(2,6,23,0.04)';
+                    wrapper.style.marginBottom = '10px';
+                    wrapper.innerHTML = `
+                        <div style="font-weight:700;color:#05203f;margin-bottom:6px">${formatDateAt(a.date)}</div>
+                        <div style="color:#213645;margin-bottom:8px">${esc(a.title)}</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div style="color:#6b7280;font-size:13px">${esc(a.category || a.faculty || '')}</div>
+                            <div>
+                                <button class="btn-read" data-id="${esc(a.id)}" style="padding:6px 10px;border-radius:8px;border:0;background:#0b6cff;color:#fff;cursor:pointer">Read more</button>
+                                <button class="save-btn" data-id="${esc(a.id)}" style="margin-left:6px;padding:6px 10px;border-radius:8px;border:1px solid #e6edf5;background:#fff;cursor:pointer;${savingEnabled ? '' : 'display:none;'}">${saved ? 'Saved' : 'Save'}</button>
+                            </div>
+                        </div>
+                    `;
+                    recentEl.appendChild(wrapper);
+                });
+
+                // attach handlers
+                recentEl.querySelectorAll('.btn-read').forEach(b => b.addEventListener('click', e => {
+                    const id = e.currentTarget.dataset.id;
+                    const itm = window._announcementsAll?.find(x => String(x.id) === String(id));
+                    if (itm) openModal(itm);
+                }));
+                recentEl.querySelectorAll('.save-btn').forEach(b => {
+                    b.addEventListener('click', e => {
+                        const id = String(e.currentTarget.dataset.id);
+                        const becameSaved = saveToggle(id);
+                        e.currentTarget.textContent = becameSaved ? 'Saved' : 'Save';
+                    });
+                });
+
+                // reflect saved state (already set on creation, but keep for safety)
+                const savedArr = getSavedArray();
+                recentEl.querySelectorAll('.save-btn').forEach(b => {
+                    if (savedArr.indexOf(String(b.dataset.id)) !== -1) b.textContent = 'Saved';
+                });
+            }
+
+            // map API data to our shape
+            function mapData(data){
+                return data.map(d => ({
+                    id: d.Id ?? d.id,
+                    title: d.Title ?? d.title ?? '(No title)',
+                    content: d.Body ?? d.Body ?? d.Excerpt ?? d.Excerpt ?? d.content ?? d.Content ?? '',
+                    date: d.CreatedAt ?? d.createdAt ?? d.date ?? d.Date ?? new Date().toISOString(),
+                    category: d.Faculty ?? d.Category ?? d.category ?? '',
+                    faculty: d.Faculty ?? d.faculty ?? '',
+                    tags: d.Tags ?? d.tags ?? []
+                }));
+            }
+
+            // load from API with fallback
+            async function loadFromApi(){
+                try {
+                    const res = await fetch('/announcements/listjson', { headers: { 'Accept': 'application/json' } });
+                    if (!res.ok) throw new Error('fetch failed');
+                    const data = await res.json();
+                    return mapData(data);
+                } catch (err) {
+                    console.warn('Announcements API failed, using fallback', err);
+                    return staticFallback;
+                }
+            }
+
+            // main: search + render
+            function applySearchAndRender(all){
+                const q = (qInput?.value || '').trim().toLowerCase();
+                let items = all.slice();
+                if (q) items = items.filter(i => (((i.title||'') + ' ' + (i.content||'') + ' ' + (i.category||'') + ' ' + (i.faculty||'')).toLowerCase().includes(q)));
+                items = sortByDateDesc(items);
+                // set global for easy access
+                window._announcementsAll = items;
+                const featured = items[0] ?? null;
+                renderFeatured(featured);
+                renderList(items);
+                renderRecent(items);
+            }
+
+            // init
+            async function init(){
+                const all = await loadFromApi();
+                applySearchAndRender(all);
+                if (qInput) qInput.addEventListener('input', () => applySearchAndRender(all));
+                // expose a small debug helper to toggle saving from console if needed
+                window._debug = window._debug || {};
+                window._debug.enableSaving = window.enableSaving;
+                // update saved count on load
+                updateSavedCount();
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+
+        })();
+    </script>
+   
+
+
+
+    <script>
+        (function(){
+          // واحد وموثوق لإدارة التنقل + تمييز العنصر النشط
+          document.addEventListener('DOMContentLoaded', function () {
+
+            const normalize = s => (s||'').toString().toLowerCase().replace(/\/$/,'') || '/';
+            const currentFull = (window.location.href || '').toLowerCase();
+            const currentPath = normalize(window.location.pathname);
+
+            const fallbackMap = {
+              home: '/user/dashboard',
+              profile: '/user/profile',
+              mycourses: '/user/courses',
+              ann: '/announcements',
+              chat: '/user/chat',
+              agenda: '/user/agenda',
+              opp: '/user/opportunities',
+              lost: '/user/lostfound',
+              settings: '/user/profile',
+              logout: '/account/logout'
+            };
+
+            // function: إزالة أي active موجودة
+            function clearActive(){
+              document.querySelectorAll('.nav-item.active').forEach(n=>n.classList.remove('active'));
+            }
+
+            // function: تمييز عنصر واحد كـ active بناءً على ال href أو data-key
+            function markActiveOnce(){
+              clearActive();
+              let matched = false;
+              document.querySelectorAll('.nav-item').forEach(item=>{
+                if (matched) return;
+
+                const raw = (item.getAttribute('data-href')||'').trim();
+                if (raw && raw !== '""' && raw !== "''"){
+                  try{
+                    const a = document.createElement('a'); a.href = raw;
+                    const ipath = normalize(a.pathname);
+                    const ifull = (a.href||'').toLowerCase();
+
+                    if (ipath === currentPath || currentFull.indexOf(ifull) !== -1){
+                      item.classList.add('active'); matched = true; return;
+                    }
+                    const lastI = ipath.split('/').filter(Boolean).pop() || '';
+                    const lastC = currentPath.split('/').filter(Boolean).pop() || '';
+                    if (lastI && lastC && (lastI === lastC || lastC.includes(lastI) || lastI.includes(lastC))){
+                      item.classList.add('active'); matched = true; return;
+                    }
+                  }catch(e){}
+                }
+
+                const key = (item.getAttribute('data-key')||'').trim().toLowerCase();
+                if (!matched && key && fallbackMap[key]){
+                  const fm = normalize(fallbackMap[key]);
+                  if (fm === currentPath || currentFull.indexOf(fm) !== -1 || currentPath.split('/').pop() === fm.split('/').pop()){
+                    item.classList.add('active'); matched = true; return;
+                  }
+                }
+
+                const innerA = item.querySelector('a[href]');
+                if (!matched && innerA && innerA.href){
+                  const a2 = document.createElement('a'); a2.href = innerA.href;
+                  if (normalize(a2.pathname) === currentPath){ item.classList.add('active'); matched = true; return; }
+                }
+              });
+
+              if (!matched){
+                if (currentPath === '/' || currentPath === '' || currentPath.endsWith('/dashboard')){
+                  const home = document.querySelector('.nav-item[data-key="home"]');
+                  if (home) home.classList.add('active');
+                }
+              }
+            }
+
+            // initial mark
+            markActiveOnce();
+
+            // click delegation (one handler)
+            document.addEventListener('click', function(e){
+              const nav = e.target.closest && e.target.closest('.nav-item');
+              if (!nav) return;
+
+              // إذا النقر على زر داخل nav-item مع data-href نتركه يتصرف
+              const btnWithHref = e.target.closest && e.target.closest('button[data-href]');
+              if (btnWithHref && btnWithHref.dataset && btnWithHref.dataset.href){
+                const url = btnWithHref.dataset.href.trim();
+                if (url && url !== '""' && url !== "''"){ window.location.href = url; return; }
+              }
+
+              // لو النقر على رابط داخلي <a>، سيب المتصفح يتعامل معاه
+              if (e.target.tagName === 'A' || e.target.closest('a')) return;
+
+              // جرب data-href على العنصر نفسه
+              const raw = (nav.getAttribute('data-href')||'').trim();
+              if (raw && raw !== '""' && raw !== "''"){
+                try{ const a = document.createElement('a'); a.href = raw; window.location.href = a.href; return; } catch(e){}
+              }
+
+              // fallback: استخدم data-key -> fallbackMap
+              const key = (nav.getAttribute('data-key')||'').trim().toLowerCase();
+              if (key && fallbackMap[key]) { window.location.href = fallbackMap[key]; return; }
+
+              // last resort: ابحث عن <a> داخل العنصر
+              const innerA = nav.querySelector('a[href]');
+              if (innerA && innerA.href) { window.location.href = innerA.href; return; }
+            }, {passive:true});
+
+            // keyboard accessibility
+            document.querySelectorAll('.nav-item').forEach(item=>{
+              if (!item.hasAttribute('tabindex')) item.setAttribute('tabindex','0');
+              item.addEventListener('keydown', function(ev){
+                if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); item.click(); }
+              });
+            });
+
+            // Expose small helper in case you change route dynamically
+            window._sidebar = window._sidebar || {};
+            window._sidebar.refreshActive = markActiveOnce;
+          });
+        })();
+    </script>
+    <script>
+        (function(){
+          const DARK_KEY = 'darkMode';
+
+          function isSystemDark(){
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          }
+
+          function applyDarkMode(on, save = true){
+            try{
+              if(on) document.documentElement.classList.add('dark-mode');
+              else document.documentElement.classList.remove('dark-mode');
+
+              const btn = document.getElementById('darkToggle');
+              const lbl = document.getElementById('darkLabel');
+              if(btn){
+                btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                if(lbl) lbl.textContent = on ? 'Dark' : 'Light';
+                const ic = btn.querySelector('i');
+                if(ic){
+                  ic.classList.remove('fa-moon','fa-sun');
+                  ic.classList.add(on ? 'fa-moon' : 'fa-sun');
+                }
+              }
+              if(save) localStorage.setItem(DARK_KEY, on ? 'true' : 'false');
+            }catch(e){ console.warn('applyDarkMode error', e); }
+          }
+
+          document.addEventListener('DOMContentLoaded', function(){
+            try{
+              const stored = localStorage.getItem(DARK_KEY);
+              let wantDark;
+              if(stored === 'true' || stored === 'false'){
+                wantDark = stored === 'true';
+              } else {
+                wantDark = isSystemDark();
+              }
+              applyDarkMode(wantDark, false);
+
+              const toggle = document.getElementById('darkToggle');
+              if(toggle){
+                toggle.addEventListener('click', function(){
+                  const now = document.documentElement.classList.contains('dark-mode');
+                  applyDarkMode(!now, true);
+                });
+              }
+            }catch(e){ console.warn('dark-mode init failed', e); }
+          });
+        })();
+    </script>
+
+
+</body>
+</html>
+
+<script>
+    (function(){
+        try{
+            if(localStorage.getItem('darkMode') === 'true'){
+                document.body.classList.add('dark-mode');
+            }
+        }catch(e){ console.warn('dark-mode init failed', e); }
+    })();
+</script>
+
+<script>
+(function () {
+    // كل عناصر السايدبار
+    const items = document.querySelectorAll('.nav-item');
+
+    // ابعت المسار الحقيقي للصفحة بدون / في الآخر
+    const current = window.location.pathname.replace(/\/$/, "").toLowerCase();
+
+    // شيل active من الكل
+    items.forEach(i => i.classList.remove("active"));
+
+    let matched = null;
+
+    // 1) أولاً — طابق link كامل مع data-href
+    items.forEach(i => {
+        const href = i.dataset.href;
+        if (!href) return;
+
+        try {
+            // نحلل الرابط لحماية من الروابط المطلقة
+            const a = document.createElement("a");
+            a.href = href;
+            const path = a.pathname.replace(/\/$/, "").toLowerCase();
+
+            if (path === current) matched = i;
+        } catch { }
+    });
+
+    // 2) لو لسه ملقاش — طابق آخر جزء مع الـ data-key
+    if (!matched) {
+        const last = current.split("/").pop();
+        matched = Array.from(items).find(i =>
+            (i.dataset.key || "").toLowerCase() === last
+        );
+    }
+
+    // 3) لو لسه — طابق بادئة (لصفحات الأقسام مثل /opportunities/5/edit)
+    if (!matched) {
+        matched = Array.from(items).find(i => {
+            const href = i.dataset.href;
+            if (!href) return false;
+
+            const a = document.createElement("a");
+            a.href = href;
+            const path = a.pathname.replace(/\/$/, "").toLowerCase();
+
+            return current.startsWith(path);
+        });
+    }
+
+    // لو وجدنا العنصر — فعّله
+    if (matched) matched.classList.add("active");
+
+})();
+</script>
+

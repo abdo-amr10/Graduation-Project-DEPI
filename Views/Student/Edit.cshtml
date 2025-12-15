@@ -1,0 +1,147 @@
+﻿@model My_Uni_Hub.Models.ViewModels.StudentEditVM
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Edit Student";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/EditStudent.css" asp-append-version="true" />
+}
+
+<div class="dashboard-container">
+    <main class="main-content">
+        <div class="breadcrumb">
+            <a href="@Url.Action("dashboard", "admin")">Dashboard</a> /
+            <a href="@Url.Action("Index", "Student", new { area = "Admin" })">Users</a> /
+            Edit Student
+        </div>
+
+        <div class="header">
+            <h1 class="header-title">Edit Student</h1>
+        </div>
+
+        <div class="form-card">
+            <div asp-validation-summary="ModelOnly" class="validation-summary text-danger"></div>
+
+            <form asp-action="Edit" asp-controller="Student" asp-area="Admin" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" id="studentEditForm">
+                @Html.AntiForgeryToken()
+                <input asp-for="Id" type="hidden" />
+
+                <div class="form-section">
+                    <h2 class="section-title">Basic Information</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="FullName">Full Name <span class="required">*</span></label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Email">Email <span class="required">*</span></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Academic Information</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="FacultyId">Faculty</label>
+                            <select asp-for="FacultyId" asp-items="(IEnumerable<SelectListItem>)ViewBag.Faculties" class="form-control">
+                                <option value="">Select Faculty</option>
+                            </select>
+                            <span asp-validation-for="FacultyId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DepartmentId">Department</label>
+                            <select asp-for="DepartmentId" asp-items="(IEnumerable<SelectListItem>)ViewBag.Departments" class="form-control">
+                                <option value="">Select Department</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="AcademicYear">Academic Year</label>
+                            <select asp-for="AcademicYear" class="form-control">
+                                <option value="">Select Year</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                                <option value="5">5th Year</option>
+                            </select>
+                            <span asp-validation-for="AcademicYear" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="CreatedAt">Joined At</label>
+                            <input asp-for="CreatedAt" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Profile Photo</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Upload New Photo</label>
+                            <input type="file" name="photo" id="photoInput" accept="image/*" />
+                            <span class="help-text">Optional. JPG/PNG. Max recommended 2MB.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Current Photo</label>
+                            <div class="photo-preview" id="photoPreview">
+                                @if (!string.IsNullOrWhiteSpace(Model.PhotoUrl))
+                                {
+                                    <img src="@Url.Content(Model.PhotoUrl)" alt="photo" />
+                                }
+                                else
+                                {
+                                    <span class="placeholder">No image</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Other</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="Bio">Bio</label>
+                            <textarea asp-for="Bio" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Bio" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="IsVerified">Verified</label>
+                            <div class="checkbox-group">
+                                <input asp-for="IsVerified" type="checkbox" id="isVerified" />
+                                <label for="isVerified">Mark account as verified</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <div class="btn-group">
+                        <a class="btn btn-secondary" href="@Url.Action("Index", "Student", new { area = "Admin" })">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <script src="~/js/Admin/EditStudent.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial" />
+}

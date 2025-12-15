@@ -1,0 +1,221 @@
+﻿/* Sidebar.css — مصحح */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --sidebar-collapsed: 70px;
+    --sidebar-expanded: 230px;
+}
+
+/* Basic page */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #f3f6fb;
+    color: #222;
+    min-height: 100vh;
+}
+
+/* layout container (doesn't need to be sibling-dependent) */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: var(--sidebar-collapsed); /* collapsed width */
+    background-color: #0b1a3d;
+    border-radius: 0 25px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.12);
+    transition: width 300ms cubic-bezier(.2,.9,.2,1), padding-left 300ms ease;
+    overflow: visible;
+}
+
+    /* expanded via class on body OR hover on sidebar itself */
+    body.sidebar-open .sidebar,
+    .sidebar:hover {
+        width: var(--sidebar-expanded);
+        align-items: flex-start;
+        padding-left: 18px;
+    }
+
+/* Logo */
+.logo-section {
+    margin-bottom: 35px;
+}
+
+.logo-img, .logo-small {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+/* default: hidden (collapsed) */
+.logo-text {
+    display: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+/* show when expanded */
+body.sidebar-open .logo-text,
+.sidebar:hover .logo-text {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+/* nav menu */
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* center when collapsed */
+    gap: 12px;
+    flex-grow: 1;
+    width: 100%;
+    padding-top: 8px;
+}
+
+/* when expanded, align items to the start so labels appear left */
+body.sidebar-open .nav-menu,
+.sidebar:hover .nav-menu {
+    align-items: flex-start;
+}
+
+/* bottom menu */
+.bottom-menu {
+    margin-top: auto;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+/* nav item */
+.nav-item {
+    color: #bfc8da;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 0;
+    border-radius: 10px;
+    box-sizing: border-box;
+    justify-content: center; /* center when collapsed */
+}
+
+/* align start when expanded */
+body.sidebar-open .nav-item,
+.sidebar:hover .nav-item {
+    justify-content: flex-start;
+    padding-left: 12px;
+}
+
+.nav-item i {
+    width: 36px;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* labels hidden collapsed, shown expanded */
+.nav-label {
+    color: #bfc8da;
+    font-size: 15px;
+    white-space: nowrap;
+    display: none;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity .2s, transform .2s;
+}
+
+:root{
+  --sidebar-collapsed: 70px;
+  --sidebar-expanded: 230px;
+}
+
+/* when sidebar opens we set class on body (JS في layout يفعّلها) */
+body.sidebar-open .main-content {
+  margin-left: var(--sidebar-expanded);
+  width: calc(100% - var(--sidebar-expanded));
+}
+
+.nav-item.active, .nav-item:hover {
+    color: #ff8c00;
+    background: rgba(255,140,0,0.06);
+}
+
+/* main content offset using body class (reliable even if sidebar is fixed) */
+.main-content {
+    margin-left: var(--sidebar-collapsed);
+    width: calc(100% - var(--sidebar-collapsed));
+    padding: 24px;
+    min-height: 100vh;
+    transition: margin-left .25s ease, width .25s ease;
+}
+
+body.sidebar-open .main-content {
+    margin-left: var(--sidebar-expanded);
+    width: calc(100% - var(--sidebar-expanded));
+}
+
+/* small-screen fallback */
+@media (max-width:900px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        border-radius: 0 0 12px 12px;
+    }
+}
+/* === Fix: show nav labels when sidebar is expanded === */
+
+/* Ensure nav-menu aligns left when expanded */
+body.sidebar-open .nav-menu,
+.sidebar:hover .nav-menu {
+    align-items: flex-start !important;
+}
+
+/* Show labels when sidebar is hovered or body has sidebar-open */
+body.sidebar-open .nav-label,
+.sidebar:hover .nav-label {
+    display: inline-block !important;
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* Make sure nav items justify to start when expanded */
+body.sidebar-open .nav-item,
+.sidebar:hover .nav-item {
+    justify-content: flex-start !important;
+    padding-left: 12px !important;
+}
+
+/* Show logo text too */
+body.sidebar-open .logo-text,
+.sidebar:hover .logo-text {
+    display: inline-block !important;
+    margin-left: 10px !important;
+}

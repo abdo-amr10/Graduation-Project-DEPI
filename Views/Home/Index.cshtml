@@ -1,0 +1,236 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<link rel="stylesheet" href="~/css/UserDashboard.css" />
+<script src="~/js/UserDashboard.js"></script>
+<div class="container">
+    <!-- Sidebar -->
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo-section">
+            <img src="logo.png" alt="MyUni Hub" class="logo-img">
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item active"><i class="fas fa-home"></i></li>
+            <li class="nav-item"><i class="fas fa-calendar-alt"></i></li>
+            <li class="nav-item"><i class="fas fa-users"></i></li>
+            <li class="nav-item"><i class="fas fa-chart-pie"></i></li>
+            <li class="nav-item"><i class="fas fa-briefcase-medical"></i></li>
+
+        </ul>
+        <div class="bottom-menu">
+            <li class="nav-item"><i class="fas fa-cog"></i></li>
+            <li class="nav-item"><i class="fas fa-sign-out-alt"></i></li>
+        </div>
+    </div>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1 class="welcome-text">Welcome, Abd El-Rahman 👋</h1>
+            <div class="header-icons">
+                <button class="icon-btn">🔍</button>
+                <button class="icon-btn">🔔</button>
+                <button class="icon-btn">⚙️</button>
+                <button class="icon-btn" id="darkModeBtn">🌙</button>
+            </div>
+        </div>
+
+
+        <div class="content-grid">
+            <div>
+                <!-- Smart Feed -->
+                <div class="smart-feed">
+                    <h2 class="section-title">Smart Feed</h2>
+                    <div class="feed-grid">
+                        <div class="feed-card">
+                            <div class="feed-icon">📢</div>
+                            <div class="feed-content">
+                                <h4>College Announcement</h4>
+                                <p>First semester exam schedule</p>
+                            </div>
+                        </div>
+                        <div class="feed-card">
+                            <div class="feed-icon">📚</div>
+                            <div class="feed-content">
+                                <h4>Course Update</h4>
+                                <p>Last date to Operating Systems project</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Courses -->
+                <div class="courses-section">
+                    <h2 class="section-title">My Courses</h2>
+                    <div class="courses-grid">
+                        <div class="course-card course-1">
+                            <div class="course-icon">💻</div>
+                            <div class="course-name">Operating Systems</div>
+                            <div class="course-prof">Dr. Ayman Al-Sayed</div>
+                            <div class="course-actions">
+                                <button class="action-btn">📚 Materials</button>
+                                <button class="action-btn">💬 Q&A</button>
+                            </div>
+                        </div>
+
+                        <div class="course-card course-2">
+                            <div class="course-icon">🌐</div>
+                            <div class="course-name">Computer Networks</div>
+                            <div class="course-prof">Dr. Nada Ameen</div>
+                            <div class="course-actions">
+                                <button class="action-btn">📚 Materials</button>
+                                <button class="action-btn">💬 Q&A</button>
+                            </div>
+                        </div>
+
+                        <div class="course-card course-3">
+                            <div class="course-icon">📊</div>
+                            <div class="course-name">Marketing</div>
+                            <div class="course-prof">Dr. Rania Al-Hassan</div>
+                            <div class="course-actions">
+                                <button class="action-btn">📚 Materials</button>
+                                <button class="action-btn">💬 Q&A</button>
+                            </div>
+                        </div>
+
+                        <div class="course-card course-4">
+                            <div class="course-icon">🗂️</div>
+                            <div class="course-name">Data Structures</div>
+                            <div class="course-prof">Dr. Mohamed Ibrahim</div>
+                            <div class="course-actions">
+                                <button class="action-btn">📚 Materials</button>
+                                <button class="action-btn">💬 Q&A</button>
+                            </div>
+                        </div>
+
+                        <div class="course-card course-5">
+                            <div class="course-icon">🗄️</div>
+                            <div class="course-name">Database Systems</div>
+                            <div class="course-prof">Dr. Sarah Ahmed</div>
+                            <div class="course-actions">
+                                <button class="action-btn">📚 Materials</button>
+                                <button class="action-btn">💬 Q&A</button>
+                            </div>
+                        </div>
+
+                        <div class="course-card course-6">
+                            <div class="course-icon">🌍</div>
+                            <div class="course-name">Web Development</div>
+                            <div class="course-prof">Dr. Omar Hassan</div>
+                            <div class="course-actions">
+                                <button class="action-btn">📚 Materials</button>
+                                <button class="action-btn">💬 Q&A</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="sidebar-right">
+
+                <!-- 🧑‍🎓 Profile Card -->
+                <div class="profile-card">
+                    <img src="my.jpg" alt="Profile Picture" class="profile-img">
+                    <div class="profile-info">
+                        <h3 class="profile-name">Abd El-Rahman Amr</h3>
+                        <p class="profile-college">Faculty of Computers & Information</p>
+                        <p class="profile-id">ID: 12102030</p>
+                    </div>
+                </div>
+
+                <!-- Calendar -->
+                <div class="calendar-widget">
+                    <h2 class="section-title">Smart Calendar</h2>
+                    <div class="calendar-header">
+                        <button class="calendar-nav">‹</button>
+                        <div class="calendar-month">October</div>
+                        <button class="calendar-nav">›</button>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-day-header">M</div>
+                        <div class="calendar-day-header">T</div>
+                        <div class="calendar-day-header">W</div>
+                        <div class="calendar-day-header">T</div>
+                        <div class="calendar-day-header">F</div>
+                        <div class="calendar-day-header">S</div>
+                        <div class="calendar-day-header">S</div>
+
+                        <div class="calendar-day">1</div>
+                        <div class="calendar-day">2</div>
+                        <div class="calendar-day">3</div>
+                        <div class="calendar-day">4</div>
+                        <div class="calendar-day">5</div>
+                        <div class="calendar-day">6</div>
+                        <div class="calendar-day">7</div>
+                        <div class="calendar-day">8</div>
+                        <div class="calendar-day">9</div>
+                        <div class="calendar-day">10</div>
+                        <div class="calendar-day today">11</div>
+                        <div class="calendar-day">12</div>
+                        <div class="calendar-day">13</div>
+                        <div class="calendar-day">14</div>
+                        <div class="calendar-day">15</div>
+                        <div class="calendar-day">16</div>
+                        <div class="calendar-day">17</div>
+                        <div class="calendar-day">18</div>
+                        <div class="calendar-day">19</div>
+                        <div class="calendar-day">20</div>
+                        <div class="calendar-day">21</div>
+                        <div class="calendar-day">22</div>
+                        <div class="calendar-day">23</div>
+                        <div class="calendar-day">24</div>
+                        <div class="calendar-day">25</div>
+                        <div class="calendar-day">26</div>
+                        <div class="calendar-day">27</div>
+                        <div class="calendar-day">28</div>
+                    </div>
+                    <div class="deadline-alert">
+                        <span>⚠️</span>
+                        <span><strong>Deadline in 2 days</strong><br>project submission</span>
+                    </div>
+                </div>
+
+                <!-- Opportunities -->
+                <div class="opportunities-widget">
+                    <h2 class="section-title">Opportunities</h2>
+                    <div class="opportunity-item">
+                        <div class="opp-icon bg-yellow">💼</div>
+                        <div class="opp-content">
+                            <h4>Summer Internship</h4>
+                            <p>x12 Corp.</p>
+                        </div>
+                    </div>
+                    <div class="opportunity-item">
+                        <div class="opp-icon bg-purple">🎓</div>
+                        <div class="opp-content">
+                            <h4>Graduate Job</h4>
+                            <p>ABC Inc.</p>
+                        </div>
+                    </div>
+                    <div class="opportunity-item">
+                        <div class="opp-icon bg-orange">🎨</div>
+                        <div class="opp-content">
+                            <h4>Workshop UI Design</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Only Logout Button -->
+                <div class="user-actions">
+                    <button class="logout-btn">🚪 Logout</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+

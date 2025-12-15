@@ -1,0 +1,116 @@
+﻿@using My_Uni_Hub.Models.Pages
+@model UniversityAgenda
+@{
+ViewData["Title"] = "Event Details";
+Layout = "_AdminLayout";
+}
+
+<div class="details-container">
+
+<!-- Header Actions -->
+<div class="details-header-box">
+    <h1><i class="fas fa-calendar-alt"></i> Event Details</h1>
+
+    <div class="header-buttons">
+        <a href="@Url.Action("Index", "AdminAgenda")" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+
+        <a href="@Url.Action("Edit", "AdminAgenda", new { id = Model.Id })" class="btn-edit">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+    </div>
+</div>
+
+<!-- Event Title -->
+<div class="event-title-box card-box">
+    <h2>@Model.Title</h2>
+    <div class="event-type-badge">@Model.Type</div>
+</div>
+
+<!-- Basic Information -->
+<div class="details-section card-box">
+    <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+
+    <div class="detail-row">
+        <div class="detail-label"><i class="fas fa-hashtag"></i> Event ID:</div>
+        <div class="detail-value"><span class="info-badge">#@Model.Id</span></div>
+    </div>
+
+    <div class="detail-row">
+        <div class="detail-label"><i class="fas fa-align-left"></i> Description:</div>
+        <div class="detail-value">
+            @(string.IsNullOrEmpty(Model.Description) ? "No description provided" : Model.Description)
+        </div>
+    </div>
+</div>
+
+<!-- Date & Time -->
+<div class="details-section card-box">
+    <h3><i class="fas fa-clock"></i> Date & Time</h3>
+
+    <div class="datetime-cards">
+        <div class="datetime-card sub-card">
+            <div class="label"><i class="fas fa-play"></i> Start</div>
+            <div class="value">@Model.StartDate.ToString("MMM dd, yyyy")</div>
+            <div class="value">@Model.StartDate.ToString("hh:mm tt")</div>
+        </div>
+
+        <div class="datetime-card sub-card">
+            <div class="label"><i class="fas fa-stop"></i> End</div>
+            <div class="value">@Model.EndDate.ToString("MMM dd, yyyy")</div>
+            <div class="value">@Model.EndDate.ToString("hh:mm tt")</div>
+        </div>
+    </div>
+
+    @{
+        var duration = Model.EndDate - Model.StartDate;
+        string durationText =
+            duration.Days > 0 ? $"{duration.Days} day(s), {duration.Hours} hour(s)" :
+            duration.Hours > 0 ? $"{duration.Hours} hour(s), {duration.Minutes} minute(s)" :
+                                 $"{duration.Minutes} minute(s)";
+    }
+
+    <div class="duration-box">
+        <i class="fas fa-hourglass-half"></i> Duration:
+        <strong>@durationText</strong>
+    </div>
+</div>
+
+<!-- Additional Info -->
+@if (Model.FacultyId.HasValue || Model.DepartmentId.HasValue || Model.StudentId.HasValue)
+{
+    <div class="details-section card-box">
+        <h3><i class="fas fa-plus-circle"></i> Additional Information</h3>
+
+        @if (Model.FacultyId.HasValue)
+        {
+            <div class="detail-row">
+                <div class="detail-label"><i class="fas fa-building"></i> Faculty ID:</div>
+                <div class="detail-value"><span class="info-badge">@Model.FacultyId</span></div>
+            </div>
+        }
+
+        @if (Model.DepartmentId.HasValue)
+        {
+            <div class="detail-row">
+                <div class="detail-label"><i class="fas fa-sitemap"></i> Department ID:</div>
+                <div class="detail-value"><span class="info-badge">@Model.DepartmentId</span></div>
+            </div>
+        }
+
+        @if (Model.StudentId.HasValue)
+        {
+            <div class="detail-row">
+                <div class="detail-label"><i class="fas fa-user-graduate"></i> Student ID:</div>
+                <div class="detail-value"><span class="info-badge">@Model.StudentId</span></div>
+            </div>
+        }
+    </div>
+}
+
+
+</div>
+
+@section Styles { <link rel="stylesheet" href="~/css/Admin/DetailsAgenda.css" asp-append-version="true" />
+}

@@ -1,0 +1,111 @@
+﻿@{
+    Layout = null;
+    var title = ViewBag.Title ?? "MyUni Hub";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>@title</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/User/Sidebar.css" />
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar" id="leftSidebar">
+            <div class="logo-section">
+                <a href="@Url.Action("Index", "Home")" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit">
+                    <img src="@Url.Content("~/Images/logo.png")" alt="MyUni Hub logo" class="logo-img" />
+                </a>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item" data-key="home" data-href='@Url.Action("dashboard", "user")'>
+                    <i class="fas fa-home"></i><span class="nav-label">Home</span>
+                </li>
+
+                <li class="nav-item" data-key="profile" data-href='@Url.Action("profile", "user")'>
+                    <i class="fas fa-user"></i><span class="nav-label">Profile</span>
+                </li>
+
+                <li class="nav-item" data-key="mycourses" data-href='@Url.Action("courses", "user")'>
+                    <i class="fas fa-book"></i><span class="nav-label">My Courses</span>
+                </li>
+
+                <li class="nav-item" data-key="ann" data-href='@Url.RouteUrl("announcements")'
+                    onclick="window.location.href=this.getAttribute('data-href')"
+                    style="cursor:pointer;">
+                    <i class="fas fa-bullhorn"></i><span class="nav-label">Announcements</span>
+                </li>
+
+                <li class="nav-item" data-key="chat" data-href='@Url.Action("chat", "user")'>
+                    <i class="fas fa-comments"></i><span class="nav-label">Chat</span>
+                </li>
+
+                <li class="nav-item" data-key="agenda" data-href="/useragenda">
+                    <i class="fas fa-calendar-alt"></i><span class="nav-label">Agenda</span>
+                </li>
+
+                <li class="nav-item" data-key="opp" data-href="/opportunities">
+                    <i class="fas fa-briefcase"></i><span class="nav-label">Opportunities</span>
+                </li>
+
+                <li class="nav-item" data-key="lost" data-href="/lost-and-found">
+                    <i class="fas fa-box-open"></i><span class="nav-label">Lost &amp; Found</span>
+                </li>
+            </ul>
+
+
+            <ul class="bottom-menu" role="menu">
+                <li class="nav-item" role="menuitem" data-key="settings" data-href="user/profile"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
+                <li class="nav-item" role="menuitem" data-key="logout" data-href="/Auth/login"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Core script: toggle body class when sidebar expands (works regardless DOM structure) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.querySelector('.sidebar');
+            const navItems = document.querySelectorAll('.nav-item');
+
+            // hover expand behavior (desktop)
+            sidebar?.addEventListener('mouseenter', () => document.body.classList.add('sidebar-open'));
+            sidebar?.addEventListener('mouseleave', () => document.body.classList.remove('sidebar-open'));
+
+            // click toggle for small screens
+            sidebar?.addEventListener('click', (e) => {
+                if (window.innerWidth <= 800) document.body.classList.toggle('sidebar-open');
+            });
+
+            // nav item click navigation + active save
+            navItems.forEach(i => {
+                i.addEventListener('click', () => {
+                    const href = i.dataset.href;
+                    const key = i.dataset.key;
+                    if (key) localStorage.setItem('activeNav', key);
+                    if (href && href !== '#') window.location.href = href;
+                });
+                // keyboard
+                i.tabIndex = 0;
+                i.addEventListener('keypress', e => { if (e.key === 'Enter') i.click(); });
+            });
+
+            // restore active item
+            const saved = localStorage.getItem('activeNav');
+            if (saved) document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.key === saved));
+            else document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.key === 'mycourses'));
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

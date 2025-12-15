@@ -1,0 +1,70 @@
+﻿@model IEnumerable<My_Uni_Hub.Models.Pages.Course>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Manage Courses - MyUniHub";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/indexcourse.css" asp-append-version="true" />
+}
+
+<div class="dashboard-container">
+    <main class="main-content">
+        <div class="breadcrumb">
+            <a href="@Url.Action("dashboard", "admin")">Dashboard</a> / Courses
+        </div>
+
+        <div class="header">
+            <h1 class="header-title">Manage Courses</h1>
+            <a class="btn btn-primary" href="@Url.Action("Create", "Courses", new { area = "Admin" })">Add Course</a>
+        </div>
+
+        <div class="courses-container">
+            <div class="courses-card">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search courses by name or code...">
+                    <select id="facultyFilter" class="filter-select">
+                        <option value="">All Faculties</option>
+                        @* Optional: populate from ViewBag.Faculties if you passed it *@
+                    </select>
+                </div>
+
+                <table class="courses-table">
+                    <thead>
+                        <tr>
+                            <th>Course Name</th>
+                            <th>Faculty</th>
+                            <th>Department</th>
+                            <th>Code</th>
+                            <th>Semester</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coursesTableBody">
+                        <!-- rendered by JS -->
+                    </tbody>
+                </table>
+
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-icon">📚</div>
+                    <p>No courses found</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+@* Render antiforgery token in a hidden form so JS can read it and include in AJAX requests *@
+<form id="__antiForgeryForm" style="display:none">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        // Serialize server model to client
+        window.__courses = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model ?? Enumerable.Empty<My_Uni_Hub.Models.Pages.Course>()));
+    </script>
+
+    <script src="~/js/Admin/indexcourse.js" asp-append-version="true"></script>
+}

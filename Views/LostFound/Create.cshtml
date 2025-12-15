@@ -1,0 +1,157 @@
+﻿@model List<My_Uni_Hub.Models.Pages.LostItem>
+
+@{
+    // Standalone page: do NOT set Layout
+    Layout = null;
+    var items = Model ?? new List<My_Uni_Hub.Models.Pages.LostItem>();
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MyUni Hub - Lost & Found</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/lostfound.css" />
+
+</head>
+<body>
+
+    @* ---- page HTML converted from your provided static HTML. small changes:
+      - the Add form posts to /lost-and-found/create (with antiforgery token).
+      - items are rendered from the model.
+*@
+
+    <div class="container">
+        <div class="sidebar" id="leftSidebar">
+            <div class="logo-section">
+                <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit">
+                    <img src="~/images/logo.png" class="logo-img" alt="MyUni Hub logo" />
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item" data-key="home" data-href="/"><i class="fas fa-home"></i><span class="nav-label">Home</span></li>
+                <li class="nav-item" data-key="lostfound" data-href="/lost-and-found"><i class="fas fa-box-open"></i><span class="nav-label">Lost & Found</span></li>
+            </ul>
+            <ul class="bottom-menu">
+                <li class="nav-item" data-key="logout" data-href="/account/logout"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+            </ul>
+        </div>
+
+        <main class="main">
+            <div class="page-title">Lost & Found</div>
+
+            <div class="layout">
+                <div>
+                    <div class="card">
+                        <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start">
+                            <strong style="font-size:20px">Recent Items</strong>
+                            <div>
+                                <button class="btn" type="button" onclick="toggleForm('lost')">+ Add Lost Item</button>
+                                <button class="btn" style="margin-left:8px;background:linear-gradient(90deg,#34d399,#10b981)" type="button" onclick="toggleForm('found')">+ Add Found Item</button>
+                            </div>
+                        </div>
+
+                        <div id="lostList" style="margin-top:12px">
+                            @* render items from model *@
+                            @foreach (var it in items)
+                            {
+                                var statusAttr = string.IsNullOrEmpty(it.Status) ? (it.IsFound ? "found" : "lost") : it.Status.ToLowerInvariant();
+                                <div class="item-card" data-status="@statusAttr">
+                                    <img src="@(string.IsNullOrEmpty(it.ImageUrl) ? Url.Content("~/images/placeholder-item.svg") : it.ImageUrl)" alt="@it.Name" />
+                                    <div class="item-info">
+                                        <p><strong>@it.Name</strong></p>
+                                        <p class="muted">
+                                            @if (!string.IsNullOrEmpty(it.Student?.ToString()))
+                                            {
+                                                <text>Posted By: @((it.Student?.GetType().GetProperty("Name")?.GetValue(it.Student) ?? "—")) • </text>
+                                            }
+                                            <text>@(!string.IsNullOrEmpty(it.Location) ? it.Location : "No location") • @it.PostedAt.ToString("yyyy-MM-dd")</text>
+                                        </p>
+                                        <p class="muted">@(!string.IsNullOrEmpty(it.ContactInfo) ? it.ContactInfo : "")</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div id="lfControls" style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:12px">
+                            <div style="color:#334155">
+                                Total: <strong id="totalCount">0</strong> • <span style="color:#e05353">Lost: <strong id="lostCount">0</strong></span> • <span style="color:#059669">Found: <strong id="foundCount">0</strong></span>
+                            </div>
+                            <div>
+                                <button class="btn ghost" type="button" onclick="filterList('all')">All</button>
+                                <button class="btn ghost" type="button" onclick="filterList('lost')" style="margin-left:8px">Lost</button>
+                                <button class="btn ghost" type="button" onclick="filterList('found')" style="margin-left:8px">Found</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="addForm" style="margin-top:16px;display:none">
+                        <strong id="formTitle">Add Item</strong>
+                        <form id="createForm" action="/lost-and-found/create" method="post" enctype="multipart/form-data" style="margin-top:12px">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" id="status" name="status" value="lost" />
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="image">Upload Image</label>
+                                    <input type="file" id="image" name="image" accept="image/*" />
+                                </div>
+                                <div class="form-field">
+                                    <label for="type">Item Type</label>
+                                    <input type="text" id="type" name="type" required />
+                                </div>
+                                <div class="form-field">
+                                    <label for="owner">Owner / Finder Name</label>
+                                    <input type="text" id="owner" name="owner" placeholder="e.g. Ahmed Ali" required />
+                                </div>
+                                <div class="form-field" id="placeField">
+                                    <label for="place" id="placeLabel">Found Location</label>
+                                    <input type="text" id="place" name="place" required />
+                                </div>
+                                <div class="form-field">
+                                    <label for="contact">Contact Info</label>
+                                    <input type="text" id="contact" name="contact" required />
+                                </div>
+                            </div>
+
+                            <div style="margin-top:12px;display:flex;gap:8px">
+                                <button type="submit" class="btn">Save</button>
+                                <button type="button" class="btn ghost" onclick="toggleForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <aside>
+                    <div class="widget">
+                        <h3> Notes</h3>
+                        <p style="color:#334155">Please provide contact info so we can return items to their owners. Admins can remove items when claimed.</p>
+                    </div>
+
+                    <div style="height:12px"></div>
+                    <div class="widget">
+                        <h3> Recent Activity</h3>
+                        <div id="recentActivity"></div>
+                    </div>
+
+                    <div style="height:12px"></div>
+                    <div class="widget">
+                        <h3> Popular Locations</h3>
+                        <ul style="list-style:none;padding:0;margin:0">
+                            <li style="padding:8px 0;border-bottom:1px dashed rgba(10,35,70,0.04)">Cafeteria <span class="muted" style="float:right">12 items</span></li>
+                            <li style="padding:8px 0;border-bottom:1px dashed rgba(10,35,70,0.04)">Main Gate <span class="muted" style="float:right">8 items</span></li>
+                            <li style="padding:8px 0">Library <span class="muted" style="float:right">6 items</span></li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+
+            <div style="margin-top:18px;color:#6b7280">Thanks for helping return lost items to their owners</div>
+        </main>
+    </div>
+
+    <script src="~/js/lostfound.js"></script>
+</body>
+</html>

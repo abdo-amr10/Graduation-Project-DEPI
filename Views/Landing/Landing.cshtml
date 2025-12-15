@@ -1,0 +1,608 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>(function(w,i,g){w[g]=w[g]||[];if(typeof w[g].push=='function')w[g].push(i)})
+  (window,'G-SEKJ4E9T4H','google_tags_first_party');</script>
+  <script async src="~/s9cc/"></script>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('set', 'developer_id.dYzg1YT', true);
+    gtag('config', 'G-SEKJ4E9T4H');
+  </script>
+
+  <title>MyUniHub</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Google font (kept external) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <!-- Local CSS files (using ~/) -->
+  <link rel="stylesheet" href="~/theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="~/theme/css/ionicons.min.css">
+  <link rel="stylesheet" href="~/theme/css/all-fa6.min.css">
+  <link rel="stylesheet" href="~/theme/css/animate.css">
+  <link rel="stylesheet" href="~/theme/css/aos.css">
+  <link rel="stylesheet" href="~/theme/css/tiny-slider.css">
+  <link rel="stylesheet" href="~/theme/css/glightbox.min.css">
+  <link rel="stylesheet" href="~/theme/css/style.css">
+  <link rel="stylesheet" href="~/theme/css/user-overrides.css">
+
+  <style>
+    /* Remove hover effects on the two about headings (definitive override) */
+    #about .no-hover-sub,
+    #about .no-hover-h2 {
+      color: #222222 !important;
+      opacity: 1 !important;
+      text-shadow: none !important;
+      transition: none !important;
+      -webkit-text-fill-color: #222222 !important;
+    }
+
+    /* Prevent parent/card hover from changing their color */
+    #about .services:hover .no-hover-sub,
+    #about .services:hover .no-hover-h2,
+    #about .services .no-hover-sub,
+    #about .services .no-hover-h2 {
+      color: #222222 !important;
+      opacity: 1 !important;
+    }
+
+    /* small utility for scroll-to-top button */
+    .scroll-to-top { position: fixed; right: 18px; bottom: 18px; background:#123248;color:#fff;width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;visibility:hidden;transition:all .25s ease;z-index:1100; }
+    .scroll-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); }
+    .navbar-scrolled{ box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .navbar-black{ background: rgba(0,0,0,0.85) !important; color:#fff; transition: background .25s ease; }
+
+    /* ensure hero has height so background is visible */
+    .hero-wrap { min-height: 60vh; background-size: cover; background-position: center; position: relative; }
+    .hero-wrap .overlay { position:absolute; inset:0; background: rgba(0,0,0,0.25); z-index:0; border-radius:0; }
+    .hero-wrap .text { position: relative; z-index: 2; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg ftco-navbar-light">
+    <div class="container-xl">   
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="fa fa-bars"></span> Menu</button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faculties">Faculties</a></li>
+          <li class="nav-item"><a class="nav-link" href="#developer">Developers</a></li>
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-wrap" style="background-image: url('@Url.Content("~/Images/bg_1.jpg")');" id="home">
+    <div class="overlay"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    
+    <div class="container">
+      <div class="row no-gutters slider-text align-items-center justify-content-center">
+        <div class="col-lg-8">
+          <div class="text text-center" data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000">
+            <h1 class="h1">MyUni Hub</h1>
+            <p>Your smart gateway to everything you need at university. Stay organized, stay ahead, and enjoy a smoother academic life.</p>
+            <p>
+              <a asp-controller="Auth" asp-action="Login" class="btn btn-primary">
+                Login Now <i class="fas fa-arrow-right ms-2"></i>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ftco-section ftco-no-pt ftco-no-pb" id="about">
+    <div class="container-xl">
+      <div class="row g-xl-5">
+        <div class="col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000">
+          <div class="img w-100" style="background-image: url('@Url.Content("~/Images/about.png")'); width: 100%; background-size: contain; height: 120vh;">
+          </div>
+        </div>
+        <div class="col-md-6 heading-section d-flex align-items-center" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
+          <div class="mt-0 my-lg-5 py-5">
+            <span class="subheading no-hover-sub" style="color:#222222!important;">Learn Anything</span>
+            <h2 class="mb-2 no-hover-h2" style="color:#222222!important;">Why MyUniHub Makes Your University Life Easier</h2>
+            <div class="row mt-4 g-lg-2">
+              <div class="col-lg-12 d-flex align-items-stretch services-wrap">
+                <div class="services d-flex">
+                  <div class="icon"><span class="flaticon-online-learning"></span></div>
+                  <div class="text">
+                    <h2>Smart Online Services</h2>
+                    <p class="mb-0">Get access to all university services from one place — schedule, payments, announcements, and more.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12 d-flex align-items-stretch services-wrap">
+                <div class="services d-flex">
+                  <div class="icon"><span class="flaticon-certificate"></span></div>
+                  <div class="text">
+                    <h2>Connect with Teaching Assistants</h2>
+                    <p class="mb-0">Ask questions, get help, and receive feedback directly from experts anytime.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12 d-flex align-items-stretch services-wrap">
+                <div class="services d-flex">
+                  <div class="icon"><span class="flaticon-scientist"></span></div>
+                  <div class="text">
+                    <h2>Track Your Courses & Deadlines</h2>
+                    <p class="mb-0">Never miss a lecture or assignment again. Stay updated with your course progress effortlessly.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </div>
+  </section>
+
+  <section class="ftco-section courses-section ftco-no-pb" id="faculties">
+    <div class="container">
+      <div class="row justify-content-center pb-4">
+        <div class="col-md-10 text-center heading-section" data-aos="fade-up">
+          <span class="subheading">Our Faculties</span>
+          <h2 class="mb-5">Explore Our Popular Faculties</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000">
+          <div class="carousel-courses">
+            <div class="item">
+              <div class="courses">
+                <div class="faculty-card-wrapper">
+                  <div class="d-flex align-items-center">
+                    <div class="faculty-img-clean">
+                      <img src="@Url.Content("~/Images/cs-faculty.jpg")" alt="Computer Science Faculty">
+                    </div>
+                    <div class="faculty-tx">
+                      <span class="faculty-label">Faculty of</span>
+                      <div class="faculty-name">Computer Science</div>
+                      <p class="faculty-msg">Advanced programs in software development, AI, and data science.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="item">
+              <div class="courses">
+                <div class="faculty-card-wrapper">
+                  <div class="d-flex align-items-center">
+                    <div class="faculty-img-clean">
+                      <img src="@Url.Content("~/Images/medicine-faculty.jpg")" alt="Medicine Faculty">
+                    </div>
+                    <div class="faculty-tx">
+                      <span class="faculty-label">Faculty of</span>
+                      <div class="faculty-name">Medicine</div>
+                      <p class="faculty-msg">Comprehensive medical education with world-class facilities.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="item">
+              <div class="courses">
+                <div class="faculty-card-wrapper">
+                  <div class="d-flex align-items-center">
+                    <div class="faculty-img-clean">
+                      <img src="@Url.Content("~/Images/engineering-faculty.jpg")" alt="Engineering Faculty">
+                    </div>
+                    <div class="faculty-tx">
+                      <span class="faculty-label">Faculty of</span>
+                      <div class="faculty-name">Engineering</div>
+                      <p class="faculty-msg">Leading programs in civil, mechanical, and electrical engineering.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="item">
+              <div class="courses">
+                <div class="faculty-card-wrapper">
+                  <div class="d-flex align-items-center">
+                    <div class="faculty-img-clean">
+                      <img src="@Url.Content("~/Images/pharmacy-faculty.jpg")" alt="Pharmacy Faculty">
+                    </div>
+                    <div class="faculty-tx">
+                      <span class="faculty-label">Faculty of</span>
+                      <div class="faculty-name">Pharmacy</div>
+                      <p class="faculty-msg">Excellence in pharmaceutical sciences and clinical practice ,  Preparing future pharmacists</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- developers, features and footer (Images using ~/...) -->
+  <section class="ftco-section testimony-section bg-light" id="developer">
+    <div class="container-xl">
+      <div class="row justify-content-center pb-4">
+        <div class="col-md-7 text-center heading-section" data-aos="fade-up" data-aos-duration="1000">
+          <span class="subheading">Meet Our Team</span>
+          <h2 class="mb-5">Our Amazing Developers</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
+          <div class="carousel-testimony">
+            <div class="item">
+              <div class="testimony-wrap">
+                <div class="text">
+                  <div class="d-flex align-items-center mb-4">
+                    <div class="developer-img">
+                      <img src="@Url.Content("~/Images/person_1.jpg")" alt="Abd El-Rahman Amr">
+                    </div>
+                    <div class="ps-3 tx">
+                      <p class="name">Abd El-Rahman Amr</p>
+                      <span class="position">Full Stack Developer</span>
+                    </div>
+                  </div>
+                  <p class="mb-0 msg">Third-year Computer Science student with a passion for web development. Specializes in React and Node.js, loves solving complex algorithms, and dreams of building apps that make a real impact.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="item">
+              <div class="testimony-wrap">
+                <div class="text">
+                  <div class="d-flex align-items-center mb-4">
+                    <div class="developer-img">
+                      <img src="@Url.Content("~/Images/person_2.jpg")" alt="Ahmed Hossam">
+                    </div>
+                    <div class="ps-3 tx">
+                      <p class="name">Ahmed Hossam</p>
+                      <span class="position">Full Stack Developer</span>
+                    </div>
+                  </div>
+                  <p class="mb-0 msg">CS junior who turns coffee into code. Obsessed with UI/UX design and creating smooth user experiences. Spends free time exploring new JavaScript frameworks and contributing to open-source projects.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="item">
+              <div class="testimony-wrap">
+                <div class="text">
+                  <div class="d-flex align-items-center mb-4">
+                    <div class="developer-img">
+                      <img src="@Url.Content("~/Images/person_3.jpg")" alt="Ali Essam">
+                    </div>
+                    <div class="ps-3 tx">
+                      <p class="name">Ali Essam</p>
+                      <span class="position">Full Stack Developer</span>
+                    </div>
+                  </div>
+                  <p class="mb-0 msg">Third-year student who loves architecting robust backend systems. Database design is his playground, API development is his game. Always learning new technologies to build scalable solutions.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="item">
+              <div class="testimony-wrap">
+                <div class="text">
+                  <div class="d-flex align-items-center mb-4">
+                    <div class="developer-img">
+                      <img src="@Url.Content("~/Images/person_4.jpg")" alt="Yousry Waheed">
+                    </div>
+                    <div class="ps-3 tx">
+                      <p class="name">Yousry Bahbah</p>
+                      <span class="position">Full Stack Developer</span>
+                    </div>
+                  </div>
+                  <p class="mb-0 msg">CS student in third year who treats code like poetry. Believes in clean architecture, best practices, and writing self-documenting code. Enjoys teaching peers and organizing coding workshops.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="item">
+              <div class="testimony-wrap">
+                <div class="text">
+                  <div class="d-flex align-items-center mb-4">
+                    <div class="developer-img">
+                      <img src="@Url.Content("~/Images/person_5.jpg")" alt="Amr Khaled">
+                    </div>
+                    <div class="ps-3 tx">
+                      <p class="name">Amr Khaled</p>
+                      <span class="position">Full Stack Developer</span>
+                    </div>
+                  </div>
+                  <p class="mb-0 msg">Junior Computer Science student with a knack for creative solutions. Loves hackathons, competitive programming, and turning crazy ideas into working prototypes. Always up for a coding challenge!</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ftco-section bg-light ftco-no-pt" id="features">
+    <div class="container-xl">
+      <div class="row justify-content-center mb-5">
+        <div class="col-md-7 heading-section text-center" data-aos="fade-up" data-aos-duration="1000">
+          <span class="subheading">What We Offer</span>
+          <h2>Our Site Features</h2>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4 d-flex">
+          <div class="blog-entry justify-content-end" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
+            <a href="#" class="block-20 img" style="background-image: url('@Url.Content("~/Images/login.png")');">
+            </a>
+            <div class="text">
+              <h3 class="heading mb-3"><a href="#">Verified University Identity</a></h3>
+              <p>Only official university emails can access the platform, ensuring every user is a real student. This builds trust, safety, and a clean academic environment.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4 d-flex">
+          <div class="blog-entry justify-content-end" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+            <a href="#" class="block-20 img" style="background-image: url('@Url.Content("~/Images/courses.jpg")');">
+            </a>
+            <div class="text">
+              <h3 class="heading mb-3"><a href="#">Organized Courses & Resources</a></h3>
+              <p>Each course has its own organized page: PDFs, lectures, summaries, past exams, and official announcements—everything you need for studying, instantly accessible.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4 d-flex">
+          <div class="blog-entry justify-content-end" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+            <a href="#" class="block-20 img" style="background-image: url('@Url.Content("~/Images/chat.jpg")');">
+            </a>
+            <div class="text">
+                            <h3 class="heading mb-3"><a href="#">Lost & Found Service</a></h3>
+              <p>An organized system that enables students to report lost items, announce found belongings, and ensure safe and efficient item recovery within the university community.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <footer class="ftco-footer" id="contact">
+  <div class="container-xl">
+    <div class="row mb-5 justify-content-between">
+      
+      <!-- About MyUni Hub -->
+      <div class="col-md-6 col-lg-4">
+        <div class="ftco-footer-widget mb-4">
+            <h2 class="ftco-heading-2 logo">
+            <a class="navbar-brand" href="#home">
+              my uni hub
+            </a>
+          </h2>
+          <p>MyUni Hub is the ultimate platform for university students to stay organized and connected. We provide all the resources, updates, and support you need for your studies in one place.</p>
+<ul class="ftco-footer-social list-unstyled mt-4">
+  <li><a href="https://twitter.com/yourpage"><i class="fab fa-twitter"></i></a></li>
+  <li><a href="https://facebook.com/yourpage"><i class="fab fa-facebook-f"></i></a></li>
+  <li><a href="https://linkedin.com/company/yourpage"><i class="fab fa-linkedin-in"></i></a></li>
+</ul>
+        </div>
+      </div>
+
+      <!-- Explore Links -->
+      <div class="col-md-6 col-lg-2">
+        <div class="ftco-footer-widget mb-4">
+          <h2 class="ftco-heading-2">Explore</h2>
+          <ul class="list-unstyled">
+            <li><a href="#home"><span class="ion ion-ios-arrow-round-forward"></span>Home</a></li>
+            <li><a href="#about"><span class="ion ion-ios-arrow-round-forward"></span>About Us</a></li>
+            <li><a href="#developer"><span class="ion ion-ios-arrow-round-forward"></span>Developers</a></li>
+            <li><a href="#features"><span class="ion ion-ios-arrow-round-forward"></span>Features</a></li>
+            <li><a href="#faculties"><span class="ion ion-ios-arrow-round-forward"></span>Faculties</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-md-6 col-lg-2">
+        <div class="ftco-footer-widget mb-4">
+          <h2 class="ftco-heading-2">Quick Links</h2>
+          <ul class="list-unstyled">
+            <li><a href="#"><span class="ion ion-ios-arrow-round-forward"></span>Privacy Policy</a></li>
+            <li><a href="#"><span class="ion ion-ios-arrow-round-forward"></span>Terms & Conditions</a></li>
+            <li><a href="#"><span class="ion ion-ios-arrow-round-forward"></span>Help Center</a></li>
+            <li><a href="#"><span class="ion ion-ios-arrow-round-forward"></span>FAQs</a></li>
+            <li><a href="#contact"><span class="ion ion-ios-arrow-round-forward"></span>Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="col-md-6 col-lg-4">
+        <div class="ftco-footer-widget mb-4">
+          <h2 class="ftco-heading-2">Get In Touch</h2>
+          <form action="#" method="post" class="contact-form">
+            <div class="form-group mb-3">
+              <input type="text" class="form-control" placeholder="Your Name" name="name" required>
+            </div>
+            <div class="form-group mb-3">
+              <input type="email" class="form-control" placeholder="Your Email" name="email" required>
+            </div>
+            <div class="form-group mb-3">
+              <textarea class="form-control" placeholder="Your Message" name="message" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  
+  <!-- Copyright -->
+  <div class="bg-darken">
+    <div class="container-xl">
+      <p>Copyright &copy; 2025 MyUni Hub. All rights reserved. Made with <span style="color: #7160DB;">♥</span> by <a href="#developer">Our Team</a></p>
+    </div>
+  </div>
+</footer>
+
+  <div class="scroll-to-top" id="scrollToTop">
+    <i class="fa fa-arrow-up"></i>
+  </div>
+
+  <!-- local JS files (using ~/) -->
+  <script src="~/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/tiny-slider.js"></script>
+  <script src="~/js/glightbox.min.js"></script>
+  <script src="~/js/aos.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+  <script src="~/js/google-map.js"></script>
+  <script src="~/js/main2.js"></script>
+
+  <!-- Google Analytics (kept external) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const navbar = document.querySelector('.ftco-navbar-light');
+      if (window.scrollY > 50) {
+        navbar.classList.add('navbar-scrolled');
+      } else {
+        navbar.classList.remove('navbar-scrolled');
+      }
+    });
+
+    // Smooth scroll for nav links (robust): scroll, close mobile menu, handle missing targets
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const hash = this.getAttribute('href');
+        if (!hash || hash === '#') return;
+        const target = document.querySelector(hash);
+        if (!target) return;
+        e.preventDefault();
+        // Smooth scroll
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Force active state on clicked nav link
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        this.classList.add('active');
+
+        // If mobile navbar is open, close it (Bootstrap collapse)
+        try {
+          const bsCollapseEl = document.getElementById('navbarSupportedContent');
+          if (bsCollapseEl && bsCollapseEl.classList.contains('show') && typeof bootstrap !== 'undefined') {
+            const bs = new bootstrap.Collapse(bsCollapseEl);
+            bs.hide();
+          }
+        } catch (err) {
+          // ignore if bootstrap not available
+        }
+      });
+    });
+
+    // Active nav link on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+
+
+      const viewportCenter = window.pageYOffset + (window.innerHeight / 2);
+      const viewportBottom = window.pageYOffset + window.innerHeight;
+      let current = '';
+      let found = false;
+      sections.forEach((section, idx) => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        if (viewportCenter >= sectionTop && viewportCenter < (sectionTop + sectionHeight)) {
+          current = section.getAttribute('id');
+          found = true;
+        }
+      });
+
+      // If viewport bottom is at or past Contact section top, always set current to contact
+      const contactSection = document.getElementById('contact');
+      if (contactSection && viewportBottom >= contactSection.offsetTop) {
+        current = 'contact';
+        found = true;
+      }
+
+      // Fallback: if none matched (very top), set to home
+      if (!found && sections.length) {
+        current = sections[0].getAttribute('id') || '';
+      }
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+
+      // Toggle navbar-black only after we've fully left the hero section
+      const navbar = document.querySelector('.ftco-navbar-light');
+      const home = document.querySelector('#home');
+      if (navbar && home) {
+        const homeBottom = home.offsetTop + home.offsetHeight - 8; // small buffer
+        if (window.pageYOffset > homeBottom) {
+          navbar.classList.add('navbar-black');
+        } else {
+          navbar.classList.remove('navbar-black');
+        }
+      }
+    });
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-23581568-13');
+
+      // Scroll to Top functionality
+const scrollToTopBtn = document.getElementById('scrollToTop');
+
+window.addEventListener('scroll', () => {
+  if (window.pageYOffset > 300) {
+    scrollToTopBtn.classList.add('show');
+  } else {
+    scrollToTopBtn.classList.remove('show');
+  }
+});
+
+scrollToTopBtn.addEventListener('click', () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+  </script>
+
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"cd0b4b3a733644fc843ef0b185f98241","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

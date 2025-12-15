@@ -1,0 +1,124 @@
+﻿@model My_Uni_Hub.Models.Pages.Opportunity
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Add Opportunity";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/OpportunityCreate.css" asp-append-version="true" />
+}
+
+<div class="dashboard-container">
+    <main class="main-content">
+
+        <div class="breadcrumb">
+            <a asp-action="Index" asp-controller="Opportunity" asp-area="Admin">Manage Opportunities</a> / Add Opportunity
+        </div>
+
+        <div class="header">
+            <h1 class="header-title">Add New Opportunity</h1>
+        </div>
+
+        <div class="form-container">
+            <div class="form-card">
+
+                <div class="success-message" id="successMessage" style="display:none;">
+                    <strong>Success!</strong> Opportunity has been added successfully.
+                </div>
+
+                @* Direct form that posts to the attribute-routed endpoint *@
+                <form action="@Url.Content("~/admin/opportunities/create")" method="post" id="opportunityForm">
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">Basic Information</h2>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="Title">Opportunity Title <span class="required">*</span></label>
+                                @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "e.g., Summer Internship - Software Development", id = "Title" })
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Organization">Organization <span class="required">*</span></label>
+                                @Html.TextBoxFor(m => m.Organization, new { @class = "form-control", placeholder = "e.g., Google Egypt", id = "Organization" })
+                                <span asp-validation-for="Organization" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label for="Description">Description <span class="required">*</span></label>
+                                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Provide a detailed description of the opportunity...", rows = 6, id = "Description" })
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opportunity Details -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">Opportunity Details</h2>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="Type">Type <span class="required">*</span></label>
+                                @Html.DropDownListFor(
+                                    m => m.Type,
+                                    new SelectList(new[] {
+                                        new { Value="Internship", Text="Internship"},
+                                        new { Value="Scholarship", Text="Scholarship"},
+                                        new { Value="Job", Text="Job"},
+                                        new { Value="Volunteer", Text="Volunteer"},
+                                        new { Value="Workshop", Text="Workshop"}
+                                    }, "Value", "Text", Model.Type),
+                                    "-- Select Type --",
+                                    new { @class = "form-control", id = "Type" }
+                                )
+                                <span asp-validation-for="Type" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="FacultyId">Faculty <span class="required">*</span></label>
+                                @Html.DropDownListFor(
+                                    m => m.FacultyId,
+                                    (SelectList)ViewBag.Faculties,
+                                    "-- Select Faculty --",
+                                    new { @class = "form-control", id = "FacultyId" }
+                                )
+                                <span asp-validation-for="FacultyId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ApplyLink">Application Link <span class="required">*</span></label>
+                                @Html.TextBoxFor(m => m.ApplyLink, new { @class = "form-control", placeholder = "https://example.com/apply", id = "ApplyLink" })
+                                <span asp-validation-for="ApplyLink" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="PostedAt">Posted Date <span class="required">*</span></label>
+                                @* NOTE: id is 'postedAt' to match OpportunityCreate.js selectors *@
+                                @Html.TextBoxFor(m => m.PostedAt, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control", id = "postedAt" })
+                                <span asp-validation-for="PostedAt" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <a asp-action="Index" asp-controller="Opportunity" asp-area="Admin" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Add Opportunity</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <script src="~/js/Admin/OpportunityCreate.js" asp-append-version="true"></script>
+}

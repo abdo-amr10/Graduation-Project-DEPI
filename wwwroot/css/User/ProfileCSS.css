@@ -1,0 +1,880 @@
+﻿<style >
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box
+}
+
+body {
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background: linear-gradient(135deg,#f5f7fa 0%,#e8ecf1 100%);
+    min-height: 100vh
+}
+
+.container {
+    display: flex;
+    min-height: 100vh
+}
+
+/* Sidebar (same as dashboard) */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 70px;
+    background-color: #0b1a3d;
+    border-radius: 0 25px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.12);
+    transition: width 300ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease;
+    overflow: visible
+}
+
+    .sidebar:hover, .sidebar.expanded {
+        width: 230px;
+        align-items: flex-start;
+        padding-left: 18px;
+        box-shadow: 10px 0 30px rgba(2,6,23,0.18)
+    }
+
+.logo-section {
+    margin-bottom: 35px
+}
+
+.logo-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    object-fit: cover
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+    width: 100%;
+    padding-top: 8px
+}
+
+.bottom-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: auto;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center
+}
+
+.nav-item {
+    color: #bfc8da;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 0;
+    border-radius: 10px;
+    box-sizing: border-box;
+    justify-content: center
+}
+
+.sidebar.expanded .nav-item {
+    justify-content: flex-start;
+    padding-left: 12px
+}
+
+.nav-item i {
+    width: 36px;
+    text-align: center;
+    font-size: 18px
+}
+
+.nav-label {
+    color: #bfc8da;
+    font-size: 15px;
+    white-space: nowrap;
+    display: none;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease
+}
+
+.sidebar.expanded .nav-label, .sidebar:hover .nav-label {
+    display: inline-block;
+    opacity: 1;
+    transform: translateX(0)
+}
+
+.nav-item.active, .nav-item:hover {
+    color: #ff8c00;
+    background: rgba(255,140,0,0.06);
+    transform: none
+}
+
+/* Main content area */
+.main-content {
+    margin-left: 75px;
+    padding: 28px;
+    width: calc(100%);
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    overflow-y: auto;
+    transition: margin-left 0.25s ease
+}
+
+.sidebar.expanded ~ .main-content, .sidebar:hover ~ .main-content {
+    margin-left: 230px
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px
+}
+
+.welcome-text {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap
+}
+
+.header-icons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    white-space: nowrap
+}
+
+.header-right .see-all {
+    margin-right: 6px
+}
+
+.icon-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(180deg,#eaf4ff,#d6ebff);
+    border: 1px solid rgba(59,130,246,0.12);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #053160;
+    box-shadow: 0 6px 18px rgba(10,35,70,0.06)
+}
+
+    .icon-btn i {
+        font-size: 18px
+    }
+
+    .icon-btn.orange {
+        background: linear-gradient(180deg,#fff4e6,#fff0de);
+        border: 1px solid rgba(255,140,0,0.14);
+        color: #b44b00
+    }
+
+        .icon-btn.orange:hover {
+            background: linear-gradient(180deg,#ffd9b8,#ffc58a)
+        }
+
+.dark-toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(180deg,#fff7ed,#fff1e6);
+    color: #07304a;
+    box-shadow: 0 6px 18px rgba(10,35,70,0.06);
+    transition: transform 160ms ease, background 200ms ease, color 180ms ease
+}
+
+    .dark-toggle.navy {
+        background: linear-gradient(180deg,#e7f1ff,#d7e9ff);
+        color: #05203f
+    }
+
+        .dark-toggle.navy:hover {
+            background: linear-gradient(180deg,#cfe6ff,#9fc8ff)
+        }
+
+/* Profile layout */
+.profile-page {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 28px
+}
+
+.profile-main {
+    background: white;
+    padding: 26px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(10,30,60,0.06)
+}
+
+.profile-header {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 18px
+}
+
+.profile-large-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 16px;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06)
+}
+
+.profile-meta {
+    display: flex;
+    flex-direction: column
+}
+
+    .profile-meta h2 {
+        font-size: 22px;
+        margin-bottom: 6px
+    }
+
+    .profile-meta p {
+        color: #556677;
+        font-size: 14px;
+        margin-bottom: 6px
+    }
+
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px
+}
+
+.btn {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700
+}
+
+    .btn.primary {
+        background: linear-gradient(90deg,#0b6cff,#3b82f6);
+        color: #fff
+    }
+
+    .btn.ghost {
+        background: transparent;
+        border: 1px solid #e6eef9;
+        color: #053160
+    }
+
+    /* Navy variant for Edit Profile */
+    .btn.navy {
+        background: linear-gradient(90deg,#05203f,#0b3b62);
+        color: #fff;
+        border: none;
+        box-shadow: 0 8px 22px rgba(2,30,60,0.18)
+    }
+
+        .btn.navy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(2,30,60,0.22)
+        }
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 12px;
+    margin-top: 10px
+}
+
+.info-card {
+    background: #fafbfd;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(10,35,70,0.03)
+}
+
+    .info-card h4 {
+        font-size: 13px;
+        color: #2c3e50;
+        margin-bottom: 6px
+    }
+
+    .info-card p {
+        font-size: 14px;
+        color: #556677
+    }
+
+.courses-list {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px
+}
+
+.course-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);
+    padding: 12px 14px;
+    border-radius: 12px
+}
+
+/* Right column widgets copied from dashboard (calendar/opportunities/logout) */
+.sidebar-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px
+}
+
+.calendar-widget, .opportunities-widget, .stats-widget {
+    background: white;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(10,30,60,0.06)
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2c3e50
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    gap: 6px;
+    text-align: center
+}
+
+.calendar-day-header {
+    font-size: 11px;
+    font-weight: 700;
+    color: #7f8c8d;
+    padding: 6px 0
+}
+
+.calendar-day {
+    padding: 6px;
+    border-radius: 8px;
+    font-size: 13px
+}
+
+
+
+.main-content {
+    padding: 18px
+}
+
+}
+
+/* Buttons & user-actions */
+.user-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+
+.logout-btn {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(90deg,#07294a,#234a7a);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(2,30,60,0.18)
+}
+
+    .logout-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(2,30,60,0.24)
+    }
+
+.see-all {
+    background: transparent;
+    border: none;
+    color: #3b82f6;
+    font-weight: 700;
+    cursor: pointer
+}
+
+/* Profile page specific: user-roles container and muted button variants */
+.user-roles {
+    background: #fff;
+    padding: 14px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(10,30,60,0.06);
+}
+
+    .user-roles .section-title {
+        font-size: 14px;
+        margin-bottom: 8px
+    }
+
+    .user-roles .role-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px
+    }
+
+.btn-muted {
+    background: linear-gradient(90deg,#eef6ff,#e6eefc);
+    color: #0b2540;
+    border: 1px solid rgba(11,37,64,0.06);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-weight: 700
+}
+
+    .btn-muted:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(11,37,64,0.06);
+    }
+
+.btn-danger-muted {
+    background: linear-gradient(90deg,#fff1f2,#ffe7e9);
+    color: #7a1f1f;
+    border: 1px solid rgba(220,38,38,0.06);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-weight: 700
+}
+
+    .btn-danger-muted:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(220,38,38,0.06);
+    }
+
+/* Dark mode styles (expanded) */
+body.dark-mode {
+    background: linear-gradient(135deg,#070911 0%, #071229 100%);
+    color: #dfe8f7
+}
+
+    body.dark-mode .sidebar {
+        background-color: #071129;
+        box-shadow: 6px 0 20px rgba(2,6,23,0.35)
+    }
+
+    body.dark-mode .nav-item {
+        color: rgba(222,233,255,0.85)
+    }
+
+    body.dark-mode .nav-label {
+        color: rgba(222,233,255,0.9)
+    }
+
+    body.dark-mode .nav-item.active, body.dark-mode .nav-item:hover {
+        color: #ffb86b;
+        background: rgba(255,140,0,0.08)
+    }
+
+    body.dark-mode .main-content, body.dark-mode .profile-main, body.dark-mode .stats-widget, body.dark-mode .opportunities-widget, body.dark-mode .calendar-widget {
+        background: #0b1220;
+        color: #dfe8f7;
+        box-shadow: 0 6px 24px rgba(2,6,23,0.28)
+    }
+    /* Right column widgets refinement */
+    body.dark-mode .sidebar-right {
+        background: transparent
+    }
+
+    body.dark-mode .stats-widget {
+        background: linear-gradient(180deg,#071226,#081428);
+        border: 1px solid rgba(255,255,255,0.03);
+        color: #e6f0ff
+    }
+
+    body.dark-mode #notificationsWidget .see-all, body.dark-mode #deadlinesWidget .see-all, body.dark-mode #documentsWidget .see-all {
+        color: #8fb7ff
+    }
+
+    body.dark-mode #notificationsList > div, body.dark-mode #documentsWidget > div > div {
+        background: linear-gradient(180deg,#071226,#081428);
+        border: 1px solid rgba(255,255,255,0.02);
+        color: #cfe6ff
+    }
+
+    body.dark-mode .deadline-item {
+        background: linear-gradient(180deg,#081226,#0b1724);
+        border: 1px solid rgba(255,255,255,0.02)
+    }
+
+    body.dark-mode .btn.ghost {
+        border-color: rgba(255,255,255,0.04);
+        color: #cfe6ff
+    }
+
+    body.dark-mode .see-all {
+        color: #8fb7ff
+    }
+
+    body.dark-mode .icon-btn {
+        background: rgba(255,255,255,0.03);
+        color: #dbe9ff;
+        border-color: rgba(255,255,255,0.03)
+    }
+
+    body.dark-mode .btn.primary {
+        background: linear-gradient(90deg,#0b6cff,#3b82f6);
+        color: #fff
+    }
+
+    body.dark-mode .btn.ghost {
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.06);
+        color: #dbe9ff
+    }
+
+    body.dark-mode .info-card {
+        background: #071226;
+        border-color: rgba(255,255,255,0.03)
+    }
+
+    body.dark-mode .profile-large-img {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.7)
+    }
+    /* Dark-mode for navy button */
+    body.dark-mode .btn.navy {
+        background: linear-gradient(90deg,#03172a,#07243b);
+        color: #f0f8ff;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.45)
+    }
+
+    body.dark-mode .see-all {
+        color: #8fb7ff
+    }
+
+    body.dark-mode .courses-list .course-row {
+        background: linear-gradient(135deg,#071226 0%,#0b1724 100%);
+        border: 1px solid rgba(255,255,255,0.02);
+        color: #dfe8f7
+    }
+
+    body.dark-mode .course-row strong {
+        color: #e6f0ff
+    }
+
+    body.dark-mode .deadline-item {
+        background: linear-gradient(135deg,#0b1220,#081021)
+    }
+
+    body.dark-mode .user-roles {
+        background: #071226;
+        box-shadow: 0 6px 18px rgba(2,6,23,0.35)
+    }
+
+    body.dark-mode .btn-muted {
+        background: linear-gradient(90deg,#0b2540,#0d3358);
+        color: #e6f3ff;
+        border-color: rgba(255,255,255,0.03)
+    }
+
+    body.dark-mode .btn-danger-muted {
+        background: linear-gradient(90deg,#3d1212,#4a1616);
+        color: #ffdede;
+        border-color: rgba(255,255,255,0.03)
+    }
+
+/* Edit Profile Modal */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000
+}
+
+.modal {
+    width: 720px;
+    max-width: 95%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 18px 50px rgba(2,12,40,0.4);
+    overflow: hidden
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid #eef3ff
+}
+
+.modal-body {
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px
+}
+
+.modal-footer {
+    padding: 12px 18px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #eef3ff
+}
+
+.modal input, .modal select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e6e9ef;
+    background: #fbfdff
+}
+
+.modal label {
+    display: block;
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 6px
+}
+
+.btn.save {
+    background: linear-gradient(90deg,#06b6d4,#3b82f6);
+    color: #fff
+}
+
+.btn.cancel {
+    background: transparent;
+    border: 1px solid #e6e9ef
+}
+
+.modal-backdrop.show {
+    display: flex
+}
+
+body.dark-mode .modal {
+    background: #0f1724;
+    color: #dfe8f7
+}
+
+    body.dark-mode .modal input, body.dark-mode .modal select {
+        background: #0b1220;
+        border-color: rgba(255,255,255,0.04);
+        color: #dfe8f7
+    }
+/* Right-side specific widgets in dark mode: Documents, Deadlines, Notifications */
+body.dark-mode #documentsWidget,
+body.dark-mode #deadlinesWidget,
+body.dark-mode #notificationsWidget {
+    background: linear-gradient(180deg,#071226,#081428);
+    border: 1px solid rgba(255,255,255,0.04);
+    color: #dfe8f7;
+    box-shadow: 0 8px 30px rgba(2,6,23,0.32);
+}
+
+    /* Inner lists/items */
+    body.dark-mode #notificationsList > div,
+    body.dark-mode #documentsWidget > div > div,
+    body.dark-mode #documentsWidget div[style] {
+        background: linear-gradient(180deg,#081226,#0b1724);
+        border: 1px solid rgba(255,255,255,0.02);
+        color: #cfe6ff;
+    }
+
+/* Deadline items and mark-done button visibility */
+body.dark-mode .deadline-item {
+    background: linear-gradient(180deg,#081226,#0b1724);
+    border: 1px solid rgba(255,255,255,0.02);
+    color: #dfe8f7
+}
+
+    body.dark-mode .deadline-item .btn.ghost {
+        border-color: rgba(255,255,255,0.04);
+        color: #cfe6ff
+    }
+
+/* Ghost buttons inside widgets */
+body.dark-mode .stats-widget .see-all,
+body.dark-mode .see-all {
+    color: #8fb7ff
+}
+
+body.dark-mode .btn.ghost {
+    color: #cfe6ff;
+    border-color: rgba(255,255,255,0.04)
+}
+
+/* --- Force dark styles for inner content (override inline light backgrounds) --- */
+/* Documents inner rows, file items, and buttons */
+body.dark-mode #documentsWidget div[style],
+body.dark-mode #documentsWidget .btn,
+body.dark-mode #documentsWidget button,
+body.dark-mode #documentsWidget p,
+body.dark-mode #documentsWidget small,
+body.dark-mode #documentsWidget strong {
+    background: linear-gradient(180deg,#081226,#0b1724) !important;
+    color: #cfe6ff !important;
+    border: 1px solid rgba(255,255,255,0.02) !important;
+}
+
+/* Notifications list entries */
+body.dark-mode #notificationsList > div {
+    background: linear-gradient(180deg,#081226,#0b1724) !important;
+    color: #e6f4ff !important;
+    border: 1px solid rgba(255,255,255,0.02) !important;
+}
+
+/* Deadlines inner text and buttons */
+body.dark-mode #deadlinesList .deadline-item,
+body.dark-mode #deadlinesList .deadline-item div {
+    background: linear-gradient(180deg,#081226,#0b1724) !important;
+    color: #e6f4ff !important;
+    border: 1px solid rgba(255,255,255,0.02) !important;
+}
+
+    body.dark-mode #deadlinesList .deadline-item .btn.ghost {
+        border-color: rgba(255,255,255,0.04) !important;
+        color: #cfe6ff !important
+    }
+
+/* Ensure icons/emoji remain visible */
+body.dark-mode #documentsWidget i, body.dark-mode #notificationsWidget i {
+    color: #cfe6ff !important
+}
+
+/* Make sure small labels inside these widgets are readable */
+body.dark-mode #documentsWidget small, body.dark-mode #notificationsWidget small, body.dark-mode #deadlinesWidget small {
+    color: #99accb !important
+}
+
+/* Hide interactive buttons inside the three right widgets per user request */
+#documentsWidget button,
+#deadlinesWidget button,
+#notificationsWidget button {
+    display: none !important;
+}
+/* Also hide any .see-all controls inside those widgets */
+#documentsWidget .see-all, #deadlinesWidget .see-all, #notificationsWidget .see-all {
+    display: none !important
+}
+
+/* --- Dark mode: remaining profile page elements --- */
+body.dark-mode .welcome-text {
+    color: #e8eefc !important
+}
+
+body.dark-mode .main-content {
+    background: linear-gradient(180deg,#071226,#071826) !important
+}
+
+body.dark-mode .profile-main {
+    background: linear-gradient(180deg,#071226,#081428) !important;
+    border: 1px solid rgba(255,255,255,0.03) !important;
+    color: #e6f0ff !important
+}
+
+body.dark-mode .profile-header {
+    border-bottom: 1px solid rgba(255,255,255,0.03) !important
+}
+
+body.dark-mode .profile-meta h2 {
+    color: #f0f6ff !important
+}
+
+body.dark-mode .profile-meta p {
+    color: #b8cfe8 !important
+}
+
+body.dark-mode .profile-actions .btn {
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,0.04) !important;
+    color: #cfe6ff !important
+}
+
+body.dark-mode .profile-large-img {
+    box-shadow: 0 6px 30px rgba(0,0,0,0.6) !important;
+    border-color: rgba(255,255,255,0.04) !important
+}
+
+/* Info cards */
+body.dark-mode .info-card {
+    background: linear-gradient(180deg,#071226,#081428) !important;
+    border: 1px solid rgba(255,255,255,0.02) !important;
+    color: #cfe6ff !important
+}
+
+    body.dark-mode .info-card h4 {
+        color: #e6f0ff !important
+    }
+
+    body.dark-mode .info-card p {
+        color: #9fb7d6 !important
+    }
+
+/* Courses list rows */
+body.dark-mode .courses-list .course-row {
+    background: linear-gradient(180deg,#071226,#081428) !important;
+    border: 1px solid rgba(255,255,255,0.02) !important;
+    color: #e6f0ff !important
+}
+
+    body.dark-mode .courses-list .course-row strong {
+        color: #eaf4ff !important
+    }
+
+    body.dark-mode .courses-list .course-row .btn.ghost {
+        border-color: rgba(255,255,255,0.04) !important;
+        color: #cfe6ff !important
+    }
+
+/* Transcript preview and similar inline containers */
+body.dark-mode .profile-main [style*="background:#fff"] {
+    background: linear-gradient(180deg,#071226,#081428) !important;
+    border: 1px solid rgba(255,255,255,0.02) !important;
+    color: #dfe8f7 !important
+}
+
+/* Small text / meta inside right widgets and center content */
+body.dark-mode small, body.dark-mode .profile-year, body.dark-mode .profile-id {
+    color: #9fb7d6 !important
+}
+
+/* Ensure icons in the profile area are visible */
+body.dark-mode .profile-main i, body.dark-mode .profile-main svg {
+    color: #cfe6ff !important
+}
+
+/* Make container titles light in dark mode */
+body.dark-mode .section-title,
+body.dark-mode .profile-main h2,
+body.dark-mode .profile-main h3,
+body.dark-mode .profile-main h4 {
+    color: #f4f8ff !important;
+}
+
+</style >

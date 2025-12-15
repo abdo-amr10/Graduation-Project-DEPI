@@ -1,0 +1,93 @@
+﻿@model My_Uni_Hub.Models.Pages.Material
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Add Material";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/CreateMaterial.css" asp-append-version="true" />
+}
+
+<div class="dashboard-container">
+    <main class="main-content">
+        <div class="breadcrumb">
+            <a asp-action="Index" asp-controller="Material" asp-area="Admin">Materials</a> / Add Material
+        </div>
+
+        <div class="header">
+            <h1 class="header-title">Add New Material</h1>
+        </div>
+
+        <div class="form-card">
+            <div asp-validation-summary="ModelOnly" class="validation-summary text-danger"></div>
+
+            <form asp-action="Create" asp-controller="Material" asp-area="Admin" method="post" enctype="multipart/form-data" id="materialForm">
+                @Html.AntiForgeryToken()
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="Title">Title <span class="required">*</span></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CourseId">Course</label>
+                        <select asp-for="CourseId" asp-items="(IEnumerable<SelectListItem>)ViewBag.Courses" class="form-control">
+                            <option value="">Select Course</option>
+                        </select>
+                        <span asp-validation-for="CourseId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label asp-for="Description">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="Category">Category</label>
+                        <input asp-for="Category" class="form-control" placeholder="e.g. Lecture Slides, Assignment, Notes" />
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Rating">Rating</label>
+                        <input asp-for="Rating" type="number" step="0.1" min="0" max="5" class="form-control" />
+                        <span asp-validation-for="Rating" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="file">File <span class="required">*</span></label>
+                        <input type="file" name="file" id="fileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.txt,image/*" required />
+                        <div id="fileHelp" class="help-text">Allowed: pdf, docx, pptx, zip, txt, images. Max 10MB.</div>
+                        <div class="text-danger" id="fileError" style="display:none;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preview</label>
+                        <div class="file-preview" id="filePreview">
+                            <span class="placeholder">No file selected</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a class="btn btn-secondary" asp-action="Index" asp-controller="Material" asp-area="Admin">Cancel</a>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Create Material</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <script src="~/js/Admin/CreateMaterial.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial" />
+}
