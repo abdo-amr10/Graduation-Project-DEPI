@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using My_Uni_Hub.Models;
 using My_Uni_Hub.Models.Pages;
 
 namespace My_Uni_Hub.Controllers.User
 {
+    [Authorize]
     [Route("announcements", Name = "announcements")]
     public class AnnouncementsController : Controller
     {

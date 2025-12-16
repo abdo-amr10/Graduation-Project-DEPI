@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using My_Uni_Hub.Models;
 using My_Uni_Hub.Models.Pages;
 using My_Uni_Hub.Models.ViewModels;
 using My_Uni_Hub.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace My_Uni_Hub.Controllers.Admin
 {
+    [Authorize(Roles = "Admin")]
+
     [Route("admin/student")]
     public class StudentController : Controller
     {

@@ -62,7 +62,14 @@
 
             <ul class="bottom-menu" role="menu">
                 <li class="nav-item" role="menuitem" data-key="settings" data-href="user/profile"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
-                <li class="nav-item" role="menuitem" data-key="logout" data-href="/Auth/login"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+                <li class="nav-item"
+                    role="menuitem"
+                    data-key="logout"
+                    onclick="document.getElementById('logoutForm').submit();"
+                    style="cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-label">Logout</span>
+                </li>
             </ul>
         </aside>
 
@@ -89,6 +96,8 @@
             // nav item click navigation + active save
             navItems.forEach(i => {
                 i.addEventListener('click', () => {
+                            if (i.dataset.key === 'logout') return;
+
                     const href = i.dataset.href;
                     const key = i.dataset.key;
                     if (key) localStorage.setItem('activeNav', key);
@@ -107,5 +116,10 @@
     </script>
 
     @RenderSection("Scripts", required: false)
+
+    <form id="logoutForm" method="post" action="/Auth/Logout" style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
+
 </body>
 </html>

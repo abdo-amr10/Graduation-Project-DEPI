@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using My_Uni_Hub.Models;
@@ -12,6 +13,8 @@ using System.Threading.Tasks;
 
 namespace My_Uni_Hub.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
     [Route("admin/announcements")]
     public class AnnouncementsController : Controller
     {

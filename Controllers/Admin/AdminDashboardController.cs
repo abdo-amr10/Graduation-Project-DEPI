@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using My_Uni_Hub.Models.ViewModels;
 using My_Uni_Hub.Services.Interfaces;
 
 namespace My_Uni_Hub.Controllers.Admin
 {
+    [Authorize(Roles = "Admin")]
+
     [Route("admin")]
     public class AdminDashboardController : Controller
     {

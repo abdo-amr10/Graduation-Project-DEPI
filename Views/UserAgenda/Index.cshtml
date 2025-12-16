@@ -147,7 +147,13 @@
 
             <ul class="bottom-menu" role="menu">
                 <li class="nav-item" role="menuitem" data-key="settings" data-href="user/profile"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
-                <li class="nav-item" role="menuitem" data-key="logout" data-href="/Auth/login"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+                <li class="nav-item"
+                    role="menuitem"
+                    data-key="logout"
+                    onclick="document.getElementById('logoutForm').submit();"
+                    style="cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span>
+                </li>
             </ul>
         </div>
 
@@ -351,6 +357,8 @@
 
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("[data-href]");
+        if (btn && btn.dataset.key === "logout") return;
+
     if (btn) {
         window.location.href = btn.getAttribute("data-href");
     }
@@ -521,6 +529,9 @@ function escapeHtml(s){
 
 })();
 </script>
+<form id="logoutForm" method="post" action="/Auth/Logout" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
 
 </body>
 </html>

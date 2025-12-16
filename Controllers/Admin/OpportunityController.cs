@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using My_Uni_Hub.Models;
@@ -7,6 +8,8 @@ using My_Uni_Hub.Services.Interfaces;
 
 namespace My_Uni_Hub.Controllers.Admin
 {
+    [Authorize(Roles = "Admin")]
+
 
     [Route("admin/opportunities")]
     public class OpportunityController : Controller

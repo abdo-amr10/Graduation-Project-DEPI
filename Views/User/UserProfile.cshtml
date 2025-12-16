@@ -941,7 +941,12 @@
 
             <ul class="bottom-menu">
                 <li class="nav-item" data-key="settings" data-href='@Url.Action("profile", "user")'><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
-                <li class="nav-item" data-key="logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+                <li class="nav-item"
+                    data-key="logout"
+                    onclick="document.getElementById('logoutForm').submit();"
+                    style="cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span>
+                </li>
             </ul>
         </div>
 
@@ -1255,7 +1260,10 @@
             else { const first = document.querySelector('.nav-item[data-key="profile"]'); if (first) first.classList.add('active'); }
 
             navItems.forEach(item=>{
-                item.addEventListener('click', function(){ navItems.forEach(i=>i.classList.remove('active')); this.classList.add('active'); if (this.dataset.key) localStorage.setItem('activeNav', this.dataset.key); if (this.dataset.href) window.location.href = this.dataset.href; });
+                item.addEventListener('click', function(){
+                            if (this.dataset.key === "logout") return;
+
+                    navItems.forEach(i=>i.classList.remove('active')); this.classList.add('active'); if (this.dataset.key) localStorage.setItem('activeNav', this.dataset.key); if (this.dataset.href) window.location.href = this.dataset.href; });
                 item.tabIndex = 0; item.addEventListener('keypress', e=>{ if (e.key==='Enter') item.click(); });
             });
 
@@ -1277,7 +1285,6 @@
             document.getElementById('messageBtn')?.addEventListener('click', ()=> openQuickChat());
             // Notifications button (header) should open quick chat like Home
             document.getElementById('notifBtn')?.addEventListener('click', ()=> openQuickChat());
-            document.getElementById('logoutBtn')?.addEventListener('click', ()=> { if (confirm('هل أنت متأكد من تسجيل الخروج؟')) { alert('Logging out... (implement actual logout)'); } });
             document.getElementById('clearNotifications')?.addEventListener('click', ()=> { const list = document.getElementById('notificationsList'); if (list) list.innerHTML = '<div style="color:#7f8c8d">No notifications</div>'; });
             document.getElementById('uploadDoc')?.addEventListener('click', ()=> alert('Upload document — implement file input.'));
             document.querySelectorAll('button[data-doc]').forEach(b => b.addEventListener('click', ()=> alert('Download: '+ b.dataset.doc)));
@@ -1397,6 +1404,9 @@
 
 })();
 </script>
+        <form id="logoutForm" method="post" action="/Auth/Logout" style="display:none;">
+            @Html.AntiForgeryToken()
+        </form>
 
 </body>
 </html>

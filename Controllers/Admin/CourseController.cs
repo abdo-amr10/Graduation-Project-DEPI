@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using My_Uni_Hub.Models.Pages;
 using My_Uni_Hub.Models.ViewModels;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace My_Uni_Hub.Controllers.Admin
 {
+    [Authorize(Roles = "Admin")]
+
     [Route("admin/courses")]
     public class CoursesController : Controller
     {

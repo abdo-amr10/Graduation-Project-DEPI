@@ -194,20 +194,39 @@
                 </a>
             </li>*@
 
-            <li class="menu-item">
-                <a href="@href("Auth/Login")" class="menu-link">
-                    <span class="menu-item-icon">
-                        <!-- svg logout -->
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <polyline points="16 17 21 12 16 7"></polyline>
-                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                        </svg>
-                    </span>
-                    <span class="menu-item-text">Logout</span>
-                </a>
-            </li>
+                    <li class="menu-item">
+                        <form method="post"
+                              action="@Url.Action("Logout","Auth")"
+                              style="margin:0">
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit"
+                                    class="menu-link"
+                                    style="
+                    all: unset;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    cursor: pointer;
+                ">
+
+                                <span class="menu-item-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                </span>
+
+                                <span class="menu-item-text">Logout</span>
+                            </button>
+                        </form>
+                    </li>
+
+
 
         </ul>
     </div>
@@ -229,5 +248,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @RenderSection("Scripts", required: false)
+
+    <form id="adminLogoutForm" method="post" action="@Url.Action("Logout","Auth")" style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
+
 </body>
 </html>

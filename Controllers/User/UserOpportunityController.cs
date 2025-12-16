@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using My_Uni_Hub.Models.Pages;
 using My_Uni_Hub.Services.Interfaces;
 using System;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace My_Uni_Hub.Controllers.User
 {
+    [Authorize]
     [Route("opportunities")]
     public class UserOpportunityController : Controller
     {

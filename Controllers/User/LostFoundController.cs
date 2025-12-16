@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using My_Uni_Hub.Models.Pages;
 using My_Uni_Hub.Services.Interfaces;
 
 namespace My_Uni_Hub.Controllers.User
 {
+    [Authorize]
     [Route("lost-and-found")]
     public class LostFoundController : Controller
     {

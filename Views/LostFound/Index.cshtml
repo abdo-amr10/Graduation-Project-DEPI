@@ -102,7 +102,15 @@
 
             <ul class="bottom-menu" role="menu">
                 <li class="nav-item" role="menuitem" data-key="settings" data-href="user/profile"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></li>
-                <li class="nav-item" role="menuitem" data-key="logout" data-href="/Auth/login"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Logout</span></li>
+                <li class="nav-item"
+                    role="menuitem"
+                    data-key="logout"
+                    onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('logoutForm').submit();"
+                    style="cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-label">Logout</span>
+                </li>
+
             </ul>
         </div>
 
@@ -514,7 +522,10 @@
       if (labelEl) i.setAttribute('title', labelEl.textContent.trim());
       if (href) {
         i.setAttribute('role', 'link');
-        i.addEventListener('click', () => { window.location.href = href; });
+        i.addEventListener('click', () => { 
+                            if (i.dataset.key === 'logout') return;
+
+            window.location.href = href; });
         const target = baseName(href).toLowerCase();
         if (target && target === current) { i.classList.add('active'); }
       }
@@ -530,5 +541,10 @@
 
     <!-- Load page script after DOM -->
     <script src="@(Url.Content("~/js/User/lostfound.js"))"></script>
+
+    <form id="logoutForm" method="post" action="/Auth/Logout" style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
+
 </body>
 </html>

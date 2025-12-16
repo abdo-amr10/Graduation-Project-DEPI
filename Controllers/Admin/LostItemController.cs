@@ -1,4 +1,5 @@
 ﻿// Controllers/Admin/LostItemController.cs
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,8 @@ using System.IO;
 
 namespace My_Uni_Hub.Controllers.Admin
 {
+    [Authorize(Roles = "Admin")]
+
     [Route("admin/lostitems")]
     public class LostItemController : Controller
     {
